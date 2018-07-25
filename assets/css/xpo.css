@@ -1,0 +1,135 @@
+@media print{
+  @page {
+    size : letter landscape;
+  }
+
+  .no-print{
+    display: none !important;
+  }
+}
+
+
+.megamenu{
+	min-height : 100%;
+	background-color: #222426f7;
+	border-top : 1px solid #ababab2e;
+	position: fixed;
+	top: 45;
+	left: 0;
+	width: 100%;
+	z-index: 1021;
+}
+
+.megamenu h4,.close{
+	color: white;
+}
+
+.megamenu .close:hover{
+	color: white;
+}
+
+.main_menu:hover{
+	color: #f23232eb !important;
+}
+
+.flip-clock-dot{
+	background: #bd2130 !important;
+	animation: blink-animation 1s steps(5, start) infinite;
+  	-webkit-animation: blink-animation 1s steps(5, start) infinite;
+}
+
+.announcement_control{
+	background-color: #5a5a5a;
+	position: absolute;
+	bottom: 100%;
+	right: 1%;
+	padding: 5px;
+}
+
+.notification_items{
+	background-color: #a29d9f1f !important;
+	border-bottom: 1px solid #9b9b9b38;
+	font-size: 13px;
+}
+
+.notification_items:hover{
+	background-color: #f23232eb !important;
+	color: white;
+	font-weight: bold;
+}
+
+.notification_time{
+	color: #45454570;
+	font-size: 8px;
+}
+
+.ui-autocomplete{
+  z-index: 99999 !important;
+}
+
+@keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+@-webkit-keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+
+
+
+@-webkit-keyframes ticker {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    visibility: visible;
+  }
+  100% {
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-200%, 0, 0);
+  }
+}
+@keyframes ticker {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    visibility: visible;
+  }
+  100% {
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-200%, 0, 0);
+  }
+}
+.ticker-wrap {
+  bottom: 0;
+  width: 100%;
+  overflow: hidden;
+  height: 2rem;
+  background-color: #5a5a5a;
+  padding-left: 100%;
+  box-sizing: content-box;
+}
+.ticker-wrap .ticker {
+  display: inline-block;
+  height: 4rem;
+  line-height: 2rem;
+  white-space: nowrap;
+  padding-right: 100%;
+  box-sizing: content-box;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  animation-timing-function: linear;
+  -webkit-animation-name: ticker;
+  animation-name: ticker;
+  -webkit-animation-duration: 30s;
+  animation-duration: 30s;
+}
+.ticker-wrap .ticker__item {
+  display: inline-block;
+  padding: 0 2rem;
+  font-size: 1rem;
+  color: white;
+}

@@ -1,0 +1,37 @@
+#accent{
+	z-index: 1;
+	background-color: #390000;
+}
+
+#backdrop{
+	z-index: 3;
+	background-image: url('../img/landing/2.jpg');
+	background-repeat: no-repeat;
+	background-size: cover;
+	opacity: .75;
+}
+
+#content{
+	z-index: 5;
+	min-height: 100%;
+}
+
+#middle{
+	z-index: 7;
+	overflow: auto;
+	background: linear-gradient(368deg,#930000 12%,#3f3737 13%,white 13%);*/
+	box-shadow: 1px 2px 4px rgba(0, 0, 0, .5);
+	transition: all 0.45s;
+}
+
+#content-section{
+	z-index: 9;
+}
+.layer{
+
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 105%;
+}
