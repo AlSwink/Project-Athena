@@ -8,6 +8,10 @@
   }
 }
 
+.container,.container-fluid{
+  margin-top: 65px;
+}
+
 
 .megamenu{
 	min-height : 100%;

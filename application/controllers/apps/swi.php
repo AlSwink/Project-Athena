@@ -68,7 +68,7 @@ class Swi extends CI_Controller {
         foreach($ids as $id){
             $data['data'] = $this->swi_model->get_process_assignments($id);
             $data['page'] = 'applications/swi/swi_print_worksheet';
-            $print .= $this->load->view('page',$data,TRUE);
+            $print .= $this->load->view('page_printer',$data,TRUE);
         }
         
         echo json_encode($print);

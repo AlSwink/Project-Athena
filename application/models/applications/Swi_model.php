@@ -33,7 +33,7 @@ class Swi_model extends XPO_Model {
 
 	public function get_process_assignments($id=null)
 	{
-		$query = "SELECT a.doc_id,a.doc_number,b.assigned_on,a.doc_name,d.department,e.process,c.pa_id,c.standard,c.comments,b.status,f.principle,g.e_fname,g.e_lname,b.assignment_id,b.completed_on
+		$query = "SELECT a.doc_id,a.doc_number,b.assigned_on,a.doc_name,d.department,e.process,c.pa_id,c.standard,c.comments,b.status,f.principle,g.e_fname,g.e_lname,b.assignment_id,b.completed_on,b.user_id
 					FROM swi_process_assignment as c, swi_documents as a, departments as d, swi_processes as e,swi_principles as f, swi_document_assignment as b, employees as g
 					WHERE b.assignment_id = $id
 					AND c.assignment_id = $id
@@ -121,6 +121,7 @@ class Swi_model extends XPO_Model {
 	{
 		$completed = 0;
 		$reported = 0;
+		$standard_met = 0;
 		$assigned = array();
 
 		$from = ($y ? date($year.'-'.$month.'-01'.' 00:00:00') : $this->firstdayofmonth);
@@ -142,16 +143,22 @@ class Swi_model extends XPO_Model {
 
 			if($doc->result != NULL){
 				$reported++;
+			}else{
+				$standard_met++;
 			}
 		}
 
 		$this->db->select('COUNT(doc_id) as docs');
 		$docs = $this->db->get_where('swi_documents',array('deleted'=>0))->row();
 		
-		$data['completed'] = $completed;
-		$data['assigned'] = count($assigned);
-		$data['reported'] = $reported;
-		$data['documents'] = $docs->docs;
+		$data = array(
+					'completed' => $completed,
+					'assigned' => count($assigned),
+					'reported' => $reported,
+					'standard_met' => $standard_met,
+					'documents' => $docs->docs,
+					'pending' => $docs->docs - $completed
+				);
 
 		return $data;
 	}

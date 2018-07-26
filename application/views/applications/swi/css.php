@@ -34,7 +34,7 @@
 	    background-color: #FFFFFF;
 	}
 
-	.dtable td:hover{
+	.dtable,#assign_doc_table,#assign_emp_table td:hover{
 		cursor: cell;
 	}
 

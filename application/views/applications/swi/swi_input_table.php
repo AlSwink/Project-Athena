@@ -32,13 +32,6 @@
 				<input type="text" class="form-control form-control-sm table-form-control" name="comments[]" >
 				<?php } ?>
 			</td>
-			<input type="hidden" id="doc_assgn_num" value="<?= $question->doc_number; ?>"/>
-			<input type="hidden" id="doc_assgn_name" value="<?= $question->doc_name; ?>"/>
-			<input type="hidden" id="doc_res_st" value="<?= strtoupper($question->status); ?>"/>
-			<input type="hidden" id="doc_assgn_emp" value="<?= $question->e_fname.' '.$question->e_lname; ?>"/>
-			<input type="hidden" id="doc_assgn_on" value="<?= humanDate($question->assigned_on); ?>"/>
-			<input type="hidden" id="doc_comp_on" value="<?= humanDate($question->completed_on); ?>"/>
-			<input type="hidden" id="doc_assgn_dept" value="<?= $question->department; ?>"/>
 		</tr>
 	<?php }}else{ ?>
 		<tr class="table-warning">
@@ -49,3 +42,17 @@
 	<?php } ?>
 	</tbody>
 </table>
+<?php if(count($questions)){ ?>
+<!-- needed for parent container reference -->
+<input type="hidden" id="doc_assgn_num" value="<?= $questions[0]->doc_number; ?>"/>
+<input type="hidden" id="doc_assgn_name" value="<?= $questions[0]->doc_name; ?>"/>
+<input type="hidden" id="doc_res_st" value="<?= strtoupper($questions[0]->status); ?>"/>
+<input type="hidden" id="doc_assgn_emp" value="<?= $questions[0]->e_fname.' '.$questions[0]->e_lname; ?>"/>
+<input type="hidden" id="doc_assgn_on" value="<?= humanDate($questions[0]->assigned_on); ?>"/>
+<input type="hidden" id="doc_comp_on" value="<?= humanDate($questions[0]->completed_on); ?>"/>
+<input type="hidden" id="doc_assgn_dept" value="<?= $questions[0]->department; ?>"/>
+<!-- included in post -->
+<input type="hidden" name="emp_id" value="<?= $questions[0]->user_id; ?>"/>
+<input type="hidden" name="process_assignment_id" value="<?= $questions[0]->assignment_id; ?>"/>
+
+<?php } ?>

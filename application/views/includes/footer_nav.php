@@ -1,4 +1,4 @@
-<footer class="navbar fixed-bottom navbar-dark m-0 p-0" style="background-color: #222426;font-size: .75rem">
+<footer class="navbar navbar-bottom navbar-dark m-0 p-0" style="background-color: #222426;font-size: .75rem">
 	<div class="ticker-wrap">
 		<div class="ticker"></div>
 	</div>

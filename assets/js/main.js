@@ -91,6 +91,19 @@ function endSubmit(target){
 	},750);
 }
 
+function loadDependencies(data){
+	deps = '';
+	$(data.css).each(function(k,v){
+		deps += '<link rel="stylesheet" href="'+site_url+'assets/css/'+v+'.css"/>';
+	});
+
+	$(data.js).each(function(k,v){
+		deps += '<script src="'+site_url+'assets/js/'+v+'.js"></script>';
+	});
+
+	$('head').append(deps);
+}
+
 $(document).ready(function(){
 	update();
 
@@ -107,9 +120,9 @@ $(document).ready(function(){
 	})
 });
 
-setInterval(function(){
+/*setInterval(function(){
 	//update();
-},30000);
+},30000);*/
 
 $(document).on('keypress','.alpha-no', function (evt) {
     if (evt.which < 48 || evt.which > 57)

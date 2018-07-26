@@ -63,7 +63,7 @@
     </div>
   </div>
 </div>
-
+<!-- confirm delete -->
 <div class="modal fade" id="delete_swi_document" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-sm" role="document">
     <div class="modal-content">
@@ -83,7 +83,7 @@
     </div>
   </div>
 </div>
-
+<!-- edit swi document -->
 <div class="modal fade" id="edit_swi_document" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -147,6 +147,61 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
         <button type="button" class="form_submit btn btn-sm btn-primary">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- assign document -->
+<div class="modal fade" id="assign_swi_document" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Assign SWI document</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="assign_doc" action="<?= site_url('swi/assign_document'); ?>" method="POST">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-7">
+              <label>Search Document</label>
+              <input type="text" class="form-control form-control-sm text-input" name="doc_search" required placeholder="eg DCKNT-0001-01 or Part Master Update" autocomplete="off">
+              <table id="assign_doc_table" class="table table-sm">
+                <thead class="thead-dark">
+                  <tr>
+                    <th>Doc Number</th>
+                    <th>Doc Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-1 d-flex align-items-center">
+                <i class="fas fa-caret-right fa-3x align-middle"></i>
+            </div>
+            <div class="col-4">
+              <label>Search Associate</label>
+              <input type="text" class="form-control form-control-sm text-input" name="assoc_search" required placeholder="eg Newt Scamander" autocomplete="off">
+              <table id="assign_emp_table" class="table table-sm">
+                <thead class="thead-dark">
+                  <tr>
+                    <th>Associate</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="form_submit btn btn-sm btn-primary">Request Assignment</button>
       </div>
     </div>
   </div>

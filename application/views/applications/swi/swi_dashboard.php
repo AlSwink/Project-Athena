@@ -10,7 +10,7 @@
 		  	<ul class="list-group list-group-flush">
 		  		<a href="<?= site_url('swi/assign_documents'); ?>" target="_blank" class="list-group-item list-group-item-action list-group-item-primary"><i class="fas fa-file-alt"></i> Get Assignments</a>
 			    <a href="#" id="test" class="list-group-item list-group-item-action list-group-item-secondary"> <i class="fas fa-random"></i> Re-shuffle assignments</a>
-			    <a href="#" class="list-group-item list-group-item-action list-group-item-secondary"><i class="fas fa-user-tag"></i> Assign a document</a>
+			    <a href="#assign_swi_document" class="list-group-item list-group-item-action list-group-item-secondary" data-toggle="modal" data-target="#assign_swi_document"><i class="fas fa-user-tag"></i> Assign a document</a>
 			    <a href="#" class="list-group-item list-group-item-action list-group-item-secondary" data-toggle="modal" data-target="#add_swi_document"><i class="fas fa-plus-square"></i> New document</a>
 			    <a href="#" class="list-group-item list-group-item-action list-group-item-secondary"><i class="fas fa-columns"></i> Compare Data</a>
 			    <a href="#" class="list-group-item list-group-item-action list-group-item-secondary"><i class="fas fa-chart-area"></i> Create Report</a>
@@ -19,45 +19,57 @@
 			</ul>
 		</div>
 	</div>
-	<div class="col">
-		<div class="row">
-			<div class="col">
-				<table class="table table-sm text-center table-bordered">
-					<thead class="thead-dark">
-						<tr>
-							<th colspan="3">SWI Document Summary</th>
-						</tr>
-						<tr>
-							<th>Completed Documents</th>
-							<th>Assigned Documents</th>
-							<th>Reported Documents</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td class="display-4"><?= $totals['completed']; ?><span class="u_limit"> /<?= $totals['documents'] ?></span></td>
-							<td class="display-4"><?= $totals['assigned']; ?><span class="u_limit"> /<?= $totals['documents'] ?></span></td>
-							<td class="display-4"><?= $totals['reported']; ?><span class="u_limit"> /<?= $totals['documents'] ?></span></td>
-						</tr>
-					</tbody>
-				</table>
+	<div class="col-9">
+		<div class="card shadow">
+			<div class="card-body">
+				<div class="row">
+					<div class="col text-center">
+						<h4 class="display-4"><?= date('F Y'); ?> Overview</h4>
+					</div>
+				</div>
+				<hr>
+				<div class="row">
+					<div class="col">
+						<canvas id="days_prog" height="250px" style="position:absolute;bottom:0"></canvas>
+					</div>
+					<div class="col">
+						<canvas id="doc_prog" height="335px"></canvas>
+					</div>
+					<div class="col">
+						<canvas id="standard_acc" height="250px" style="position:absolute;bottom:0"></canvas>
+					</div>
+				</div>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col">
-				<table class="table table-sm text-center table-bordered etable">
-					<thead class="thead-dark">
-						<tr>
-							<th colspan="4">Employee Progress</th>
-						</tr>
-						<tr>
-							<th>Name</th>
-							<th>Docs</th>
-							<th>Department</th>
-							<th>Status</th>
-						</tr>
-					</thead>
-				</table>
+	</div>
+</div>
+<div class="row mt-2">
+	<div class="col">
+		<div class="card shadow">
+			<div class="card-body">
+				<div class="row">
+					<div class="col text-center">
+						<h6>vs Last month</h6>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col text-center">
+						<h5 class="text-success"><i class="fas fa-caret-up fa-xs"></i>12</h5>
+						<small>Documents</small>
+					</div>
+					<div class="col text-center">
+						<h5 class="text-success"><i class="fas fa-caret-up"></i>20</h5>
+						<small>Processes</small>
+					</div>
+					<div class="col text-center">
+						<h5 class="text-danger"><i class="fas fa-caret-down"></i>10</h5>
+						<small>Associates</small>
+					</div>
+					<div class="col text-center">
+						<h5>6</h5>
+						<small>Completed per Day</small>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

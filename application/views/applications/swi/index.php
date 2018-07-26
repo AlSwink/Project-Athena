@@ -1,6 +1,6 @@
 <div id="assign_print" class="d-none d-print-block"></div>
 <div class="container-fluid d-print-none">
-	<?php $this->load->view('applications/container_control'); ?>
+	<?= loadInclude('app_container_control',$this->app_info); ?>
 	<div class="row mt-2">
 		<div class="col">
 			<ul class="nav nav-tabs nav-fill">
@@ -31,22 +31,22 @@
 	<div class="row">
 		<div class="tab-content col">
 			<div class="tab-pane active" id="swi_dash" role="tabpanel">
-			  	<?php $this->load->view($page_dir.'/swi_dashboard'); ?>
+			  	<?php loadSubTemplate('swi_dashboard'); ?>
 			</div>
 			<div class="tab-pane" id="swi_input" role="tabpanel">
-			  	<?php $this->load->view($page_dir.'/swi_input'); ?>
+			  	<?php loadSubTemplate('swi_input'); ?>
 			</div>
 			<div class="tab-pane " id="swi_docs" role="tabpanel">
-			  	<?php $this->load->view($page_dir.'/swi_docs'); ?>
+			  	<?php loadSubTemplate('swi_docs'); ?>
 			</div>
 			<div class="tab-pane " id="swi_requests" role="tabpanel">
 			  	
 			</div>
 			<div class="tab-pane " id="swi_reports" role="tabpanel">
-			  	
+			  	<?php loadSubTemplate('swi_reports'); ?>
 			</div>
 			<div class="tab-pane" id="swi_documentation" role="tabpanel">
-			  	<?php $this->load->view($page_dir.'/swi_documentation'); ?>
+			  	<?php loadSubTemplate('swi_documentation'); ?>
 			</div>
 			<div class="tab-pane " id="swi_logs" role="tabpanel">
 			  	
@@ -55,8 +55,4 @@
 	</div>
 </div>
 
-<?php 
-$this->load->view($page_dir.'/modals');
-$this->load->view($page_dir.'/css');
-$this->load->view($page_dir.'/js'); 
-?>
+<?php loadSubTemplate(['modals','css','js']); ?>

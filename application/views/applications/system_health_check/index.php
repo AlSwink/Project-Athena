@@ -2,7 +2,7 @@
 	<?php //$this->load->view('applications/container_control'); ?>
 	<div class="row mt-2">
 		<div id="notes" class="col-4" style="min-height: 250px">
-			<?php $this->load->view($page_dir.'/notes.php'); ?>
+			<?php loadSubTemplate('notes.php'); ?>
 		</div>
 		<div id="operations" class="col-8"></div>
 	</div>
@@ -11,4 +11,4 @@
 	<div id="systems" class="row mx-1"></div>
 	<div id="machines" class="row mx-1"></div>
 </div>
-<?php $this->load->view($page_dir.'/js'); ?>
+<?php loadSubTemplate('js'); ?>

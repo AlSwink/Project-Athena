@@ -1,4 +1,5 @@
 <script>
+	loadDependencies(<?php echo json_encode($dependencies); ?>);
 	var last_doc = '';
 	var new_process_line = '';
 	var edit_process_line = '';
@@ -7,6 +8,179 @@
 		classes : { "ui-autocomplete": "highlight" },
 		source: <?= create_autocomplete_source($processes,'principle_id','process'); ?>
 	}
+
+	var days_prog = $("#days_prog");
+	var doc_prog = $("#doc_prog");
+	var in_standard = $("#standard_acc");
+
+	//charts
+
+	var c_days_prog = new Chart(days_prog,{
+				type : 'doughnut',
+				data : {
+					labels : ['Passed','Left'],
+					datasets : [{
+						data : [
+							<?= (int)date('j'); ?>,
+							<?= (int)date('t') - (int)date('j'); ?>
+						],
+						backgroundColor : [
+							'rgba(50, 50,50, 1)',
+							'rgba(196,159,78,1)'
+						]
+	                }]
+				},
+				options: {
+					title : {
+						display: true,
+						text: 'Days to go'
+					},
+					cutoutPercentage : 60,
+					legend:{
+						position: 'bottom',
+						labels: {
+							boxWidth: 11
+						}
+					}
+				}
+		});
+
+	var c_doc_prog = new Chart(doc_prog,{
+				type : 'doughnut',
+				data : {
+					labels : ['Completed','Pending'],
+					datasets : [{
+						data : [
+							<?= $totals['completed']; ?>,
+							<?= $totals['pending']; ?>
+						],
+						backgroundColor : [
+							'rgba(4, 173, 41,1)',
+							'rgba(50, 50,50, 1)'
+						]
+	                }]
+				},
+				options: {
+					title : {
+						display: true,
+						text: 'Document Progress'
+					},
+					cutoutPercentage : 60,
+					legend:{
+						position: 'bottom',
+						labels: {
+							boxWidth: 11
+						}
+					}
+				}
+		});
+
+	var c_in_standard = new Chart(in_standard,{
+				type : 'doughnut',
+				data : {
+					labels : ['Standard Met','Reported','Pending'],
+					datasets : [{
+						data : [
+							<?= $totals['standard_met']; ?>,
+							<?= $totals['reported']; ?>,
+							<?= $totals['pending']; ?>
+						],
+						backgroundColor : [
+							'rgba(4, 173, 41,1)',
+							'rgba(123,21,36,1)',
+							'rgba(50, 50,50, 1)'
+						]
+	                }]
+				},
+				options: {
+					title : {
+						display: true,
+						text: 'Standard Met Rate'
+					},
+					cutoutPercentage : 60,
+					legend:{
+						position: 'bottom',
+						labels: {
+							boxWidth: 11
+						}
+					}
+				}
+		});
+
+	Chart.pluginService.register({
+	  beforeDraw: function(chart) {
+	    var width = chart.chart.width,
+	        height = chart.chart.height,
+	        ctx = chart.chart.ctx,
+	        cid = $(chart.chart.canvas).attr('id');
+
+	    ctx.restore();
+	    var fontSize = (height / 114).toFixed(2);
+	    ctx.font = fontSize + "em sans-serif";
+	    ctx.textBaseline = "middle";
+
+	    if(cid == 'doc_prog'){
+	    	var doughnut_text = Math.ceil(chart.data.datasets[0].data[0] / chart.data.datasets[0].data[1] * 100) + '%';
+	   	}else if(cid == 'standard_acc'){
+	   		var doughnut_text = Math.ceil(chart.data.datasets[0].data[0] / chart.data.datasets[0].data[2] * 100) + '%';
+	   	}else if(cid == 'days_prog'){
+	   		var doughnut_text = chart.data.datasets[0].data[1];
+	   	}
+
+	    var text = doughnut_text,
+	        textX = Math.round((width - ctx.measureText(text).width) / 2),
+	        textY = height / 2;
+
+	    ctx.fillText(text, textX, textY);
+	    ctx.save();
+	  }
+	});
+
+	//data tables
+	var astable = $('#assign_doc_table').DataTable({
+			dom : '<"row"<"col"t>>',
+			ordering: false,
+			pagingType : 'numbers',
+			responsive: false,
+			ajax: {
+				url: '<?= site_url("swi/get_document"); ?>',
+				dataSrc: ''
+			},
+			columns : [
+				{ data: "doc_number" },
+		        { data: "doc_name" }
+			],
+		    scrollY:        '40vh',
+		    deferRender:    false,
+		    scroller: {
+		    	loadingIndicator : true
+		    },
+		    select: {
+		    	style : 'single'
+		    }
+		});
+
+	var aetable = $('#assign_emp_table').DataTable({
+			dom : '<"row"<"col"t>>',
+			ordering: false,
+			pagingType : 'numbers',
+			responsive: false,
+			ajax: {
+				url: '<?= site_url("swi/get_dashboard_employees"); ?>',
+				dataSrc: ''
+			},
+			columns : [
+				{ data: "name" }
+			],
+		    scrollY:        '40vh',
+		    deferRender:    false,
+		    scroller: {
+		    	loadingIndicator : true
+		    },
+		    select: {
+		    	style : 'single'
+		    }
+		});
 
 	var dtable = $('.dtable').DataTable({
 			dom : '<"row"<"col"t>><"row"<"col"iBp>>',
@@ -87,6 +261,23 @@
 		    }
 		});
 
+	dtable.on('select deselect',function(e,dt,type,indexes){
+		if(dtable.rows({selected:true}).data().length){
+			$('#delete,#edit').prop('disabled',false);
+		}else{
+			$('#delete,#edit').prop('disabled',true);
+		}
+
+		if(dtable.rows({selected:true}).data().length > 1){
+			$('#edit').prop('disabled',true);	
+		}
+	});
+
+	dtable.on('deselect',function(e,dt,type,indexes){	
+		last_doc = dtable.rows(indexes).data();
+	});
+
+	//functions
 	function form_submit(target,is_edit=false){
 		
 		url = $(target).attr('action');
@@ -118,6 +309,8 @@
 		$('#swi_input_table').empty();
 		clear_validation();
 	}
+
+	//events
 
 	$(document).ready(function(){
 		new_process_line = $('#new_process').html();
@@ -195,6 +388,10 @@
 		}
 	});
 
+	$('#assign_swi_document').on('shown.bs.modal', function (e) {
+		astable.draw('full-reset');	
+		aetable.draw('full-reset');
+	})
 
 	$('a[href="#swi_docs').click(function(){
 		setTimeout(function(){
@@ -202,7 +399,7 @@
 		},0);
 	})
 
-	$('a[href="#swi_dash').click(function(){
+	$('a[href="#swi_reports').click(function(){
 		setTimeout(function(){
 			etable.draw('full-reset');
 		},0);
@@ -218,6 +415,14 @@
 
 	$('#search_swi').keyup(function(){
 		dtable.search( this.value ).draw();
+	})
+
+	$('input[name="doc_search"]').keyup(function(){
+		astable.search(this.value).draw();
+	})
+
+	$('input[name="assoc_search"]').keyup(function(){
+		aetable.search(this.value).draw();
 	})
 
 	$('#delete_docs').click(function(){
@@ -432,7 +637,7 @@
 			url: '<?= site_url('swi/get_assigned_document'); ?>',
 			dataType: 'json',
 			beforeSend : function(){
-				$('body').append(<?php echo getFullLoading('Generating SWI Worksheets'); ?>);
+				$('body').append(<?php echo getFullLoading('Generating SWI Worksheets<br>Please wait'); ?>);
 			},
 			success : function(res){
 				$('#assign_print').html(res);
@@ -441,23 +646,5 @@
 				$('#full-loader').remove();
 			}
 		})
-	});
-
-
-
-	dtable.on('select deselect',function(e,dt,type,indexes){
-		if(dtable.rows({selected:true}).data().length){
-			$('#delete,#edit').prop('disabled',false);
-		}else{
-			$('#delete,#edit').prop('disabled',true);
-		}
-
-		if(dtable.rows({selected:true}).data().length > 1){
-			$('#edit').prop('disabled',true);	
-		}
-	});
-
-	dtable.on('deselect',function(e,dt,type,indexes){	
-		last_doc = dtable.rows(indexes).data();
 	});
 </script>

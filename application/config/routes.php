@@ -57,7 +57,8 @@ $route['login'] = 'landing';
 $route['request_login'] = 'landing/request_login';
 
 //swi routes
-$route['swi'] = 'applications/swi/1';
+$route['swi'] = 'applications/swi';
+$route['swi/standalone'] = 'applications/swi/1';
 $route['swi/(:any)'] = 'apps/swi/$1';
 $route['swi/get_document/(:any)/(:any)'] = 'apps/swi/get_document/$1/$2';
 $route['swi/get_document_process/(:any)'] = 'apps/swi/get_document_process/$1';
@@ -65,5 +66,9 @@ $route['swi/get_input_document/(:any)'] = 'apps/swi/get_input_document/$1';
 $route['swi/get_assigned_document/(:any)'] = 'apps/swi/get_assigned_document/$1';
 
 //system_health_check routes
-$route['health_check'] = 'applications/system_health_check/1';
+$route['health_check'] = 'applications/system_health_check';
+$route['health_check/standalone'] = 'applications/system_health_check/1';
 $route['health_check/(:any)'] = 'apps/system_health_check/$1';
+
+//api
+$route['test'] = 'api/test';

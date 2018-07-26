@@ -1,7 +1,26 @@
 <?php
 	
-	function getCurrentPage($method)
+	function loadView($data)
 	{
+		$ci =&get_instance();
+
+		if($ci->standalone){
+            $ci->load->view('page',$data);
+        }else{
+            echo json_encode($ci->load->view($ci->page,$data,TRUE));
+        }
+	}
+	
+	function getCurrentPage($class)
+	{
+		$ci =&get_instance();
+		
+		if($class == 'applications'){
+			$method = $ci->router->fetch_method();
+		}else{
+			$method = $class;
+		}
+
 		$page_name = str_replace('_',' ',$method);
 		$page_name = ucwords($page_name);
 		$page_name = '- '.$page_name;
@@ -217,5 +236,24 @@
 		$data['message'] = $message;
 		$loading = $ci->load->view('includes/full-screen-loading',$data,TRUE);
 		return json_encode($loading);
+	}
+
+	function loadSubTemplate($pages)
+	{
+		$ci =&get_instance();
+
+		if(is_array($pages)){
+			foreach($pages as $page){
+				$ci->load->view($ci->page_dir.'/'.$page);	
+			}
+		}else{
+			$ci->load->view($ci->page_dir.'/'.$pages);
+		}
+	}
+
+	function loadInclude($page,$param=null)
+	{
+		$ci =&get_instance();
+		$ci->load->view('includes/'.$page,$param);
 	}
 ?>
