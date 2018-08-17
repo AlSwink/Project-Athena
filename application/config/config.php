@@ -529,3 +529,4 @@ $config['ssh_host'] = 'mlknt.menlolog.com';
 $config['ssh_user'] = 'kntops';
 $config['ssh_pass'] = 'doit1234';
 $config['return_label_dir'] = '/app/wms/knt/opt/viaware/mww/w2t/reports/';
+$config['help-image-dir'] = $config['base_url'].'/assets/img/help-images/';

@@ -29,8 +29,8 @@ class Applications extends CI_Controller {
                     'swi_docs'      => $this->model->get_swi(),
                     'totals'        => $this->model->summary_report(),
                     'dependencies' => array(
-                                        'css'   => array('jquery-ui.min'),
-                                        'js'    => array('jquery-ui.min','printThis','chart.min')
+                                        'css'   => array('jquery-ui.min','jquery.contextMenu.min'),
+                                        'js'    => array('jquery-ui.min','chart.min','jquery.contextMenu.min','jquery.ui.position.min','moment')
                                         )
                 );
 

@@ -1,38 +1,30 @@
 <div class="row mt-3">
-	<div class="col">
-		<table class="table table-sm text-center table-bordered">
-			<thead class="thead-dark">
-				<tr>
-					<th colspan="3">SWI Document Summary</th>
-				</tr>
-				<tr>
-					<th>Completed Documents</th>
-					<th>Assigned Documents</th>
-					<th>Reported Documents</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td class="display-4"><?= $totals['completed']; ?><span class="u_limit"> /<?= $totals['documents'] ?></span></td>
-					<td class="display-4"><?= $totals['assigned']; ?><span class="u_limit"> /<?= $totals['documents'] ?></span></td>
-					<td class="display-4"><?= $totals['reported']; ?><span class="u_limit"> /<?= $totals['documents'] ?></span></td>
-				</tr>
-			</tbody>
-		</table>
+	<div class="col-3">
+		<div class="card text-white bg-info">
+			<div class="card-header">
+	  			<i class="fas fa-bars"></i> Report Types
+	  		</div>
+		  	<div class="card-body">
+				<p class="card-text">Please select a report type below.</p>	    
+		  	</div>
+			<ul class="list-group list-group-flush nav">
+				<li class="nav-item">
+		  			<a href="#report_documents" class="nav-link bbr-0 list-group-item list-group-item-action list-group-item-secondary" data-toggle="pill">All Documents</a>
+		  		</li>
+		  		<li class="nav-item">
+		  			<a href="#report_employees" class="nav-link list-group-item list-group-item-action list-group-item-secondary" data-toggle="pill">All Employees</a>
+		  		</li>
+			</ul>
+		</div>
 	</div>
-	<div class="col">
-		<table class="table table-sm text-center table-bordered etable">
-			<thead class="thead-dark">
-				<tr>
-					<th colspan="4">Employee Progress</th>
-				</tr>
-				<tr>
-					<th>Name</th>
-					<th>Docs</th>
-					<th>Department</th>
-					<th>Status</th>
-				</tr>
-			</thead>
-		</table>
+	<div class="col-9">
+		<div class="tab-content">
+			<div class="tab-pane show active" id="report_documents">
+				<?php loadSubTemplate('swi_reports_documents'); ?>
+			</div>
+			<div class="tab-pane" id="report_employees">
+				<?php loadSubTemplate('swi_reports_employees'); ?>
+			</div>
+		</div>
 	</div>
 </div>

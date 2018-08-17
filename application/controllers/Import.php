@@ -34,7 +34,7 @@ class Import extends CI_Controller {
         }
 
         $this->db->insert_batch('users_login',$insert);
-        echo count($insert).' Users from us_f imported successfully';
+        echo count($insert).' Users from us_f imported to employees successfully';
     }
 
     public function eroster_positions()
@@ -93,6 +93,7 @@ class Import extends CI_Controller {
                                 'active' => 1
                             );
             }else{
+                $deleted_users[] = '('.$employee->id.') -'.$employee->emp_fname.' '.$employee->emp_lname.'- ['.$employee->wms.']';
                 $deleted++;
             }
         }
@@ -116,7 +117,12 @@ class Import extends CI_Controller {
         echo count($insert).' Employees from xpo.tbl_employees imported successfully<br>';
         
         if($deleted){
-            echo $deleted.' Employees were not imported because they are not in users_login table<br>';
+            echo $deleted.' Employees were not imported because they are not in WMS<br>';
+            echo '<hr>';
+            foreach($deleted_users as $deleted){
+                echo $deleted.'<br>';
+            }
+            echo '<hr>';
             echo 'to ensure full import run '.site_url('import/wms_users').' to import wms users before being crossed checked with eroster';
         }
     }

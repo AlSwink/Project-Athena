@@ -51,9 +51,14 @@
 		font-size: 35% !important;
 	}
 
-	.table-form-control,.table-form-control:focus{
+	.table-form-control,.table-form-control:focus,.table-form-control:disabled{
 		border: none;
 		box-shadow: none;
+	}
+
+	.bbr-0{
+		border-bottom-left-radius: 0 !important;
+		border-bottom-right-radius: 0 !important;
 	}
 
 	button[disabled]:hover{
@@ -81,13 +86,13 @@
 			page-break-after: always !important;
 		}
 
-		 td{
+		td{
 		 	padding: 0;
-		 }
+		}
 
-		 th{
+		th{
 		 	font-size: 100%;
-		 }
+		}
 
 		table td{
 			font-size: 90% !important;

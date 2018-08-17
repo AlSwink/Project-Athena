@@ -40,7 +40,7 @@ function templater(url=null,target,post=null,load=true,iscontroller=null,animate
 }
 
 function form_submit(target){
-	console.log($(target).serialize());
+	//console.log($(target).serialize());
 }
 
 function update(cm=null,target=null){
@@ -88,6 +88,7 @@ function endSubmit(target){
 		$(target).html('Submit');
 		$(target).removeClass('disabled');
 		$(target).prop('disabled',false);
+		$('.modal').modal('hide');
 	},750);
 }
 

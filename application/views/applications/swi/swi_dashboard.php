@@ -1,21 +1,21 @@
 <div class="row mt-3">
 	<div class="col-3">
-		<div class="card shadow text-white bg-info">
+		<div class="card text-white bg-info">
 		  <div class="card-header">
-		  	<i class="fas fa-wrench"></i> Control Panel
+		  	<i class="fas fa-wrench"></i> Quick Conrols
 		  </div>
 		  <div class="card-body">
     			<p class="card-text">Use this panel to quickly access SWI tools and functions.</p>	    
 		  </div>
 		  	<ul class="list-group list-group-flush">
-		  		<a href="<?= site_url('swi/assign_documents'); ?>" target="_blank" class="list-group-item list-group-item-action list-group-item-primary"><i class="fas fa-file-alt"></i> Get Assignments</a>
-			    <a href="#" id="test" class="list-group-item list-group-item-action list-group-item-secondary"> <i class="fas fa-random"></i> Re-shuffle assignments</a>
+		  		<!--a href="<?= site_url('swi/assign_documents'); ?>" target="_blank" class="list-group-item list-group-item-action list-group-item-primary"><i class="fas fa-file-alt"></i> Set Assignments</a-->
+			    <a href="#" class="print_assignments list-group-item list-group-item-action list-group-item-secondary"> <i class="fas fa-print"></i> Print all assignments</a>
 			    <a href="#assign_swi_document" class="list-group-item list-group-item-action list-group-item-secondary" data-toggle="modal" data-target="#assign_swi_document"><i class="fas fa-user-tag"></i> Assign a document</a>
 			    <a href="#" class="list-group-item list-group-item-action list-group-item-secondary" data-toggle="modal" data-target="#add_swi_document"><i class="fas fa-plus-square"></i> New document</a>
-			    <a href="#" class="list-group-item list-group-item-action list-group-item-secondary"><i class="fas fa-columns"></i> Compare Data</a>
+			    <!--a href="#" class="list-group-item list-group-item-action list-group-item-secondary"><i class="fas fa-columns"></i> Compare Data</a>
 			    <a href="#" class="list-group-item list-group-item-action list-group-item-secondary"><i class="fas fa-chart-area"></i> Create Report</a>
 			    <a href="#" class="list-group-item list-group-item-action list-group-item-secondary"><i class="fas fa-download"></i> Download Report</a>
-			    <a href="#" class="list-group-item list-group-item-action list-group-item-info"><i class="fas fa-cog"></i> SWI Settings</a>
+			    <a href="#" class="list-group-item list-group-item-action list-group-item-info"><i class="fas fa-cog"></i> SWI Settings</a-->
 			</ul>
 		</div>
 	</div>

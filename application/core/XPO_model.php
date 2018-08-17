@@ -3,10 +3,10 @@
 class XPO_Model extends CI_Model {
 
 	protected $max_login_attempt;
-  protected $lastdayofmonth;
-  protected $firstdayofmonth;
+  	protected $lastdayofmonth;
+  	protected $firstdayofmonth;
 	public $site_name;
-  public $user_id;
+  	public $user_id;
 
   function __construct()
   {
@@ -52,24 +52,26 @@ class XPO_Model extends CI_Model {
   public function getDepartment($id)
   {
     $department = $this->db->get_where('departments',array('department_id'=>$id))->row();
+    $this->db->flush_cache();
     return $department->department;
   }
 
-  public function getEmployeesByStaffing($staffing_id)
+  public function setEmployeeStaffing($staffingid)
   {
-    $this->db->where('staffing',$staffing_id);
-    $this->db->where('deleted',0);
-    $this->db->order_by('e_fname','ASC');
-    $employees = $this->db->get('employees')->result();
-    return $employees;
+    $this->db->where_in('staffing',$staffingid);
   }
 
-  public function getEmployeesByDepartment($dept_id)
+  public function setEmployeeDepartment($deptid)
   {
-    $this->db->where('department',$dept_id);
+    $this->db->where_in('department',$deptid);
+  }
+
+  public function getEmployees()
+  {
     $this->db->where('deleted',0);
     $this->db->order_by('e_fname','ASC');
     $employees = $this->db->get('employees')->result();
+    $this->db->flush_cache();
     return $employees;
   }
 
@@ -97,6 +99,19 @@ class XPO_Model extends CI_Model {
     }
 
     return $final;
+  }
 
+  public function get_department_with_document($id=array())
+  {
+    $this->db->select('dept_id');
+    if(count($id)){
+      $this->db->where_in('dept_id',$id);
+    }else{
+      $this->db->group_by('dept_id');
+    }
+
+    $this->db->where('deleted',0);
+    $dd = $this->db->get('swi_documents')->result();
+    return $dd;
   }
 }

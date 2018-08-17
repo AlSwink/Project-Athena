@@ -1,0 +1,2 @@
+http://10.89.96.183/athena/import/wms_users
+http://10.89.96.183/athena/import/eroster_employees

@@ -64,6 +64,10 @@ $route['swi/get_document/(:any)/(:any)'] = 'apps/swi/get_document/$1/$2';
 $route['swi/get_document_process/(:any)'] = 'apps/swi/get_document_process/$1';
 $route['swi/get_input_document/(:any)'] = 'apps/swi/get_input_document/$1';
 $route['swi/get_assigned_document/(:any)'] = 'apps/swi/get_assigned_document/$1';
+$route['swi/reset/(:any)'] = 'apps/swi/reset_assignment/$1';
+$route['swi/unassign/(:any)'] = 'apps/swi/unassign/$1';
+$route['swi/input_worksheet'] = 'apps/swi/input_worksheet/';
+$route['swi/getEmployeeInfo/(:any)'] = 'apps/swi/getEmployeeInfo/$1';
 
 //system_health_check routes
 $route['health_check'] = 'applications/system_health_check';

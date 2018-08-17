@@ -1,4 +1,4 @@
-<table class="table table-sm table-condensed table-bordered text-center">
+<table class="table table-sm table-condensed table-bordered text-center m-0">
 	<thead class="table-info">
 		<tr>
 			<th>Process</th>
@@ -9,18 +9,19 @@
 	<tbody>		
 	<?php 
 		if(count($questions)){
+			$x = 0;
 		foreach($questions as $question){ ?>
 		<tr class="table-<?= converIcontoColor($question->standard); ?>">
 			<td style="width:45%"><?= $question->process; ?></td>
 			<td class="text-center">
 				<?php if($question->status != 'completed'){ ?>
-				<div class="btn-group" role="group">
-				  <button type="button" class="btn btn-success standard_select ok" data-value="ok" title="Met Standards"><i class="fas fa-check"></i></button>
-				  <button type="button" class="btn btn-danger standard_select bad" data-value="bad" title="Did not meet Standards"><i class="fas fa-times"></i></button>
-				  <button type="button" class="btn btn-default standard_select na" data-value="na" title="Not Applicable"><i class="fas fa-ban"></i></button>
+				<div class="btn-group btn-group-sm" role="group">
+				  <button type="button" class="btn btn-success standard_select ok" data-value="ok" title="Met Standards"><i class="fas fa-check fa-sm"></i></button>
+				  <button type="button" class="btn btn-danger standard_select bad" data-value="bad" title="Did not meet Standards"><i class="fas fa-times fa-sm"></i></button>
+				  <button type="button" class="btn btn-default standard_select na" data-value="na" title="Not Applicable"><i class="fas fa-ban fa-sm"></i></button>
 				</div>
 				<?php }else{ ?>
-					<i class="fas fa-<?= $question->standard; ?> fa-3x"></i>
+					<i class="fas fa-<?= $question->standard; ?> fa-sm"></i>
 				<?php } ?>
 				<input type="hidden" name="question_id[]" value="<?= $question->pa_id; ?>">
 				<input type="hidden" name="standard[]" value="">
@@ -29,11 +30,11 @@
 				<?php if($question->status == 'completed'){ ?>
 				<?= $question->comments; ?>
 				<?php }else{ ?>
-				<input type="text" class="form-control form-control-sm table-form-control" name="comments[]" >
+				<input type="text" class="form-control form-control-sm table-form-control comments_field" name="comments[<?= $x; ?>]">
 				<?php } ?>
 			</td>
 		</tr>
-	<?php }}else{ ?>
+	<?php $x++; }}else{ ?>
 		<tr class="table-warning">
 			<td colspan="3" class="text-center">
 				<h5 class="mt-2">Assignment Number does not exist</h5>
