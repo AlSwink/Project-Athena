@@ -292,3 +292,67 @@
     </div>
   </div>
 </div>
+<!-- confirm action -->
+<div class="modal" id="confirm_action" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-clipboard-check"></i> Confirm action</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="" method="POST">
+          <h5>Are you sure you want to <span id="confirm_action_label" class="text-danger"></span> this?</h5>
+          <small>This action cannot be reversed</small>
+          <input type="hidden" value="" name="confirm_assignment_id">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-md btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" id="confirm_action_submit" class="btn btn-md btn-success">Yes, I'm sure <i class="fas fa-check"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- print by dept -->
+<div class="modal" id="assignment_printer" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-print"></i> Print Assignment</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="print_assignment_form" action="<?= site_url('api/get_assigned_document'); ?>" action="POST">
+        <label>Criteria</label>
+        <select id="print_type" class="form-control">
+          <option value="all">All</option>
+          <option value="assignment_id">Assignment ID</option>
+          <option value="dept_id">Department</option>
+          <option value="employee">Employee</option>
+        </select>
+        <div id="print_department" class="subselection mt-2 d-none">
+          <label>Department</label>
+          <?= createDropdown('dept_id','departments','department','',['has_swi = 1'],['form-control']); ?>
+        </div>
+        <div id="print_employee" class="subselection mt-2 d-none">
+          <label>Employees</label>
+          <?= createEmpDropdown('user_id','user_id',['e_fname','e_lname'],['staffing = 3'],['form-control']); ?>
+        </div>
+        <div id="print_assignment_id" class="subselection mt-2 d-none">
+          <label>Assignment ID</label>
+          <input type="text" class="form-control" name="assignment_id"/>
+        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-md btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" id="print_assignment" class="btn btn-md btn-info">Print</i></button>
+      </div>
+    </div>
+  </div>
+</div>

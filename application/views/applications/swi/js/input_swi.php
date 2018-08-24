@@ -86,25 +86,6 @@
 		search_assignment(assignment_id);
 	})
 
-	$('#reprint_all').click(function(){
-		$.ajax({
-			type: 'GET',
-			url: '<?= site_url('swi/get_assigned_document'); ?>',
-			dataType: 'json',
-			beforeSend : function(){
-				$('body').append(<?php echo getFullLoading('Generating SWI Worksheets<br>Please wait'); ?>);
-			},
-			success : function(res){
-				$('#assign_print').html(res);
-			},
-			complete : function(){
-				$('#full-loader').remove();
-				window.print();
-				$('#assign_print').html('');
-			}
-		})
-	});
-
 	$('#sign_submit').click(function(evt){
 		err = 0;
 		if($('#status_display').html() == 'PENDING'){
@@ -150,10 +131,75 @@
 		}
 	});
 
+	$('#request_reset').click(function(){
+		
+	});
+
+	$('#print_type').change(function(){
+		selected = $(this).val();
+		$('.subselection').addClass('d-none');
+		switch(selected){
+			case 'assignment_id':
+				$('input[name="assignment_id"]').parent().removeClass('d-none');
+				break;
+			case 'dept_id':
+				$('select[name="dept_id"]').parent().removeClass('d-none');
+				break;
+			case 'employee':
+				$('select[name="user_id"]').parent().removeClass('d-none');
+				break;
+		}
+	});
+
+	$('#print_assignment').click(function(){
+		form = $('#print_assignment_form');
+		url = $(form).attr('action');
+		post = $(form).find(':visible').serialize();
+		
+		$.ajax({
+			type: 'POST',
+			url: '<?= site_url('api/get_assigned_document'); ?>',
+			dataType: 'json',
+			data: { post : post },
+			beforeSend : function(){
+				$('.modal').modal('hide');
+				$('body').append(<?php echo getFullLoading('Generating SWI Worksheets<br>Please wait'); ?>);
+			},
+			success : function(res){
+				$('#assign_print').html(res);
+			},
+			complete : function(){
+				$('#full-loader').remove();
+				window.print();
+				$('#assign_print').html('');
+			}
+		})
+	})
+
 	function clear_input_swi()
 	{
 		$('#doc_info_card').addClass('d-none');
 		$('#swi_input_table').empty();
 		clear_validation();
 	}
+
+	function search_assignment(id)
+	{
+		$.ajax({
+			type: 'GET',
+			url: '<?= site_url('api/get_assigned_document/'); ?>'+id,
+			dataType: 'json',
+			beforeSend : function(){
+				$('body').append(<?php echo getFullLoading('Generating SWI Worksheets<br>Please wait'); ?>);
+			},
+			success : function(res){
+				$('#assign_print').html('');
+				$('#assign_print').html(res);
+			},
+			complete : function(){
+				$('#full-loader').remove();
+				window.print();
+			}
+		})
+	};
 </script>

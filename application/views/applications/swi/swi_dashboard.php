@@ -2,14 +2,13 @@
 	<div class="col-3">
 		<div class="card text-white bg-info">
 		  <div class="card-header">
-		  	<i class="fas fa-wrench"></i> Quick Conrols
+		  	<i class="fas fa-wrench"></i> Quick Controls
 		  </div>
 		  <div class="card-body">
     			<p class="card-text">Use this panel to quickly access SWI tools and functions.</p>	    
 		  </div>
 		  	<ul class="list-group list-group-flush">
-		  		<!--a href="<?= site_url('swi/assign_documents'); ?>" target="_blank" class="list-group-item list-group-item-action list-group-item-primary"><i class="fas fa-file-alt"></i> Set Assignments</a-->
-			    <a href="#" class="print_assignments list-group-item list-group-item-action list-group-item-secondary"> <i class="fas fa-print"></i> Print all assignments</a>
+			    <a href="#" class="list-group-item list-group-item-action list-group-item-secondary" data-toggle="modal" data-target="#assignment_printer"> <i class="fas fa-print"></i> Print assignments</a>
 			    <a href="#assign_swi_document" class="list-group-item list-group-item-action list-group-item-secondary" data-toggle="modal" data-target="#assign_swi_document"><i class="fas fa-user-tag"></i> Assign a document</a>
 			    <a href="#" class="list-group-item list-group-item-action list-group-item-secondary" data-toggle="modal" data-target="#add_swi_document"><i class="fas fa-plus-square"></i> New document</a>
 			    <!--a href="#" class="list-group-item list-group-item-action list-group-item-secondary"><i class="fas fa-columns"></i> Compare Data</a>
@@ -49,7 +48,7 @@
 			<div class="card-body">
 				<div class="row">
 					<div class="col text-center">
-						<h6>vs Last month</h6>
+						<h6>vs Last month <small>(dummy)</small></h6>
 					</div>
 				</div>
 				<div class="row">

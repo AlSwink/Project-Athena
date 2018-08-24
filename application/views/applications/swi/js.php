@@ -128,13 +128,14 @@
 	    ctx.textBaseline = "middle";
 
 	    if(cid == 'doc_prog'){
-	    	var doughnut_text = Math.ceil(chart.data.datasets[0].data[0] / chart.data.datasets[0].data[1] * 100) + '%';
+	    	total = chart.data.datasets[0].data[0] + chart.data.datasets[0].data[1];
+	    	doughnut_text = Math.ceil(chart.data.datasets[0].data[0] / total * 100) + '%';
 	   	}else if(cid == 'standard_acc'){
 	   		standard_met = chart.data.datasets[0].data[0];
-	   		pending = chart.data.datasets[0].data[2];
-	   		var doughnut_text = Math.ceil(standard_met / pending * 100) + '%';
+	   		total = chart.data.datasets[0].data[0] + chart.data.datasets[0].data[1] + chart.data.datasets[0].data[2];
+	   		doughnut_text = Math.ceil(standard_met / total * 100) + '%';
 	   	}else if(cid == 'days_prog'){
-	   		var doughnut_text = chart.data.datasets[0].data[1];
+	   		doughnut_text = chart.data.datasets[0].data[1];
 	   	}
 
 	    var text = doughnut_text,
@@ -153,7 +154,7 @@
 			pagingType : 'numbers',
 			responsive: false,
 			ajax: {
-				url: '<?= site_url("swi/get_document"); ?>',
+				url: '<?= site_url("api/swi_get_document"); ?>',
 				dataSrc: ''
 			},
 			columns : [
@@ -177,7 +178,7 @@
 			pagingType : 'numbers',
 			responsive: false,
 			ajax: {
-				url: '<?= site_url("swi/get_dashboard_employees"); ?>',
+				url: '<?= site_url("api/get_swi_employees"); ?>',
 				dataSrc: ''
 			},
 			columns : [
@@ -213,7 +214,7 @@
 		        }
 	        ],
 			ajax: {
-				url: '<?= site_url("swi/get_document"); ?>',
+				url: '<?= site_url("api/swi_get_document"); ?>',
         		dataSrc: ''
 			},
 			columns : [
@@ -251,7 +252,7 @@
 		        }
 	        ],
 			ajax: {
-				url: '<?= site_url("swi/get_dashboard_employees"); ?>',
+				url: '<?= site_url("api/get_swi_employees"); ?>',
         		dataSrc: ''
 			},
 			columns : [
@@ -290,7 +291,7 @@
 		        }
 	        ],
 			ajax: {
-				url: '<?= site_url("swi/get_document_report"); ?>',
+				url: '<?= site_url("api/get_document_report"); ?>',
 				dataSrc: ''
 			},
 			columns : [
@@ -438,34 +439,6 @@
 				c_in_standard.data.datasets[0].data[1] = res.reported;
 				c_in_standard.data.datasets[0].data[2] = res.pending;
 				c_in_standard.update();
-
-				// reports tab update
-				$('#rd_completed').html(res.completed);
-				$('#rd_pending').html(res.pending);
-				$('#rd_standard').html(res.standard_met);
-				$('#rd_reported').html(res.reported);
-				$('#rd_unassigned').html(res.unassigned);
-				$('.u_limit').html(' /'+res.documents);
-			}
-		})
-	}
-
-	function search_assignment(id)
-	{
-		$.ajax({
-			type: 'GET',
-			url: '<?= site_url('swi/get_assigned_document/'); ?>'+id,
-			dataType: 'json',
-			beforeSend : function(){
-				$('body').append(<?php echo getFullLoading('Generating SWI Worksheets<br>Please wait'); ?>);
-			},
-			success : function(res){
-				$('#assign_print').html('');
-				$('#assign_print').html(res);
-			},
-			complete : function(){
-				$('#full-loader').remove();
-				window.print();
 			}
 		})
 	}
@@ -483,6 +456,25 @@
 		});
 		console.log(tooltip);
 		return tooltip;
+	}
+
+	function update_reporting_tab()
+	{
+		$.ajax({
+			typ : 'GET',
+			url : '<?= site_url('swi/get_dashboard_chart'); ?>',
+			dataType : 'json',
+			success : function(res){
+				$('#rd_completed').html(res.completed);
+				$('#rd_pending').html(res.pending);
+				$('#rd_standard').html(res.standard_met);
+				$('#rd_reported').html(res.reported);
+				$('#rd_unassigned').html(res.unassigned);
+				$('.u_limit').html(' /'+res.documents);
+			}
+		})
+		
+		rdtable.ajax.reload();
 	}
 	//events
 
@@ -515,7 +507,24 @@
 		                		$('input[name="reassignment_id"]').val(assignment_id);
 		                		$('#assign_swi_document').modal('show');
 		                		break;
-		                }
+		                	case 'reset':
+		                		$('input[name="confirm_assignment_id"]').val(assignment_id);
+		                		$('#confirm_action').find('form').attr('action','<?= site_url('swi/reset_assignment'); ?>');
+		                		$('#confirm_action_label').html('<b>Reset</b>');
+		                		$('#confirm_action').modal('show');
+		                		break;
+		                	case 'unassign':
+		                		$('#confirm_action').find('form').attr('action','<?= site_url('swi/unassign'); ?>/'+assignment_id);
+		                		$('#confirm_action_label').html('<b>Unassign</b>');
+		                		$('#confirm_action').modal('show');
+		                		break;
+		                	case 'delete':
+		                		$('#confirm_action').find('form').attr('action','<?= site_url('swi/delete_assignment'); ?>/'+assignment_id);
+		                		$('#confirm_action_label').html('<b>Delete</b>');
+		                		$('#confirm_action').modal('show');
+		                		break;
+		                }		
+
         			},
         			items: {
         				assignment: {name:doc_number,icon:"fas fa-info",disabled:true},
@@ -622,6 +631,10 @@
 		$('a[href="#swi_input"]').trigger('click');
 	});
 
+	$('a[href="#swi_reports"]').click(function(){
+		update_reporting_tab();
+	})
+
 	$('#assign_swi_document').on('shown.bs.modal', function (e) {
 		$.fn.dataTable.tables({visible: true, api: true}).columns.adjust();
 	})
@@ -653,14 +666,16 @@
 				dataType : 'json',
 				data : { post : post },
 				beforeSend : function(){
-					startSubmit($(this));
+					startSubmit('.reassign_submit');
 				},
 				success : function(res){
-					$('#report_document_table').DataTable().ajax.reload();
+					
 				},
 				complete : function(){
-					endSubmit($(this));
+					endSubmit('.reassign_submit');
 					clear_validation();
+					update_dashboard();
+					update_reporting_tab();
 				}
 			})
 		}
@@ -688,7 +703,7 @@
 	});
 
 	$('#rdl_table_reload').click(function(){
-			rdtable.ajax.reload();
+		rdtable.ajax.reload();
 	});
 
 	$('#rprint').click(function(){
@@ -767,25 +782,6 @@
 		}
 	});
 
-	$('.print_assignments').click(function(){
-		$.ajax({
-			type: 'GET',
-			url: '<?= site_url('swi/get_assigned_document'); ?>',
-			dataType: 'json',
-			beforeSend : function(){
-				$('body').append(<?php echo getFullLoading('Generating SWI Worksheets<br>Please wait'); ?>);
-			},
-			success : function(res){
-				$('#assign_print').html(res);
-			},
-			complete : function(){
-				$('#full-loader').remove();
-				window.print();
-				$('#assign_print').html('');
-			}
-		})
-	});
-
 	$('.form_submit').click(function(){
 		clear_validation();
 
@@ -836,5 +832,81 @@
 	
 	$(".dashboard_tabs > li > a.nav-link").click(function(){
 		update_dashboard();
+		update_reporting_tab();
+	})
+
+	$('#confirm_action_submit').click(function(){
+		form =  $(this).parent().siblings('.modal-body').find('form');
+		url = $(form).attr('action');
+		id = $(form).find('input[name="confirm_assignment_id"]').val();
+		
+		$.ajax({
+			type: 'POST',
+			url: url,
+			dataType: 'json',
+			data: { confirm_assignment_id : id },
+			beforeSend: function(){
+				startSubmit('#confirm_action_submit');
+			},
+			success: function(res){
+				
+			},
+			complete: function(){
+				endSubmit('#confirm_action_submit');
+				$('#confirm_action').modal('hide');		
+				update_reporting_tab();
+			}
+		});
+	});
+
+	$('#print_type').change(function(){
+		selected = $(this).val();
+		$('.subselection').addClass('d-none');
+		switch(selected){
+			case 'assignment_id':
+				$('input[name="assignment_id"]').parent().removeClass('d-none');
+				break;
+			case 'dept_id':
+				$('select[name="dept_id"]').parent().removeClass('d-none');
+				break;
+			case 'employee':
+				$('select[name="user_id"]').parent().removeClass('d-none');
+				break;
+		}
+	});
+
+	$('#print_assignment').click(function(){
+		form = $('#print_assignment_form');
+		url = $(form).attr('action');
+		post = $(form).find(':visible').serialize();
+		
+		$.ajax({
+			type: 'POST',
+			url: '<?= site_url('api/get_assigned_document'); ?>',
+			dataType: 'json',
+			data: { post : post },
+			beforeSend : function(){
+				$('.modal').modal('hide');
+				$('body').append(<?php echo getFullLoading('Generating SWI Worksheets<br>Please wait'); ?>);
+			},
+			success : function(res){
+				$('#assign_print').html(res);
+			},
+			complete : function(){
+				$('#full-loader').remove();
+				window.print();
+				$('#assign_print').html('');
+			}
+		})
+	})
+
+	$('#assignment_printer').keydown(function(e){
+		e.preventDefault();
+		$('#print_assignment').trigger('click');
+	})
+
+	$('#assignment_printer').on('show.bs.modal',function(){
+		$('#print_type').prop('selectedIndex',0);
+		$('#print_type').trigger('change');
 	})
 </script>

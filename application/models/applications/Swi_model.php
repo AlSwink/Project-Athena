@@ -332,6 +332,7 @@ class Swi_model extends XPO_Model {
 
 	public function get_document_assignment($wheres=array(),$y=null,$m=null)
 	{
+		$admins = array(2037,1955,2309);
 		$from = ($y ? date($y.'-'.$m.'-01'.' 00:00:00') : $this->firstdayofmonth);
 		$to = ($y ? date($y.'-'.$m.'-t'.' 23:59:59') : $this->lastdayofmonth);
 
@@ -342,10 +343,14 @@ class Swi_model extends XPO_Model {
 		if(!$y){
 			$this->db->where('assigned_on BETWEEN "'.$from.'" AND "'.$to.'"');
 		}
-		//$this->db->where('status','pending');
-		//$this->db->where('result !=',2);
+
+		$this->db->join('swi_documents','swi_documents.doc_id = swi_document_assignment.doc_id');
+		if(!in_array($this->session->userdata('user_id'),$admins)){
+			$this->db->where('swi_documents.dept_id',$this->session->userdata('user_info')['dept']);
+		}
 		$this->db->order_by('assignment_id','ASC');
 		$assignments = $this->db->get('swi_document_assignment')->result_array();
+		//echo $this->db->last_query();
 		return $assignments;
 	}
 
@@ -378,7 +383,8 @@ class Swi_model extends XPO_Model {
 		$update_document = array(
 							'status' => 'completed',
 							'result' => $status,
-							'completed_on' => date('Y-m-d H:i:s')
+							'completed_on' => date('Y-m-d H:i:s'),
+							'modified_by' => $this->session->userdata('user_id')
 							);
 
 		$this->db->where('assignment_id',$data['process_assignment_id']);
@@ -417,18 +423,19 @@ class Swi_model extends XPO_Model {
 		$this->db->insert_batch('swi_processes',$insert_batch);
 	}
 
-	public function reset_assignment($wheres=array())
+	public function delete_assignment($id='all')
 	{
 		if(count($wheres)){
 			foreach($wheres as $value){
 				$this->db->where($value);
 			}
 		}
+		$this->db->where_in($ids);
 		$tables = array('swi_process_assignment','swi_document_assignment');
 		$this->db->delete($tables);
 	}
 
-	public function unassign($id='all')
+	public function unassign_assignment($id='all')
 	{
 		if($id != 'all'){
 			$this->db->where('assignment_id',$id);
@@ -436,6 +443,23 @@ class Swi_model extends XPO_Model {
 		$this->db->set('user_id',NULL);
 		$this->db->set('assigned_on',NULL);
 		$this->db->set('result',2);
+		$this->db->set('status','pending');
+		$this->db->set('completed_on',NULL);
+		$this->db->set('modified_on',date('Y-m-d H:i:s'));
+		$this->db->update('swi_document_assignment');
+		$this->db->flush_cache();
+		$this->db->set('standard',NULL);
+		$this->db->set('comments',NULL);
+		$this->db->where('assignment_id',$id);
+		$this->db->update('swi_process_assignment');
+	}
+
+	public function reset_assignment($id='all')
+	{
+		if($id != 'all'){
+			$this->db->where('assignment_id',$id);
+		}
+		$this->db->set('result',NULL);
 		$this->db->set('status','pending');
 		$this->db->set('completed_on',NULL);
 		$this->db->set('modified_on',date('Y-m-d H:i:s'));

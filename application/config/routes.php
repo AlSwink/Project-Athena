@@ -50,7 +50,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |		my-controller/my-method	-> my_controller/my_method
 */
 $route['default_controller'] = 'landing';
-$route['404_override'] = '';
+$route['404_override'] = 'redirect/index';
 $route['translate_uri_dashes'] = FALSE;
 $route['accounts/index'] = 'redirect/lost';
 $route['login'] = 'landing';
@@ -68,11 +68,15 @@ $route['swi/reset/(:any)'] = 'apps/swi/reset_assignment/$1';
 $route['swi/unassign/(:any)'] = 'apps/swi/unassign/$1';
 $route['swi/input_worksheet'] = 'apps/swi/input_worksheet/';
 $route['swi/getEmployeeInfo/(:any)'] = 'apps/swi/getEmployeeInfo/$1';
-
 //system_health_check routes
 $route['health_check'] = 'applications/system_health_check';
 $route['health_check/standalone'] = 'applications/system_health_check/1';
 $route['health_check/(:any)'] = 'apps/system_health_check/$1';
 
+//referral routes
+$route['referral/(:any)/(:any)'] = 'redirect/referral/$1/$2';
+
 //api
 $route['test'] = 'api/test';
+
+//tool routes

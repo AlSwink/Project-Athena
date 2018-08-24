@@ -3,10 +3,10 @@
 class XPO_Model extends CI_Model {
 
 	protected $max_login_attempt;
-  	protected $lastdayofmonth;
-  	protected $firstdayofmonth;
+  protected $lastdayofmonth;
+  protected $firstdayofmonth;
 	public $site_name;
-  	public $user_id;
+  public $user_id;
 
   function __construct()
   {
@@ -38,14 +38,18 @@ class XPO_Model extends CI_Model {
     return $announcements;
   }
 
-  public function getOptions($table,$cond=array())
+  public function getOptions($table,$cond=array(),$order=null)
   {
     if(isset($cond)){
       foreach($cond as $w){
         $this->db->where($w);
       }
     }
-    $options = $this->db->get_where($table,array('deleted'=>'0'))->result();
+    
+    if($order)
+      $this->db->order_by($order,'ASC');
+      $options = $this->db->get_where($table,array('deleted'=>'0'))->result();
+    
     return $options;
   }
 

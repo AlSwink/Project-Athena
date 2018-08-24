@@ -1,5 +1,24 @@
 <div class="row" style="max-height: 80%; overflow: auto">
 	<div class="col-lg-12">
+		<div class="jumbotron">
+			<h2><i class="fas fa-code-branch"></i> Development has been put on-hold until further notice</h2>
+		</div>
+	</div>
+	<div class="col-lg-12">
+		<h3>As of 08/24/2018 <small>v0.4.1</small></h3>
+		Changes made:
+		<ul>
+			<li>Migrated SWI controller functions to API function for datatables.</li>
+			<li>Fixed a bug where there would be multiple errors whenever session has expired.</li>
+			<li>Re-labeled print all assignment to print assignment button.</li>
+			<li>Added print assignment modal to house the extended printing function.</li>
+			<li>Added 4 criterias for targeted printing.</li>
+			<li>Printing via department is now available.</li>
+			<li>Printing via employee is now available.</li>
+			<li>Targeted printing has been enabled on both dashboard and input worksheet page.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
 		<h3>As of 08/17/2018 <small>v0.4.0</small></h3>
 		Changes made:
 		<ul>

@@ -43,7 +43,7 @@
 			  <a href="#" id="reprint_sheet" class="list-group-item list-group-item-action list-group-item-primary"><i class="fas fa-print"></i> Re-print Sheet</a>
 			  <!--a href="#" class="list-group-item list-group-item-action list-group-item-secondary"><i class="fas fa-redo-alt"></i> Re-assign</a>
 			  <a href="#" class="list-group-item list-group-item-action list-group-item-secondary"><i class="fas fa-eraser"></i> Request Reset</a-->
-			  <a href="#" id="reprint_all" class="list-group-item list-group-item-action list-group-item-secondary"> <i class="fas fa-print"></i> Print all assignments</a>
+			  <a href="#" class="list-group-item list-group-item-action list-group-item-secondary" data-toggle="modal" data-target="#assignment_printer"> <i class="fas fa-print"></i> Print assignments</a>
 			  <a href="#" id="sign_submit" class="list-group-item list-group-item-action list-group-item-success"><i class="fas fa-clipboard-check"></i> Sign and Submit</a>
 			  <a href="#" class="list-group-item list-group-item-action list-group-item-info" data-toggle="modal" data-target="#help_input_swi"><i class="fas fa-question-circle"></i> Need Help</a>
 			</div>

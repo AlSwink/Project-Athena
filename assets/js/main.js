@@ -1,6 +1,7 @@
 var site_url = 'http://'+window.location.hostname+'/athena/';
 var loading = '';
 var	active = '';
+var	submit_original = '';
 
 $.get({
 	url : site_url+'template/getLoading',
@@ -69,7 +70,7 @@ function createInvalid(message){
 }
 
 function startSubmit(target){
-
+	submit_original = $(target).html();
 	$(target).removeClass('btn-primary');
 	$(target).addClass('btn-warning');
 	$(target).html('Submitting.. <i class="fab fa-whmcs fa-spin"></i>');
@@ -77,7 +78,7 @@ function startSubmit(target){
 	$(target).prop('disabled',true);
 }
 
-function endSubmit(target){
+function endSubmit(target,modal_close=true){
 	$(target).removeClass('btn-warning');
 	$(target).addClass('btn-success');
 	$(target).html('Submitted <i class="fas fa-check-circle"></i>');
@@ -85,10 +86,12 @@ function endSubmit(target){
 	setTimeout(function(){
 		$(target).removeClass('btn-success');
 		$(target).addClass('btn-primary');
-		$(target).html('Submit');
+		$(target).html(submit_original);
 		$(target).removeClass('disabled');
 		$(target).prop('disabled',false);
-		$('.modal').modal('hide');
+		if(modal_close){
+			$('.modal').modal('hide');
+		}
 	},750);
 }
 

@@ -24,7 +24,12 @@ class Auth extends CI_Controller {
         
         $this->session->set_userdata('user_id',$user->user_id);
         $this->accounts_model->build($user->user_id);
-        redirect('dashboard');
+        if($this->session->userdata('referral_url') != ''){
+            $redirect = $this->session->userdata('referral_url');
+            redirect($redirect);
+        }else{
+            redirect('dashboard');
+        }
     }
 
     public function logout()

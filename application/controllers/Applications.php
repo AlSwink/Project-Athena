@@ -6,7 +6,6 @@ class Applications extends CI_Controller {
 	public function __construct()
     {
         parent::__construct();
-
         //set view type html(true)/json(false)
         $this->standalone = $this->uri->segment(2,FALSE);
         $method = $this->router->fetch_method();
@@ -24,6 +23,7 @@ class Applications extends CI_Controller {
     }
 
     public function swi(){
+        check_session();
         $swi = array(
                     'processes'     => $this->model->get_unique_process(),
                     'swi_docs'      => $this->model->get_swi(),

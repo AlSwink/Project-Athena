@@ -6,6 +6,7 @@ class Swi extends CI_Controller {
 	public function __construct()
     {
         parent::__construct();
+        check_session();
         $this->load->model('applications/swi_model');
     }
 
@@ -14,18 +15,6 @@ class Swi extends CI_Controller {
         $post = $this->input->post();
         $this->swi_model->save_swi($post);
         echo create_autocomplete_source($this->swi_model->get_unique_process(),'principle_id','process');
-    }
-
-    public function get_document($field=null,$doc_num=null)
-    {
-        if($doc_num)
-            $docnum = $doc_num;
-
-        if($this->input->post())
-            $doc_num = $this->input->post('doc_num');
-
-        $swi = $this->swi_model->get_swi($doc_num,$field);
-        echo json_encode($swi);
     }
 
     public function get_document_process($doc_num=null)
@@ -38,11 +27,6 @@ class Swi extends CI_Controller {
 
         $process = $this->swi_model->get_process($doc_num);
         echo json_encode($process);
-    }
-
-    public function get_dashboard_employees()
-    {
-        echo json_encode($this->swi_model->summary_employee());
     }
 
     public function delete_document($docs=null)
@@ -70,37 +54,11 @@ class Swi extends CI_Controller {
 
     public function reset_assignment($id=null)
     {
-        $where = array();
-
-        if($id != 'all'){
-            $where[] = 'assignment_id = '.$id;
-        }
-
-        $this->swi_model->reset_assignment($where);
-
-        echo 'swi_process_assignment and swi_document_assignment has been cleared';
-    }
-
-    public function get_assigned_document($id=null)
-    {
-        $page = '';
         if(!$id){
-            $where = array('status'=>'pending');
-        }else{
-            $where = array('assignment_id'=>$id);
+            $id = $this->input->post('confirm_assignment_id');
         }
-        $assignments = $this->swi_model->get_document_assignment($where);
-        $ids = array_column($assignments,'assignment_id');
-        
-        foreach($ids as $id){
-            $data['data'] = $this->swi_model->get_process_assignments($id);
-            $data['page'] = 'applications/swi/swi_print_worksheet';
-            $page .= $this->load->view($data['page'],$data,TRUE);
-        }
-        $print['page'] = $page;
-        $printable = $this->load->view('page_printer',$print,TRUE);
-        
-        echo json_encode($page);
+        $this->swi_model->reset_assignment($id);
+        echo json_encode('SWI assignment number '.$id.' has been reset');
     }
 
     public function get_input_document($assignment_id=null)
@@ -136,15 +94,9 @@ class Swi extends CI_Controller {
         echo json_encode($data);
     }
 
-    public function get_document_report()
-    {
-        $data = $this->swi_model->get_document_report();
-        echo json_encode($data);
-    }
-
     public function unassign($id)
     {
-        $this->swi_model->unassign($id);
+        $this->swi_model->unassign_assignment($id);
     }
 
     public function getEmployeeInfo($id)
@@ -161,5 +113,11 @@ class Swi extends CI_Controller {
         $this->page = 'applications/swi/swi_input';
         $this->page_dir = 'applications/swi';
         $this->load->view('page');
+    }
+
+    public function request_action()
+    {
+        $post = $this->input->post();
+
     }
 }

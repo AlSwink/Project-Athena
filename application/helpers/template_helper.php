@@ -1,6 +1,6 @@
 <?php
 	
-	function loadView($data)
+	function loadView($data=null)
 	{
 		$ci =&get_instance();
 
@@ -161,6 +161,26 @@
 		return $dropdown;
 	}
 
+	function createEmpDropdown($name,$field_id,$fields=array(),$conditions=array(),$class=array())
+	{
+		$ci =&get_instance();
+		$ci->load->model('XPO_model');
+		$options = $ci->XPO_model->getOptions('employees',$conditions,'e_fname');
+
+		$dropdown = '<select name="'.$name.'" class="'.implode(' ',$class).'">';
+	
+		foreach($options as $option){
+			$rowval = '';
+			foreach($fields as $field){
+				$rowval .= $option->$field.' ';
+			}
+			$dropdown .= '<option value="'.$option->$field_id.'">'.$rowval.'</option>';
+		}
+		$dropdown .= '</select>';
+
+		return $dropdown;
+	}
+
 	function create_autocomplete_source($arr,$value,$label)
 	{
 		$ac = array();
@@ -256,4 +276,5 @@
 		$ci =&get_instance();
 		$ci->load->view('includes/'.$page,$param);
 	}
+
 ?>
