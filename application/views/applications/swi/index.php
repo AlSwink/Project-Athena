@@ -1,6 +1,6 @@
 <div id="assign_print" class="d-none d-print-block"></div>
 <div class="container-fluid d-print-none">
-	<?= loadInclude('app_container_control',$this->app_info); ?>
+	<?= //loadInclude('app_container_control',$this->app_info); ?>
 	<div class="row mt-2">
 		<div class="col">
 			<ul class="nav nav-tabs nav-fill dashboard_tabs">
