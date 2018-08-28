@@ -356,3 +356,39 @@
     </div>
   </div>
 </div>
+<!-- change dataset -->
+<div class="modal" id="change_dataset" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-exchange-alt"></i> Change Dataset</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="change_dataset_form" action="#" action="POST">
+        <div class="row">
+          <div class="col">
+            <label>Year</label>
+            <select id="dataset_year" class="form-control">
+              <option>2018</option>
+            </select>
+          </div>
+          <div class="col">
+            <label>Month</label>
+            <select id="dataset_month" class="form-control">
+              <option value="07">July</option>
+              <option value="08">August</option>
+            </select>
+          </div>
+        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-md btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" id="load_dataset_btn" class="btn btn-md btn-info">Load Dataset <i class="fas fa-download"></i></button>
+      </div>
+    </div>
+  </div>
+</div>

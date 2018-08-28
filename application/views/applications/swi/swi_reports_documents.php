@@ -3,7 +3,10 @@
 		<table class="table table-sm text-center table-bordered">
 			<thead>
 				<tr>
-					<th class="table-dark">Completed Documents</th>
+					<th colspan="5" class="my-display table-dark">August 2018</th>
+				</tr>
+				<tr>
+					<th class="table-secondary">Completed Documents</th>
 					<th class="table-info">Unassigned Documents</th>
 					<th class="table-warning">Pending Documents</th>
 					<th class="table-success">Standard Met</th>

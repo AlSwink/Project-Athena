@@ -9,6 +9,18 @@ class Api extends CI_Controller {
          $this->load->model('applications/swi_model');
     }
 
+    public function get_dashboard_chart()
+    {
+        $year = date('Y');
+        $month = date('m');
+        if($this->input->post()){
+            $year = $this->input->post('year');
+            $month = $this->input->post('month');
+        }
+        $data = $this->swi_model->summary_report($year,$month);
+        echo json_encode($data);
+    }
+
     public function get_swi_employees()
     {
         echo json_encode($this->swi_model->summary_employee());
@@ -26,9 +38,13 @@ class Api extends CI_Controller {
         echo json_encode($swi);
     }
 
-     public function get_document_report()
+    public function get_document_report($year=null,$month=null)
     {
-        $data = $this->swi_model->get_document_report();
+        if(!$year){
+            $year = date('Y');
+            $month = date('m');
+        }
+        $data = $this->swi_model->get_document_report($year,$month);
         echo json_encode($data);
     }
 

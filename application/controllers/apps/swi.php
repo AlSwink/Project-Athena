@@ -88,12 +88,6 @@ class Swi extends CI_Controller {
         $this->swi_model->mass_update_process();
     }
 
-    public function get_dashboard_chart()
-    {
-        $data = $this->swi_model->summary_report();
-        echo json_encode($data);
-    }
-
     public function unassign($id)
     {
         $this->swi_model->unassign_assignment($id);

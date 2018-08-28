@@ -11,6 +11,7 @@
 			    <a href="#" class="list-group-item list-group-item-action list-group-item-secondary" data-toggle="modal" data-target="#assignment_printer"> <i class="fas fa-print"></i> Print assignments</a>
 			    <a href="#assign_swi_document" class="list-group-item list-group-item-action list-group-item-secondary" data-toggle="modal" data-target="#assign_swi_document"><i class="fas fa-user-tag"></i> Assign a document</a>
 			    <a href="#" class="list-group-item list-group-item-action list-group-item-secondary" data-toggle="modal" data-target="#add_swi_document"><i class="fas fa-plus-square"></i> New document</a>
+			    <a href="#" class="list-group-item list-group-item-action list-group-item-secondary" data-toggle="modal" data-target="#change_dataset"><i class="fas fa-exchange-alt"></i> Change Dataset</a>
 			    <!--a href="#" class="list-group-item list-group-item-action list-group-item-secondary"><i class="fas fa-columns"></i> Compare Data</a>
 			    <a href="#" class="list-group-item list-group-item-action list-group-item-secondary"><i class="fas fa-chart-area"></i> Create Report</a>
 			    <a href="#" class="list-group-item list-group-item-action list-group-item-secondary"><i class="fas fa-download"></i> Download Report</a>
@@ -23,19 +24,19 @@
 			<div class="card-body">
 				<div class="row">
 					<div class="col text-center">
-						<h4 class="display-4"><?= date('F Y'); ?> Overview</h4>
+						<h5 class="display-5"><span class="my-display"><?= date('F Y'); ?></span> Overview</h5>
 					</div>
 				</div>
 				<hr>
 				<div class="row">
 					<div class="col">
-						<canvas id="days_prog" height="250px" style="position:absolute;bottom:0"></canvas>
+						<canvas id="days_prog" height="200px" style="position:absolute;bottom:0"></canvas>
 					</div>
 					<div class="col">
-						<canvas id="doc_prog" height="335px"></canvas>
+						<canvas id="doc_prog" height="235px"></canvas>
 					</div>
 					<div class="col">
-						<canvas id="standard_acc" height="250px" style="position:absolute;bottom:0"></canvas>
+						<canvas id="standard_acc" height="200px" style="position:absolute;bottom:0"></canvas>
 					</div>
 				</div>
 			</div>
@@ -47,26 +48,21 @@
 		<div class="card shadow">
 			<div class="card-body">
 				<div class="row">
-					<div class="col text-center">
-						<h6>vs Last month <small>(dummy)</small></h6>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col text-center">
-						<h5 class="text-success"><i class="fas fa-caret-up fa-xs"></i>12</h5>
-						<small>Documents</small>
-					</div>
-					<div class="col text-center">
-						<h5 class="text-success"><i class="fas fa-caret-up"></i>20</h5>
-						<small>Processes</small>
-					</div>
-					<div class="col text-center">
-						<h5 class="text-danger"><i class="fas fa-caret-down"></i>10</h5>
-						<small>Associates</small>
-					</div>
-					<div class="col text-center">
-						<h5>6</h5>
-						<small>Completed per Day</small>
+					<div class="col-4">
+						<h6>Progress by Department</h6>
+						<table id="department_progress_table" class="table table-sm table-bordered table-hover">
+							<?php foreach($totals['departments'] as $key => $dept){ ?>
+								<tr class="dashrow dashrow_<?= $key; ?>" data-dept="<?= $key; ?>">
+									<td><?= $key; ?></td>
+									<td class="text-center"><?= $dept['completed'].'/'.$dept['total']; ?></td>
+									<td class="w-25">
+										<div class="progress">
+										  <div class="progress-bar bg-<?= $dept['color']; ?>" role="progressbar" style="width: <?= $dept['progress']; ?>"><?= $dept['progress']; ?></div>
+										</div>
+									</td>
+								</tr>
+							<?php } ?>
+						</table>
 					</div>
 				</div>
 			</div>

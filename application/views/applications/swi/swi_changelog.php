@@ -5,6 +5,21 @@
 		</div>
 	</div>
 	<div class="col-lg-12">
+		<h3>As of 08/28/2018 <small>v0.4.2</small></h3>
+		Changes made:
+		<ul>
+			<li>Added change dataset control for dashboard and reporting tab.</li>
+			<li>Added api for fetching data by filter.</li>
+			<li>Reconstructed chart and datatable updates to do less calls.</li>
+			<li>Added chart update hooks on new dataset.</li>
+			<li>Added datatable update hooks on new dataset.</li>
+			<li>Added progress by department section.</li>
+			<li>Added progress update hooks on new dataset.</li>
+			<li>Added progress by deparment on api call.</li>
+			<li>Dashboard chart and header sizes have been revised to provide more space for sub data</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
 		<h3>As of 08/24/2018 <small>v0.4.1</small></h3>
 		Changes made:
 		<ul>

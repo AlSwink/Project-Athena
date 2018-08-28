@@ -133,14 +133,17 @@ class Swi_model extends XPO_Model {
 		$standard_met = 0;
 		$unassigned = 0;
 
-		$from = ($y ? date($year.'-'.$month.'-01'.' 00:00:00') : $this->firstdayofmonth);
-		$to = ($y ? date($year.'-'.$month.'-t'.' 23:59:59') : $this->lastdayofmonth);
+		$today = new DateTime;
+		$post_year = new DateTime(date($y.'-'.$m.'-01'.' 00:00:00'));
+		$post_month = new DateTime(date($y.'-'.$m.'-t'.' 23:59:59'));
+		$from = $post_year->format('Y-m-d H:i:s');
+		$to = $post_month->format('Y-m-d H:i:s');
 
 		$this->db->where('assigned_on BETWEEN "'.$from.'" AND "'.$to.'"');
 		$this->db->or_where('completed_on BETWEEN "'.$from.'" AND "'.$to.'"');
 		$this->db->or_where('modified_on BETWEEN "'.$from.'" AND "'.$to.'"');
 		$documents = $this->db->get('swi_document_assignment')->result();
-		
+
 		foreach($documents as $doc)
 		{
 			if($doc->status != 'pending'){
@@ -159,10 +162,12 @@ class Swi_model extends XPO_Model {
 
 		$this->db->select('COUNT(doc_id) as docs');
 		$docs = $this->db->get_where('swi_documents',array('deleted'=>0))->row();
-		
+
 		//$pending = $docs->docs - ($completed + $unassigned);
 		$pending = $docs->docs - $completed;
 		$all_docs = (int)$docs->docs;
+
+		$days_left = $today->diff($post_month);
 
 		$data = array(
 					'completed' => $completed,
@@ -170,8 +175,14 @@ class Swi_model extends XPO_Model {
 					'standard_met' => $standard_met,
 					'documents' => $all_docs,
 					'pending' => $pending,
-					'unassigned' => $unassigned
+					'unassigned' => $unassigned,
+					'year' => $y,
+					'month' => $post_month->format('F'),
+					'days_left' => ($days_left->invert ? 0 : $days_left->d),
+					'days_total' => (int)$post_month->format('d'),
+					'departments' => $this->summary_department($y,$m)
 				);
+
 
 		return $data;
 	}
@@ -200,6 +211,34 @@ class Swi_model extends XPO_Model {
 		}
 		
 		return $progress;
+	}
+
+	public function summary_department($y=null,$m=null)
+	{
+		$post_year = new DateTime(date($y.'-'.$m.'-01'.' 00:00:00'));
+		$post_month = new DateTime(date($y.'-'.$m.'-t'.' 23:59:59'));
+		$from = $post_year->format('Y-m-d H:i:s');
+		$to = $post_month->format('Y-m-d H:i:s');
+
+		$query = "SELECT department, count(completed_on) as completed, count(assigned_on) as total
+					FROM athena.swi_document_assignment
+					JOIN swi_documents ON swi_document_assignment.doc_id = swi_documents.doc_id
+					JOIN departments on swi_documents.dept_id = departments.department_id
+					WHERE assigned_on BETWEEN '".$from."' AND '".$to."'
+					GROUP BY dept_id";
+
+		$departments = $this->db->query($query)->result_array();
+		foreach($departments as $dept){
+			$progress = round(($dept['completed'] / $dept['total']) * 100).'%';
+
+			$final[$dept['department']] = array(
+											'completed' => $dept['completed'],
+											'total' => $dept['total'],
+											'color' => ($progress == '100%' ? 'success' : 'secondary'),
+											'progress' => $progress
+											);
+		}
+		return $final;
 	}
 
 	private function check_completion($docs=null)
@@ -356,13 +395,15 @@ class Swi_model extends XPO_Model {
 
 	public function get_document_report($y=null,$m=null)
 	{
-		$from = ($y ? date($y.'-'.$m.'-01'.' 00:00:00') : $this->firstdayofmonth);
-		$to = ($y ? date($y.'-'.$m.'-t'.' 23:59:59') : $this->lastdayofmonth);
+		$post_year = new DateTime(date($y.'-'.$m.'-01'.' 00:00:00'));
+		$post_month = new DateTime(date($y.'-'.$m.'-t'.' 23:59:59'));
+		$from = $post_year->format('Y-m-d H:i:s');
+		$to = $post_month->format('Y-m-d H:i:s');
 
-		if($y){
-			$this->db->where('assigned_on BETWEEN "'.$from.'" AND "'.$to.'"');
-			$this->db->or_where('modified_on BETWEEN "'.$from.'" AND "'.$to.'"');
-		}
+
+		$this->db->where('assigned_on BETWEEN "'.$from.'" AND "'.$to.'"');
+		$this->db->or_where('swi_document_assignment.modified_on BETWEEN "'.$from.'" AND "'.$to.'"');
+
 		$this->db->select('doc_number,doc_name,assignment_id,swi_document_assignment.user_id,departments.department,status,result,CONCAT(e_fname," ",e_lname) as name,assigned_on,completed_on');
 		$this->db->join('swi_documents','swi_document_assignment.doc_id = swi_documents.doc_id');
 		$this->db->join('departments','swi_documents.dept_id = departments.department_id');

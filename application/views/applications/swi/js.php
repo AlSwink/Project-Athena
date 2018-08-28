@@ -7,7 +7,8 @@
 					'pending'	: <?= $totals['pending']; ?>,
 					'documents'	: <?= $totals['documents']; ?>
 				}; //chart initial data
-
+	var month_dataset = '<?= date('m'); ?>';
+	var year_dataset = '<?= date('Y'); ?>';
 	var last_doc = '';
 	var new_process_line = '';
 	var edit_process_line = '';
@@ -425,22 +426,56 @@
 
 	function update_dashboard()
 	{
+		doc_report_url = '<?= site_url("api/get_document_report"); ?>/'+year_dataset+'/'+month_dataset;
+		rdtable.ajax.url(doc_report_url).load();
+
 		$.ajax({
-			typ : 'GET',
-			url : '<?= site_url('swi/get_dashboard_chart'); ?>',
+			type : 'POST',
+			url : '<?= site_url('api/get_dashboard_chart'); ?>',
 			dataType : 'json',
+			data : { year : year_dataset, month : month_dataset },
 			success : function(res){
 				// chart update
+				c_days_prog.data.datasets[0].data[0] = res.days_total;
+				c_days_prog.data.datasets[0].data[1] = res.days_left;
+
 				c_doc_prog.data.datasets[0].data[0] = res.completed;
 				c_doc_prog.data.datasets[0].data[1] = res.pending;
-				c_doc_prog.update();
-
+				
 				c_in_standard.data.datasets[0].data[0] = res.standard_met;
 				c_in_standard.data.datasets[0].data[1] = res.reported;
 				c_in_standard.data.datasets[0].data[2] = res.pending;
+				
+				$('.my-display').html(res.month+ ' '+res.year);
+				$('#rd_completed').html(res.completed);
+				$('#rd_pending').html(res.pending);
+				$('#rd_standard').html(res.standard_met);
+				$('#rd_reported').html(res.reported);
+				$('#rd_unassigned').html(res.unassigned);
+				$('.u_limit').html(' /'+res.documents);
+
+				
+				$('.dashrow').each(function(k,v){
+					dept = $(v).data('dept');
+					dept_data = res.departments[dept];
+					progress_bar = $(this).find('.progress-bar');
+					if(dept_data){
+						$(progress_bar).css('width',dept_data.progress);
+						$(progress_bar).removeClass();
+						$(progress_bar).addClass('progress-bar bg-'+dept_data.color);
+						$(progress_bar).html(dept_data.progress);
+					}else{
+						$(progress_bar).css('width','0%');
+					}
+				});
+			},
+			complete : function(){
+				c_days_prog.update();
 				c_in_standard.update();
+				c_doc_prog.update();
+				rdtable.ajax.reload();
 			}
-		})
+		});
 	}
 
 	function getEmployeeTooltip()
@@ -458,24 +493,6 @@
 		return tooltip;
 	}
 
-	function update_reporting_tab()
-	{
-		$.ajax({
-			typ : 'GET',
-			url : '<?= site_url('swi/get_dashboard_chart'); ?>',
-			dataType : 'json',
-			success : function(res){
-				$('#rd_completed').html(res.completed);
-				$('#rd_pending').html(res.pending);
-				$('#rd_standard').html(res.standard_met);
-				$('#rd_reported').html(res.reported);
-				$('#rd_unassigned').html(res.unassigned);
-				$('.u_limit').html(' /'+res.documents);
-			}
-		})
-		
-		rdtable.ajax.reload();
-	}
 	//events
 
 	$(document).ready(function(){
@@ -631,8 +648,8 @@
 		$('a[href="#swi_input"]').trigger('click');
 	});
 
-	$('a[href="#swi_reports"]').click(function(){
-		update_reporting_tab();
+	$('a[href="#swi_reports"],a[href="#swi_dash"]').click(function(){
+		update_dashboard();
 	})
 
 	$('#assign_swi_document').on('shown.bs.modal', function (e) {
@@ -675,7 +692,6 @@
 					endSubmit('.reassign_submit');
 					clear_validation();
 					update_dashboard();
-					update_reporting_tab();
 				}
 			})
 		}
@@ -829,11 +845,6 @@
 			form_submit(form_id,is_edit);
 		}
 	});
-	
-	$(".dashboard_tabs > li > a.nav-link").click(function(){
-		update_dashboard();
-		update_reporting_tab();
-	})
 
 	$('#confirm_action_submit').click(function(){
 		form =  $(this).parent().siblings('.modal-body').find('form');
@@ -854,7 +865,7 @@
 			complete: function(){
 				endSubmit('#confirm_action_submit');
 				$('#confirm_action').modal('hide');		
-				update_reporting_tab();
+				update_dashboard();
 			}
 		});
 	});
@@ -909,4 +920,11 @@
 		$('#print_type').prop('selectedIndex',0);
 		$('#print_type').trigger('change');
 	})
+
+	$('#load_dataset_btn').click(function(){
+		year_dataset = $('#dataset_year').val();
+		month_dataset = $('#dataset_month').val();
+		update_dashboard();
+		$('.modal').modal('hide');
+	});
 </script>
