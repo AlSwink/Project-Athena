@@ -13,6 +13,7 @@
 			<li>Revised print worksheet layout to specify signatures.</li>
 			<li>Added Recently audited worksheets on dashboard.</li>
 			<li>Added Current dataset indicator to change dataset modal.</li>
+			<li>Added Department and status filter on reporting tab.</li>
 		</ul>
 	</div>
 	<div class="col-lg-12">

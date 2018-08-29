@@ -56,12 +56,13 @@
 									<td><?= $recent['doc_id']; ?></td>
 									<td><?= $recent['doc_name']; ?></td>
 									<td><?= $recent['status']; ?></td>
+									<td><?= $recent['completed_by']; ?></td>
 									<td><?= $recent['completed_on']; ?></td>
 								</tr>
 							<?php } ?>
 						</table>
 					</div>
-					<div class="col-4">
+					<div class="col-6">
 						<h6>Progress by Department</h6>
 						<table id="department_progress_table" class="table table-sm table-bordered table-hover">
 							<?php foreach($totals['departments'] as $key => $dept){ ?>

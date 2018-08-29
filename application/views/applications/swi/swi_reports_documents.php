@@ -27,24 +27,24 @@
 </div>
 <div class="row">
 	<div class="col-4">
-		<label>Search Filters</label>
+		<label class="mb-0">Search Filters</label>
 		<input id="search_report_assignment" type="text" class="form-control form-control-sm text-input" placeholder="Quicksearch">
 	</div>
 	<div class="col-3">
-		<label>Department</label>
-		<?= createDropdown('dept','departments','department','',['has_swi = 1'],'form-control form-control-sm document_report_filters is_filter'); ?>
+		<label class="mb-0">Department</label>
+		<?= createDropdown('dept','departments','department','department_filter',['has_swi = 1'],'form-control form-control-sm document_report_filters is_filter'); ?>
 	</div>
 	<div class="col-2">
-		<label>Status</label>
-		<select class="form-control form-control-sm is_filter">
-			<option value="all">Show all</option>
+		<label class="mb-0">Status</label>
+		<select id="status_filter" class="form-control form-control-sm is_filter document_report_filters">
+			<option value="">Show all</option>
 			<option>Standard Met</option>
 			<option>Pending</option>
 			<option>Reported</option>
 		</select>
 	</div>
 	<div class="col-3">
-		<label>Controls</label>
+		<label class="mb-0">Controls</label>
 		<div class="btn-group btn-group-sm text-right">
 			<button id="rdl_table_reload" type="button" class="btn btn-info">Fetch new data <i class="fas fa-sync-alt"></i></button>
 			<button id="rdl_excel" type="button" class="btn btn-success">Excel <i class="fas fa-file-excel"></i></button>

@@ -20,6 +20,11 @@ class Swi_model extends XPO_Model {
 		$this->fto = $this->to->format('Y-m-d H:i:s');
 	}
 
+	public function setDepartment($dept_id)
+	{
+		$this->db->where('dept_id',$dept_id);
+	}
+
 
 	public function get_swi($id=null,$field=null)
 	{
@@ -152,9 +157,10 @@ class Swi_model extends XPO_Model {
 		$standard_met = 0;
 		$unassigned = 0;
 
+		$this->db->join('swi_documents','swi_documents.doc_id = swi_document_assignment.doc_id');
 		$this->db->where('assigned_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
 		$this->db->or_where('completed_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
-		$this->db->or_where('modified_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
+		$this->db->or_where('swi_document_assignment.modified_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
 		$documents = $this->db->get('swi_document_assignment')->result();
 
 		foreach($documents as $doc)
@@ -265,6 +271,7 @@ class Swi_model extends XPO_Model {
 			$final[] = array(
 						'doc_id' => $recent->doc_number,
 						'doc_name' => $recent->doc_name,
+						'completed_by' => $recent->e_fname.' '.$recent->e_lname,
 						'status' => ($recent->result ? 'Reported' : 'Good'),
 						'color' => ($recent->result ? 'danger' : 'success'),
 						'completed_on' => date_format(date_create($recent->completed_on),'m/d/Y h:i A')
@@ -428,14 +435,8 @@ class Swi_model extends XPO_Model {
 
 	public function get_document_report($y=null,$m=null)
 	{
-		$post_year = new DateTime(date($y.'-'.$m.'-01'.' 00:00:00'));
-		$post_month = new DateTime(date($y.'-'.$m.'-t'.' 23:59:59'));
-		$from = $post_year->format('Y-m-d H:i:s');
-		$to = $post_month->format('Y-m-d H:i:s');
-
-
-		$this->db->where('assigned_on BETWEEN "'.$from.'" AND "'.$to.'"');
-		$this->db->or_where('swi_document_assignment.modified_on BETWEEN "'.$from.'" AND "'.$to.'"');
+		$this->db->where('assigned_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
+		$this->db->or_where('swi_document_assignment.modified_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
 
 		$this->db->select('doc_number,doc_name,assignment_id,swi_document_assignment.user_id,departments.department,status,result,CONCAT(e_fname," ",e_lname) as name,assigned_on,completed_on');
 		$this->db->join('swi_documents','swi_document_assignment.doc_id = swi_documents.doc_id');
@@ -444,6 +445,48 @@ class Swi_model extends XPO_Model {
 		$this->db->order_by('status','ASC');
 		$report = $this->db->get('swi_document_assignment')->result_array();
 		return $report;
+	}
+
+	public function getProgressBoard()
+	{
+		$year_start = date('Y-01-01 00:00:00');
+		$year_end = date('Y-12-31 23:59:59');
+
+		$docs = $this->db->get('swi_documents')->result();
+		$today_num = $this->today->format('m');
+
+		for($x=0;$x<count($docs);$x++){
+			$final[$x]['doc_num'] = $docs[$x]->doc_number;
+			$final[$x]['doc_name'] = $docs[$x]->doc_name;
+			for($y=01;$y<=12;$y++){
+				$cm_start = new DateTime(date('Y-'.$y.'-01 00:00:00'));
+				$cm_end = new DateTime(date('Y-'.$y.'-t 23:59:59'));
+
+				$this->db->join('employees','employees.user_id = swi_document_assignment.user_id','LEFT');
+				$this->db->where('assigned_on BETWEEN "'.$cm_start->format('Y-m-d H:i:s').'" AND "'.$cm_end->format('Y-m-d H:i:s').'"');
+				$this->db->where('doc_id',$docs[$x]->doc_id);
+				$doc_month = $this->db->get('swi_document_assignment')->row();
+				
+				$val = null;
+
+				if($doc_month)
+					if($doc_month->completed_on)
+						$val .= '<i class="fas fa-check-circle text-success"></i>';
+
+				if((int)$today_num == (int)$y){
+					$fname = (isset($doc_month->e_fname) ? $doc_month->e_fname : NULL);
+					$lname = (isset($doc_month->e_lname) ? $doc_month->e_lname : NULL);
+					$val .= ' '.$fname.' '.$lname;
+				}
+
+				$final[$x]['months'][$y] = array(
+											'value' => $val
+											);
+			}
+		}
+
+		return $final;
+
 	}
 
 	public function save_input_swi($data)

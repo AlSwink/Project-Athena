@@ -476,6 +476,7 @@
 					recents_row += '<td>'+b.doc_id+'</td>';
 					recents_row += '<td>'+b.doc_name+'</td>';
 					recents_row += '<td>'+b.status+'</td>';
+					recents_row += '<td>'+b.completed_by+'</td>';
 					recents_row += '<td>'+b.completed_on+'</td>';
 					recents_row += '</tr>';
 				});
@@ -676,6 +677,15 @@
 		astable.rows().deselect();
 		astable.search('').draw();
 		aetable.search('').draw();
+	});
+
+	$('.document_report_filters').change(function(){
+		var department = $('#department_filter option:selected').text();
+		var status = $('#status_filter').val();
+		department = (department == 'Show all' ? '' : department);
+		
+		rdtable.column([3]).search(department).draw();
+		rdtable.column([4]).search(status).draw();
 	});
 
 	$('.reassign_submit').click(function(){

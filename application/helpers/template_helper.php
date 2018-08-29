@@ -155,7 +155,7 @@
 
 		$classes = explode(' ',$class);
 		if(in_array('is_filter',$classes)){
-			$dropdown .= '<option value="all">Show all</option>';
+			$dropdown .= '<option value="">Show all</option>';
 		}
 		
 		foreach($options as $option){

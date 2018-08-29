@@ -8,6 +8,7 @@ class Swi extends CI_Controller {
         parent::__construct();
         check_session();
         $this->load->model('applications/swi_model');
+        $this->page_dir = 'applications/swi';
     }
 
     public function save_document()
@@ -104,9 +105,22 @@ class Swi extends CI_Controller {
     public function input_worksheet()
     {
         $this->kiosk = true;
-        $this->page = 'applications/swi/swi_input';
-        $this->page_dir = 'applications/swi';
+        $this->page = $this->page_dir.'/swi_input';
         $this->load->view('page');
+    }
+
+    public function getDepartmentProgress($dept_id)
+    {
+        $this->swi_model->setDepartment($dept_id);
+        $this->swi_model->setFromAndTo();
+        $data['summary'] = $this->swi_model->getProgressBoard();
+        $this->swi_model->setDepartment($dept_id);
+        $this->swi_model->setFromAndTo();
+        $data['bars'] = $this->swi_model->get_document_report();
+
+        $this->page = $this->page_dir.'/swi_progress_board';
+       
+        $this->load->view('page',$data);
     }
 
     public function request_action()

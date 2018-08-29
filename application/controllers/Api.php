@@ -42,11 +42,8 @@ class Api extends CI_Controller {
 
     public function get_document_report($year=null,$month=null)
     {
-        if(!$year){
-            $year = date('Y');
-            $month = date('m');
-        }
-        $data = $this->swi_model->get_document_report($year,$month);
+        $this->swi_model->setFromAndTo($year,$month);
+        $data = $this->swi_model->get_document_report();
         echo json_encode($data);
     }
 
