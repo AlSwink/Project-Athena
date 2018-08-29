@@ -9,7 +9,7 @@
 		Changes made:
 		<ul>
 			<li>Added employee being audited on input worksheet.</li>
-			<li>Added new field on databast to store employee being audited.</li>
+			<li>Added new field on database to store employee being audited.</li>
 			<li>Revised print worksheet layout to specify signatures.</li>
 			<li>Added Recently audited worksheets on dashboard.</li>
 			<li>Added Current dataset indicator to change dataset modal.</li>
