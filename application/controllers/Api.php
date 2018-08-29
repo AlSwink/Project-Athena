@@ -17,12 +17,14 @@ class Api extends CI_Controller {
             $year = $this->input->post('year');
             $month = $this->input->post('month');
         }
-        $data = $this->swi_model->summary_report($year,$month);
+        $this->swi_model->setFromAndTo($year,$month);
+        $data = $this->swi_model->summary_report();
         echo json_encode($data);
     }
 
     public function get_swi_employees()
     {
+        $this->swi_model->setFromAndTo();
         echo json_encode($this->swi_model->summary_employee());
     }
 
@@ -65,7 +67,7 @@ class Api extends CI_Controller {
 
         $assignments = $this->swi_model->get_document_assignment($where);
         $ids = array_column($assignments,'assignment_id');
-        
+
         foreach($ids as $id){
             $data['data'] = $this->swi_model->get_process_assignments($id);
             $data['page'] = 'applications/swi/swi_print_worksheet';

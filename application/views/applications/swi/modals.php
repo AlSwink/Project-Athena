@@ -22,7 +22,7 @@
             </div>
             <div class="col-4">
               <label>Department</label>
-              <?= createDropdown('dept','departments','department','',['has_swi = 1'],['form-control form-control-sm']); ?>
+              <?= createDropdown('dept','departments','department','',['has_swi = 1'],'form-control form-control-sm'); ?>
             </div>
           </div>
           <div class="row mt-4">
@@ -40,7 +40,7 @@
                       <input type="text" class="form-control form-control-sm text-input process" name="process[]" placeholder="Enter process" autocomplete="off">
                     </td>
                     <td class="border-0" style='width: 35%'>
-                      <?= createDropdown('principle[]','swi_principles','principle','',[],['form-control form-control-sm']); ?>
+                      <?= createDropdown('principle[]','swi_principles','principle','',[],'form-control form-control-sm'); ?>
                     </td>
                     <td style='width: 5%'>
                       <button type="button" class="btn btn-sm btn-dark remove_process">&nbsp;<i class="fas fa-minus"></i>&nbsp;</button>
@@ -108,7 +108,7 @@
             </div>
             <div class="col-4">
               <label>Department</label>
-              <?= createDropdown('dept','departments','department','',['has_swi = 1'],['form-control form-control-sm']); ?>
+              <?= createDropdown('dept','departments','department','',['has_swi = 1'],'form-control form-control-sm'); ?>
             </div>
           </div>
           <div class="row mt-4">
@@ -126,7 +126,7 @@
                       <input type="text" class="form-control form-control-sm text-input process" name="process[]" placeholder="Enter process" autocomplete="off">
                     </td>
                     <td class="border-0" style='width: 35%'>
-                      <?= createDropdown('principle[]','swi_principles','principle','',[],['form-control form-control-sm']); ?>
+                      <?= createDropdown('principle[]','swi_principles','principle','',[],'form-control form-control-sm'); ?>
                     </td>
                     <td style='width: 5%'>
                       <button type="button" class="btn btn-sm btn-dark remove_process">&nbsp;<i class="fas fa-minus"></i>&nbsp;</a>
@@ -337,7 +337,7 @@
         </select>
         <div id="print_department" class="subselection mt-2 d-none">
           <label>Department</label>
-          <?= createDropdown('dept_id','departments','department','',['has_swi = 1'],['form-control']); ?>
+          <?= createDropdown('dept_id','departments','department','',['has_swi = 1'],'form-control'); ?>
         </div>
         <div id="print_employee" class="subselection mt-2 d-none">
           <label>Employees</label>
@@ -368,6 +368,10 @@
       </div>
       <div class="modal-body">
         <form id="change_dataset_form" action="#" action="POST">
+        <div class="row">
+          <div class="col">Current Dataset : <strong><span class="my-display text-info"><?= date('F Y'); ?></span></strong></div>
+        </div>
+        <hr>
         <div class="row">
           <div class="col">
             <label>Year</label>

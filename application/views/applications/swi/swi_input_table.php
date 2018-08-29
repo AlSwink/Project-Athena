@@ -34,7 +34,20 @@
 				<?php } ?>
 			</td>
 		</tr>
-	<?php $x++; }}else{ ?>
+		
+	<?php $x++; } ?>
+		<?php if($questions[0]->status == 'pending'){ ?>
+			<tr>
+				<th colspan="2">Employee being audited</th>
+				<td><?= createEmpDropdown('emp_audited_id','user_id',['e_fname','e_lname'],[],['form-control form-control-sm']); ?></td>
+			</tr>
+		<?php }else{ ?>
+			<tr>
+				<th colspan="2">Employee Audited</th>
+				<td><?= $questions[0]->audited ?></td>
+			</tr>
+		<?php } ?>
+	<?php }else{ ?>
 		<tr class="table-warning">
 			<td colspan="3" class="text-center">
 				<h5 class="mt-2">Assignment Number does not exist</h5>

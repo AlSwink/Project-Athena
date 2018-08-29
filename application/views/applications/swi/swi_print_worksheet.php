@@ -47,10 +47,12 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-4">
-			Signature Area
+		<div class="col-6">
+			<b>Employee being audited :</b> __________________________________ <br>
+			<b>Employee signature :</b> _______________________________________ <br><br>
+			<b>Auditor signature :</b> _________________________________________
 		</div>
-		<div class="col-8">
+		<div class="col-6">
 			<small>
 			Fill out the standard column using the below legend and make sure to fill out comments if Not applicable<br>
 			<i class="fas fa-check"></i> Standard met<br>

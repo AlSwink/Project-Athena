@@ -3,6 +3,23 @@
 class Swi_model extends XPO_Model {
 
 	public $doc_id;
+	private $today;
+	private $from ;
+	private $ffrom;
+	private $to;
+	private $fto;
+
+	public function setFromAndTo($y=null,$m=null)
+	{
+		$y = ($y ? $y : date('Y'));
+		$m = ($m ? $m : date('m'));
+		$this->today = new DateTime;
+		$this->from = new DateTime(date($y.'-'.$m.'-01'.' 00:00:00'));
+		$this->to = new DateTime(date($y.'-'.$m.'-t'.' 23:59:59'));
+		$this->ffrom = $this->from->format('Y-m-d H:i:s');
+		$this->fto = $this->to->format('Y-m-d H:i:s');
+	}
+
 
 	public function get_swi($id=null,$field=null)
 	{
@@ -40,18 +57,20 @@ class Swi_model extends XPO_Model {
 			}
 		}
 
-		$this->db->select('a.doc_id,a.doc_number,b.assigned_on,a.doc_name,d.department,e.process,c.pa_id,c.standard,c.comments,b.status,f.principle,g.e_fname,g.e_lname,b.assignment_id,b.completed_on,b.user_id');
-		$this->db->from('swi_process_assignment as c, swi_documents as a, departments as d, swi_processes as e,swi_principles as f, swi_document_assignment as b, employees as g');
+		$this->db->select('a.doc_id,a.doc_number,b.assigned_on,CONCAT(h.e_fname," ",h.e_lname) as audited,a.doc_name,d.department,e.process,c.pa_id,c.standard,c.comments,b.status,f.principle,g.e_fname,g.e_lname,b.assignment_id,b.completed_on,b.user_id');
+		$this->db->from('swi_process_assignment as c');
+		$this->db->join('swi_documents as a','a.doc_id = c.doc_id');
+		$this->db->join('departments as d','d.department_id = a.dept_id');
+		$this->db->join('swi_document_assignment as b','b.doc_id = a.doc_id');
+		$this->db->join('swi_processes as e','e.process_id = c.process_id');
+		$this->db->join('swi_principles as f','f.principle_id = e.principle_id');
+		$this->db->join('employees as g','g.user_id = b.user_id');
+		$this->db->join('employees as h','h.user_id = b.emp_audited_id','LEFT');
 		$this->db->where('b.assignment_id',$id);
 		$this->db->where('c.assignment_id',$id);
-		$this->db->where('b.doc_id = a.doc_id');
-		$this->db->where('b.doc_id = c.doc_id');
-		$this->db->where('a.dept_id = d.department_id');
-		$this->db->where('e.principle_id = f.principle_id');
-		$this->db->where('e.process_id = c.process_id');
-		$this->db->where('b.user_id = g.user_id');
 		$this->db->group_by('pa_id');
 		$pa = $this->db->get()->result();
+		
 		return $pa;
 	}
 
@@ -126,22 +145,16 @@ class Swi_model extends XPO_Model {
 		return ($process ? $process : null);
 	}
 
-	public function summary_report($y=null,$m=null)
+	public function summary_report()
 	{
 		$completed = 0;
 		$reported = 0;
 		$standard_met = 0;
 		$unassigned = 0;
 
-		$today = new DateTime;
-		$post_year = new DateTime(date($y.'-'.$m.'-01'.' 00:00:00'));
-		$post_month = new DateTime(date($y.'-'.$m.'-t'.' 23:59:59'));
-		$from = $post_year->format('Y-m-d H:i:s');
-		$to = $post_month->format('Y-m-d H:i:s');
-
-		$this->db->where('assigned_on BETWEEN "'.$from.'" AND "'.$to.'"');
-		$this->db->or_where('completed_on BETWEEN "'.$from.'" AND "'.$to.'"');
-		$this->db->or_where('modified_on BETWEEN "'.$from.'" AND "'.$to.'"');
+		$this->db->where('assigned_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
+		$this->db->or_where('completed_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
+		$this->db->or_where('modified_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
 		$documents = $this->db->get('swi_document_assignment')->result();
 
 		foreach($documents as $doc)
@@ -166,8 +179,8 @@ class Swi_model extends XPO_Model {
 		//$pending = $docs->docs - ($completed + $unassigned);
 		$pending = $docs->docs - $completed;
 		$all_docs = (int)$docs->docs;
-
-		$days_left = $today->diff($post_month);
+		
+		$days_left = $this->today->diff($this->to);
 
 		$data = array(
 					'completed' => $completed,
@@ -176,11 +189,12 @@ class Swi_model extends XPO_Model {
 					'documents' => $all_docs,
 					'pending' => $pending,
 					'unassigned' => $unassigned,
-					'year' => $y,
-					'month' => $post_month->format('F'),
+					'year' => $this->from->format('Y'),
+					'month' => $this->from->format('F'),
 					'days_left' => ($days_left->invert ? 0 : $days_left->d),
-					'days_total' => (int)$post_month->format('d'),
-					'departments' => $this->summary_department($y,$m)
+					'days_total' => (int)$this->to->format('d'),
+					'departments' => $this->summary_department(),
+					'recents' => $this->recently_audited()
 				);
 
 
@@ -189,15 +203,12 @@ class Swi_model extends XPO_Model {
 
 	public function summary_employee($y=null,$m=null)
 	{
-		$from = ($y ? date($year.'-'.$month.'-01'.' 00:00:00') : $this->firstdayofmonth);
-		$to = ($y ? date($year.'-'.$month.'-t'.' 23:59:59') : $this->lastdayofmonth);
-
 		$this->setEmployeeStaffing(3);
 		$employees = $this->getEmployees();
 
 		foreach($employees as $employee)
 		{
-			$this->db->where('assigned_on BETWEEN "'.$from.'" AND "'.$to.'"');
+			$this->db->where('assigned_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
 			$this->db->where('user_id',$employee->user_id);
 			$swi_doc = $this->db->get('swi_document_assignment')->result();
 
@@ -215,16 +226,13 @@ class Swi_model extends XPO_Model {
 
 	public function summary_department($y=null,$m=null)
 	{
-		$post_year = new DateTime(date($y.'-'.$m.'-01'.' 00:00:00'));
-		$post_month = new DateTime(date($y.'-'.$m.'-t'.' 23:59:59'));
-		$from = $post_year->format('Y-m-d H:i:s');
-		$to = $post_month->format('Y-m-d H:i:s');
+		$final = array();
 
 		$query = "SELECT department, count(completed_on) as completed, count(assigned_on) as total
 					FROM athena.swi_document_assignment
 					JOIN swi_documents ON swi_document_assignment.doc_id = swi_documents.doc_id
 					JOIN departments on swi_documents.dept_id = departments.department_id
-					WHERE assigned_on BETWEEN '".$from."' AND '".$to."'
+					WHERE assigned_on BETWEEN '".$this->ffrom."' AND '".$this->fto."'
 					GROUP BY dept_id";
 
 		$departments = $this->db->query($query)->result_array();
@@ -238,6 +246,31 @@ class Swi_model extends XPO_Model {
 											'progress' => $progress
 											);
 		}
+		return $final;
+	}
+
+	public function recently_audited($y=null,$m=null)
+	{
+		$final = array();
+
+		$this->db->join('employees','employees.user_id = swi_document_assignment.user_id');
+		$this->db->join('swi_documents','swi_documents.doc_id = swi_document_assignment.doc_id');
+		$this->db->where('status','completed');
+		$this->db->where('completed_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
+		$this->db->order_by('completed_on','DESC');
+		$this->db->limit(7);
+		$recents = $this->db->get('swi_document_assignment')->result();
+
+		foreach($recents as $recent){
+			$final[] = array(
+						'doc_id' => $recent->doc_number,
+						'doc_name' => $recent->doc_name,
+						'status' => ($recent->result ? 'Reported' : 'Good'),
+						'color' => ($recent->result ? 'danger' : 'success'),
+						'completed_on' => date_format(date_create($recent->completed_on),'m/d/Y h:i A')
+						);
+		}
+
 		return $final;
 	}
 
@@ -425,7 +458,8 @@ class Swi_model extends XPO_Model {
 							'status' => 'completed',
 							'result' => $status,
 							'completed_on' => date('Y-m-d H:i:s'),
-							'modified_by' => $this->session->userdata('user_id')
+							'modified_by' => $this->session->userdata('user_id'),
+							'emp_audited_id' => $data['emp_audited_id']
 							);
 
 		$this->db->where('assignment_id',$data['process_assignment_id']);
@@ -503,6 +537,7 @@ class Swi_model extends XPO_Model {
 		$this->db->set('result',NULL);
 		$this->db->set('status','pending');
 		$this->db->set('completed_on',NULL);
+		$this->db->set('emp_audited_id',NULL);
 		$this->db->set('modified_on',date('Y-m-d H:i:s'));
 		$this->db->update('swi_document_assignment');
 		$this->db->flush_cache();

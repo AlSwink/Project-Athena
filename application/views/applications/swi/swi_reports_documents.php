@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="col">
-		<table class="table table-sm text-center table-bordered">
+		<table class="table table-sm text-center table-bordered mb-1">
 			<thead>
 				<tr>
 					<th colspan="5" class="my-display table-dark">August 2018</th>
@@ -26,11 +26,26 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-5">
-		<input id="search_report_assignment" type="text" class="form-control form-control-sm text-input" placeholder="Search here">
+	<div class="col-4">
+		<label>Search Filters</label>
+		<input id="search_report_assignment" type="text" class="form-control form-control-sm text-input" placeholder="Quicksearch">
 	</div>
-	<div class="col text-right">
-		<div class="btn-group btn-group-sm">
+	<div class="col-3">
+		<label>Department</label>
+		<?= createDropdown('dept','departments','department','',['has_swi = 1'],'form-control form-control-sm document_report_filters is_filter'); ?>
+	</div>
+	<div class="col-2">
+		<label>Status</label>
+		<select class="form-control form-control-sm is_filter">
+			<option value="all">Show all</option>
+			<option>Standard Met</option>
+			<option>Pending</option>
+			<option>Reported</option>
+		</select>
+	</div>
+	<div class="col-3">
+		<label>Controls</label>
+		<div class="btn-group btn-group-sm text-right">
 			<button id="rdl_table_reload" type="button" class="btn btn-info">Fetch new data <i class="fas fa-sync-alt"></i></button>
 			<button id="rdl_excel" type="button" class="btn btn-success">Excel <i class="fas fa-file-excel"></i></button>
 			<button id="rprint" type="button" class="btn btn-secondary">Print <i class="fas fa-print"></i></button>

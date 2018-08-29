@@ -468,6 +468,19 @@
 						$(progress_bar).css('width','0%');
 					}
 				});
+
+				recents_row = '';
+
+				$(res.recents).each(function(a,b){
+					recents_row += '<tr class="table-'+b.color+'">';
+					recents_row += '<td>'+b.doc_id+'</td>';
+					recents_row += '<td>'+b.doc_name+'</td>';
+					recents_row += '<td>'+b.status+'</td>';
+					recents_row += '<td>'+b.completed_on+'</td>';
+					recents_row += '</tr>';
+				});
+
+				$('#recently_audited_table').html(recents_row);
 			},
 			complete : function(){
 				c_days_prog.update();

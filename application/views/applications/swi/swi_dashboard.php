@@ -48,14 +48,26 @@
 		<div class="card shadow">
 			<div class="card-body">
 				<div class="row">
+					<div class="col-6">
+						<h6>Recently Audited</h6>
+						<table id="recently_audited_table" class="table table-sm table-bordered table-hover">
+							<?php foreach($totals['recents'] as $recent){ ?>
+								<tr class="table-<?= $recent['color']; ?>">
+									<td><?= $recent['doc_id']; ?></td>
+									<td><?= $recent['doc_name']; ?></td>
+									<td><?= $recent['status']; ?></td>
+									<td><?= $recent['completed_on']; ?></td>
+								</tr>
+							<?php } ?>
+						</table>
+					</div>
 					<div class="col-4">
 						<h6>Progress by Department</h6>
 						<table id="department_progress_table" class="table table-sm table-bordered table-hover">
 							<?php foreach($totals['departments'] as $key => $dept){ ?>
 								<tr class="dashrow dashrow_<?= $key; ?>" data-dept="<?= $key; ?>">
 									<td><?= $key; ?></td>
-									<td class="text-center"><?= $dept['completed'].'/'.$dept['total']; ?></td>
-									<td class="w-25">
+									<td class="w-50">
 										<div class="progress">
 										  <div class="progress-bar bg-<?= $dept['color']; ?>" role="progressbar" style="width: <?= $dept['progress']; ?>"><?= $dept['progress']; ?></div>
 										</div>

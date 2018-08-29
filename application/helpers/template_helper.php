@@ -144,14 +144,19 @@
 		}
 	}
 
-	function createDropdown($name,$table,$field,$id=null,$conditions=array(),$class=array())
+	function createDropdown($name,$table,$field,$id=null,$conditions=array(),$class=null)
 	{
 		$ci =&get_instance();
 		$ci->load->model('XPO_model');
 		$options = $ci->XPO_model->getOptions($table,$conditions);
 
-		$dropdown = '<select name="'.$name.'" id="'.$id.'" class="'.implode('_',$class).'" name="'.$field.'">';
+		$dropdown = '<select name="'.$name.'" id="'.$id.'" class="'.$class.'" name="'.$field.'">';
 		$field_id = $field.'_id';
+
+		$classes = explode(' ',$class);
+		if(in_array('is_filter',$classes)){
+			$dropdown .= '<option value="all">Show all</option>';
+		}
 		
 		foreach($options as $option){
 			$dropdown .= '<option value="'.$option->$field_id.'">'.$option->$field.'</option>';

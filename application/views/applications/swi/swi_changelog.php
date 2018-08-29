@@ -5,6 +5,17 @@
 		</div>
 	</div>
 	<div class="col-lg-12">
+		<h3>As of 08/29/2018 <small>v0.4.3</small></h3>
+		Changes made:
+		<ul>
+			<li>Added employee being audited on input worksheet.</li>
+			<li>Added new field on databast to store employee being audited.</li>
+			<li>Revised print worksheet layout to specify signatures.</li>
+			<li>Added Recently audited worksheets on dashboard.</li>
+			<li>Added Current dataset indicator to change dataset modal.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
 		<h3>As of 08/28/2018 <small>v0.4.2</small></h3>
 		Changes made:
 		<ul>

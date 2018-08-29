@@ -12,7 +12,7 @@
 		  			<a href="#report_documents" class="nav-link bbr-0 list-group-item list-group-item-action list-group-item-secondary" data-toggle="pill">All Documents</a>
 		  		</li>
 		  		<li class="nav-item">
-		  			<a href="#report_employees" class="nav-link bbr-0 list-group-item list-group-item-action list-group-item-secondary" data-toggle="pill">All Employees</a>
+		  			<a href="#report_employees" class="nav-link bbr-0 list-group-item list-group-item-action list-group-item-secondary" data-toggle="pill">Employees Progress</a>
 		  		</li>
 		  		<li class="nav-item">
 		  			<a href="#" class="nav-link list-group-item list-group-item-action list-group-item-secondary" data-toggle="modal" data-target="#change_dataset">Change Dataset</a>
