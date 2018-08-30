@@ -472,7 +472,7 @@
 				recents_row = '';
 
 				$(res.recents).each(function(a,b){
-					recents_row += '<tr class="table-'+b.color+'">';
+					recents_row += '<tr class="table-'+b.color+' rdtablemenu">';
 					recents_row += '<td class="d-none">'+b.assignment_id+'</td>';
 					recents_row += '<td>'+b.doc_id+'</td>';
 					recents_row += '<td>'+b.doc_name+'</td>';
@@ -505,7 +505,6 @@
 				tooltip = res;
 			}
 		});
-		console.log(tooltip);
 		return tooltip;
 	}
 
