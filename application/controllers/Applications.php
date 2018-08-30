@@ -29,6 +29,7 @@ class Applications extends CI_Controller {
                     'processes'     => $this->model->get_unique_process(),
                     'swi_docs'      => $this->model->get_swi(),
                     'totals'        => $this->model->summary_report(),
+                    'departments'   => $this->model->getDepartmentIds(),
                     'dependencies' => array(
                                         'css'   => array('jquery-ui.min','jquery.contextMenu.min'),
                                         'js'    => array('jquery-ui.min','chart.min','jquery.contextMenu.min','jquery.ui.position.min','moment')

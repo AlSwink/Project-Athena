@@ -473,10 +473,12 @@
 
 				$(res.recents).each(function(a,b){
 					recents_row += '<tr class="table-'+b.color+'">';
+					recents_row += '<td class="d-none">'+b.assignment_id+'</td>';
 					recents_row += '<td>'+b.doc_id+'</td>';
 					recents_row += '<td>'+b.doc_name+'</td>';
+					recents_row += '<td>'+b.department+'</td>';
 					recents_row += '<td>'+b.status+'</td>';
-					recents_row += '<td>'+b.completed_by+'</td>';
+					recents_row += '<td class="rdempdetails" data-empid="'+emp_id+'">'+b.completed_by+'</td>';
 					recents_row += '<td>'+b.completed_on+'</td>';
 					recents_row += '</tr>';
 				});
@@ -571,7 +573,28 @@
         	}
         });
 
-		$('#report_document_table').tooltip({
+        $.contextMenu({
+        	selector: '.dept_progress',
+        	build: function($triggerElement,e){
+   				department = $($triggerElement);
+   				dept_id = $(department).data('deptid');
+        		return {
+        			callback: function(key, options,e){
+		                switch(key){
+		                	case 'progress_board':
+		                		pboardurl = "<?= site_url('swi/progress_board'); ?>/"+dept_id;
+		                		window.open(pboardurl, 'Progress board');
+		                		break;
+		                }		
+        			},
+        			items: {
+        				progress_board: {name:"Show progress board",icon:"fas fa-info"},
+        			}
+        		}
+        	}
+        });
+
+		$('#report_document_table,#recently_audited_table').tooltip({
 			selector: '.rdempdetails',
 			title: getEmployeeTooltip,
 			html: true,

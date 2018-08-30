@@ -1,23 +1,22 @@
-<?php var_dump($bars); ?>
 <div class="container-fluid">
 	<div class="row">
 		<div class="col">
-			<h3 class="display-3">SWI - Department</h3>
+			<h3 class="display-3">SWI - <?= $summary[0]['department']; ?></h3>
 		</div>
 		<div class="col text-right">
-			<h3 class="display-3">FY-2018</h3>
+			<h3 class="display-3">FY - <?= date('Y'); ?></h3>
 		</div>
 	</div>
 	<hr>
 	<div class="row">
 		<div class="col">
 			<div class="progress" style="height: 50px">
-			  <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 50%"><h4>50% Towards completion</h4></div>
+			  <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: <?= $summary[0]['progress']['completed']; ?>"><h4><?= $summary[0]['progress']['completed']; ?> COMPLETE</h4></div>
 			</div>
 			<div class="progress mt-2" style="height: 30px">
-			  <div class="progress-bar bg-success" role="progressbar" style="width: 40%"><b>Standard Met</b></div>
-			  <div class="progress-bar bg-danger" role="progressbar" style="width: 10%"><b>Reported</b></div>
-			  <div class="progress-bar bg-secondary" role="progressbar" style="width: 50%"><b>Pending</b></div>
+			  <div class="progress-bar bg-success" role="progressbar" style="width: <?= $summary[0]['progress']['met']; ?>"><b>Standard Met</b></div>
+			  <div class="progress-bar bg-danger" role="progressbar" style="width: <?= $summary[0]['progress']['reported']; ?>"><b>Reported</b></div>
+			  <div class="progress-bar bg-dark" role="progressbar" style="width: <?= $summary[0]['progress']['pending']; ?>"><b>Pending</b></div>
 			</div>
 		</div>
 	</div>

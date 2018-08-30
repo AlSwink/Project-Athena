@@ -234,7 +234,7 @@ class Swi_model extends XPO_Model {
 	{
 		$final = array();
 
-		$query = "SELECT department, count(completed_on) as completed, count(assigned_on) as total
+		$query = "SELECT department_id,department, count(completed_on) as completed, count(assigned_on) as total
 					FROM athena.swi_document_assignment
 					JOIN swi_documents ON swi_document_assignment.doc_id = swi_documents.doc_id
 					JOIN departments on swi_documents.dept_id = departments.department_id
@@ -246,6 +246,7 @@ class Swi_model extends XPO_Model {
 			$progress = round(($dept['completed'] / $dept['total']) * 100).'%';
 
 			$final[$dept['department']] = array(
+											'dept' => $dept['department_id'],
 											'completed' => $dept['completed'],
 											'total' => $dept['total'],
 											'color' => ($progress == '100%' ? 'success' : 'secondary'),
@@ -261,6 +262,7 @@ class Swi_model extends XPO_Model {
 
 		$this->db->join('employees','employees.user_id = swi_document_assignment.user_id');
 		$this->db->join('swi_documents','swi_documents.doc_id = swi_document_assignment.doc_id');
+		$this->db->join('departments','departments.department_id = swi_documents.dept_id');
 		$this->db->where('status','completed');
 		$this->db->where('completed_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
 		$this->db->order_by('completed_on','DESC');
@@ -269,9 +271,12 @@ class Swi_model extends XPO_Model {
 
 		foreach($recents as $recent){
 			$final[] = array(
+						'assignment_id' => $recent->assignment_id,
 						'doc_id' => $recent->doc_number,
 						'doc_name' => $recent->doc_name,
+						'emp_id' => $recent->user_id,
 						'completed_by' => $recent->e_fname.' '.$recent->e_lname,
+						'department' => $recent->department,
 						'status' => ($recent->result ? 'Reported' : 'Good'),
 						'color' => ($recent->result ? 'danger' : 'success'),
 						'completed_on' => date_format(date_create($recent->completed_on),'m/d/Y h:i A')
@@ -449,15 +454,24 @@ class Swi_model extends XPO_Model {
 
 	public function getProgressBoard()
 	{
+		$completed = 0;
+		$pending = 0;
+		$reported = 0;
+		$met = 0;
+		$total = 0;
+
 		$year_start = date('Y-01-01 00:00:00');
 		$year_end = date('Y-12-31 23:59:59');
 
+		$this->db->where('swi_documents.deleted',0);
+		$this->db->join('departments','departments.department_id = swi_documents.dept_id');
 		$docs = $this->db->get('swi_documents')->result();
 		$today_num = $this->today->format('m');
 
 		for($x=0;$x<count($docs);$x++){
 			$final[$x]['doc_num'] = $docs[$x]->doc_number;
 			$final[$x]['doc_name'] = $docs[$x]->doc_name;
+
 			for($y=01;$y<=12;$y++){
 				$cm_start = new DateTime(date('Y-'.$y.'-01 00:00:00'));
 				$cm_end = new DateTime(date('Y-'.$y.'-t 23:59:59'));
@@ -465,6 +479,7 @@ class Swi_model extends XPO_Model {
 				$this->db->join('employees','employees.user_id = swi_document_assignment.user_id','LEFT');
 				$this->db->where('assigned_on BETWEEN "'.$cm_start->format('Y-m-d H:i:s').'" AND "'.$cm_end->format('Y-m-d H:i:s').'"');
 				$this->db->where('doc_id',$docs[$x]->doc_id);
+
 				$doc_month = $this->db->get('swi_document_assignment')->row();
 				
 				$val = null;
@@ -473,17 +488,48 @@ class Swi_model extends XPO_Model {
 					if($doc_month->completed_on)
 						$val .= '<i class="fas fa-check-circle text-success"></i>';
 
+
 				if((int)$today_num == (int)$y){
 					$fname = (isset($doc_month->e_fname) ? $doc_month->e_fname : NULL);
 					$lname = (isset($doc_month->e_lname) ? $doc_month->e_lname : NULL);
 					$val .= ' '.$fname.' '.$lname;
+
+					switch($doc_month->status){
+						case 'completed':
+							$completed++;
+							if($doc_month->result){
+								$reported++;
+							}else{
+								$met++;
+							}
+							break;
+						case 'pending':
+							$pending++;
+							break;
+					}
+					$total++;
 				}
 
 				$final[$x]['months'][$y] = array(
 											'value' => $val
 											);
 			}
+
+
 		}
+
+		$final_completed = ceil(($completed / $total) * 100);
+		$final_reported = ceil(($reported / $total) * 100);
+		$final_met = $final_completed - $final_reported;
+		$final_pending = $final_completed - ($final_reported + $final_met);
+
+		$final[0]['department'] = $docs[0]->department;
+		$final[0]['progress'] = array(
+									'completed' => $final_completed.'%',
+									'reported' => $final_reported.'%',
+									'met' => $final_met.'%',
+									'pending'=> $final_pending.'%'
+									);
 
 		return $final;
 
@@ -570,6 +616,12 @@ class Swi_model extends XPO_Model {
 		$this->db->set('comments',NULL);
 		$this->db->where('assignment_id',$id);
 		$this->db->update('swi_process_assignment');
+	}
+
+	public function getDepartmentIds()
+	{
+		$dept = $this->getOptions('departments',array("has_swi = 1"));
+		return $dept;
 	}
 
 	public function reset_assignment($id='all')

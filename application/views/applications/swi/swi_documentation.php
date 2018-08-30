@@ -2,50 +2,43 @@
 	<div class="col-3">
 		<h5 class="display-5">Table of Contents</h5>
 		<hr>
-		<ul class="list-unstyled">
-			<li><a href="#">Overview</a></li>
-			<li><a href="#">The Process Cycle</a></li>
-			<li><a href="#">SWI Document Management</a>
-				<ul>
-					<li><a href="#">Create/Edit/Delete a document</a></li>
-					<li><a href="#">Document :: Processes</a></li>
-					<li><a href="#">Adding principles</a></li>
-				</ul>
-			</li>
-			<li><a href="#">SWI Document Assignment</a>
-				<ul>
-					<li><a href="#">How it works?</a></li>
-					<li><a href="#">Criteria for assignments</a></li>
-					<li><a href="#">Generating document assignments</a></li>
-					<li><a href="#">Assigning specific documents</a></li>
-					<li><a href="#">Re-shuffling of assignments</a></li>
-					<li><a href="#">Printing document assignments</a></li>
-				</ul>
-			</li>
-			<li><a href="#">SWI Worksheet Input</a>
-				<ul>
-					<li><a href="#">What's an assignment ID?</a></li>
-					<li><a href="#">Requesting a reset</a></li>
-				</ul>
-			</li>
-			<li><a href="#">Glossary</a></li>
-			<li><a href="#">What's Next?</a></li>
-		</ul>
+		<div id="table_of_contents" class="list-group">
+		  <a class="list-group-item list-group-item-action" href="#overview">Overview</a>
+		  <a class="list-group-item list-group-item-action" href="#dept_ids">Department IDs</a>
+		</div>
 	</div>
-	<div class="col">
+	<div class="col" data-spy="scroll" data-target="#table_of_contents" data-offset="0">
 		<div id="overview">
 			<h5>Overview</h5>
-			<p>The objective of this application is to help ensure our SWI's are updated and is being properly followed. The application will also manage SWI documents and convert them to a more trackable data that can be evenly distributed to all XPO associates</p>
+			<p>The objective of this application is to help ensure our SWI's are updated and is being properly followed. The application will also manage SWI documents and convert them to a more trackable data.</p>
+			<p>In the past we have been doing SWI audits by hand and paper. Associates grab a worksheet and conducts the audit. After it has been filled, They put it back in an unsecured board as an indication that it was completed. After some research, flaws have been found with the current system. Such as
+				<ul>
+					<li>All documents placed back are not secured and can be altered or disposed.</li>
+					<li>Document audit tracking takes a lot of time and cross referencing.</li>
+					<li>Progress Board is not real-time.</li>
+					<li>Audit assignments is not balanced nor trackable.</li>
+					<li>There's no centralized database to track all SWIs on each department.</li>
+				</ul>
+			<p>This system will provide solution and further improve the way we do SWI audits. We grabbed the old process and forged a new one with better integration of our current systems such as the ERoster. Using this standard we will be able to balance the audit assignments, track them in real-time and study the data in a bigger picture.</p>
 		</div>
-		<div id="tpc">
-			<h5>The Process Cycle</h5>
-			Generate document assignments for the month -> Print and distribute input worksheet -> Input worksheet and sign -> track progress
-		</div>
-		<div id="sdm">
-			<h5>SWI Document Management</h5>
-		</div>
-		<div id="glossary">
-			<h5>Glossary</h5>
+		<div id="dept_ids">
+			<h5>Department IDs</h5>
+			<p>This section only shows the department and their ID equivalent on the database. This information is vital in visiting progress boards for each department.</p>
+
+			<table class="table table-sm">
+				<thead>
+					<th>Department</th>
+					<th>Department ID</th>
+				</thead>
+				<tbody>
+					<?php foreach($departments as $dept){ ?>
+						<tr>
+							<td><?= $dept->department; ?></td>
+							<td><?= $dept->department_id; ?></td>
+						</tr>
+					<?php } ?>
+				</tbody>
+			</table>
 		</div>
 	</div>
 </div>

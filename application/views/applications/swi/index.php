@@ -21,10 +21,10 @@
 			  	</li>
 			  	<li class="nav-item">
 			    	<a class="nav-link" data-toggle="tab" href="#swi_settings"><i class="fas fa-cog"></i>  Settings</a>
-			  	</li>
+			  	</li-->
 			  	<li class="nav-item">
 			    	<a class="nav-link" data-toggle="tab" href="#swi_documentation"><i class="fas fa-book"></i>  Documentation</a>
-			  	</li-->
+			  	</li>
 			  	<li class="nav-item">
 			    	<a class="nav-link" data-toggle="tab" href="#swi_logs"><i class="fas fa-file-code"></i> Changelog</a>
 			  	</li>

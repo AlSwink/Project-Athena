@@ -52,11 +52,13 @@
 						<h6>Recently Audited</h6>
 						<table id="recently_audited_table" class="table table-sm table-bordered table-hover">
 							<?php foreach($totals['recents'] as $recent){ ?>
-								<tr class="table-<?= $recent['color']; ?>">
+								<tr class="table-<?= $recent['color']; ?> rdtablemenu">
+									<td class="d-none"><?= $recent['assignment_id']; ?></td>
 									<td><?= $recent['doc_id']; ?></td>
 									<td><?= $recent['doc_name']; ?></td>
+									<td><?= $recent['department']; ?></td>
 									<td><?= $recent['status']; ?></td>
-									<td><?= $recent['completed_by']; ?></td>
+									<td><span class='rdempdetails' data-empid='<?= $recent['emp_id'];?>'><?= $recent['completed_by']; ?></span></td>
 									<td><?= $recent['completed_on']; ?></td>
 								</tr>
 							<?php } ?>
@@ -66,7 +68,7 @@
 						<h6>Progress by Department</h6>
 						<table id="department_progress_table" class="table table-sm table-bordered table-hover">
 							<?php foreach($totals['departments'] as $key => $dept){ ?>
-								<tr class="dashrow dashrow_<?= $key; ?>" data-dept="<?= $key; ?>">
+								<tr class="dashrow dashrow_<?= $key; ?> dept_progress" data-deptid="<?= $dept['dept']; ?>" data-dept="<?= $key; ?>">
 									<td><?= $key; ?></td>
 									<td class="w-50">
 										<div class="progress">
