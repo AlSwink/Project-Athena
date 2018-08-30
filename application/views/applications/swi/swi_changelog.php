@@ -8,7 +8,7 @@
 		<h3>As of 08/30/2018 <small>v0.4.8</small></h3>
 		Changes made:
 		<ul>
-			<li><span class="badge bg-success">New</span> Deparment progress board accessible via <a href="http://10.89.96.183/athena/swi/progress_board/1" target="_blank">http://10.89.96.183/athena/swi/progress_board/1</a>. the number should be the department's id.</li>
+			<li><span class="badge bg-success">New</span> Deparment progress board accessible via <a href="http://10.89.96.128/athena/swi/progress_board/1" target="_blank">http://10.89.96.128/athena/swi/progress_board/1</a>. the number should be the department's id.</li>
 			<li><span class="badge bg-success">New</span> Completion progress bar on progress board.</li>
 			<li><span class="badge bg-success">New</span> Standard met,reported and pending progress bar on progress board.</li>
 			<li><span class="badge bg-success">New</span> Monthly document tracking table on progress board.</li>
