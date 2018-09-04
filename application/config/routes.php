@@ -69,6 +69,7 @@ $route['swi/unassign/(:any)'] = 'apps/swi/unassign/$1';
 $route['swi/input_worksheet'] = 'apps/swi/input_worksheet/';
 $route['swi/getEmployeeInfo/(:any)'] = 'apps/swi/getEmployeeInfo/$1';
 $route['swi/progress_board/(:any)'] = 'apps/swi/getDepartmentProgress/$1';
+$route['swi/assign_documents/(:any)'] = 'apps/swi/assign_documents/$1';
 //system_health_check routes
 $route['health_check'] = 'applications/system_health_check';
 $route['health_check/standalone'] = 'applications/system_health_check/1';

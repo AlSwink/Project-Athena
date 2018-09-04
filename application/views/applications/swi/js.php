@@ -88,7 +88,7 @@
 	var c_in_standard = new Chart(in_standard,{
 				type : 'doughnut',
 				data : {
-					labels : ['Standard Met','Deprecation','Reported','Pending'],
+					labels : ['Met','Deprecation','Reported','Pending'],
 					datasets : [{
 						data : [
 							totals.standard_met,

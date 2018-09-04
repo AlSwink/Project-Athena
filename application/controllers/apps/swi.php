@@ -39,10 +39,14 @@ class Swi extends CI_Controller {
         echo json_encode('DELETED');
     }
 
-    public function assign_documents()
+    public function assign_documents($test=null)
     {
         $data = $this->swi_model->get_assignment_pool();
-        $this->swi_model->set_assignments($data);
+        if($test){
+            $this->swi_model->set_assignment_pool($data);
+        }else{
+            $this->swi_model->set_assignments($data);    
+        }
         echo 'All documents has been successfully assigned this month';
     }
 

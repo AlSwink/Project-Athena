@@ -415,7 +415,8 @@ class Swi_model extends XPO_Model {
 												'doc_id' => $documents[$di]->doc_id,
 												'status' => 'pending',
 												'assigned_by' => 1,
-												'assigned_on' => date('Y-m-d H:i:s')
+												'assigned_on' => date('Y-m-d H:i:s'),
+												'deleted' => 0
 												);
 
 							unset($documents[$di]);
