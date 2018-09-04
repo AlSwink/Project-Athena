@@ -3,6 +3,7 @@
 					'completed' : <?= $totals['completed']; ?>,
 					'pending'	: <?= $totals['pending']; ?>,
 					'standard_met' : <?= $totals['standard_met']; ?>,
+					'deprecation' : <?= $totals['deprecation']; ?>,
 					'reported'	: <?= $totals['reported']; ?>,
 					'pending'	: <?= $totals['pending']; ?>,
 					'documents'	: <?= $totals['documents']; ?>
@@ -87,15 +88,17 @@
 	var c_in_standard = new Chart(in_standard,{
 				type : 'doughnut',
 				data : {
-					labels : ['Standard Met','Reported','Pending'],
+					labels : ['Standard Met','Deprecation','Reported','Pending'],
 					datasets : [{
 						data : [
 							totals.standard_met,
+							totals.deprecation,
 							totals.reported,
 							totals.pending
 						],
 						backgroundColor : [
 							'rgba(4, 173, 41,1)',
+							'rgba(222, 226, 230,1)',
 							'rgba(123,21,36,1)',
 							'rgba(50, 50,50, 1)'
 						]
@@ -132,9 +135,15 @@
 	    	total = chart.data.datasets[0].data[0] + chart.data.datasets[0].data[1];
 	    	doughnut_text = Math.ceil(chart.data.datasets[0].data[0] / total * 100) + '%';
 	   	}else if(cid == 'standard_acc'){
-	   		standard_met = chart.data.datasets[0].data[0];
-	   		total = chart.data.datasets[0].data[0] + chart.data.datasets[0].data[1] + chart.data.datasets[0].data[2];
-	   		doughnut_text = Math.ceil(standard_met / total * 100) + '%';
+	   		standard_met = (chart.data.datasets[0].data[0] ? chart.data.datasets[0].data[0] : 0);
+	   		deprecation = (chart.data.datasets[0].data[1] ? chart.data.datasets[0].data[1] : 0);
+	   		reported = (chart.data.datasets[0].data[2] ? chart.data.datasets[0].data[2] : 0);
+	   		total = standard_met + deprecation + reported;
+	   		if(standard_met){
+	   			doughnut_text = Math.ceil(standard_met / total * 100) + '%';
+	   		}else{
+	   			doughnut_text = '0%';
+	   		}
 	   	}else if(cid == 'days_prog'){
 	   		doughnut_text = chart.data.datasets[0].data[1];
 	   	}
@@ -312,6 +321,9 @@
 		        			case '2':
 		        				return 'Unassigned';
 		        				break;
+		        			case '3':
+		        				return 'Deprecation';
+		        				break;
 		        			default:
 		        				return 'Pending';
 		        				break;
@@ -363,6 +375,9 @@
         				break;
         			case '2':
         				$(row).addClass('table-info');
+        				break;
+        			case '3':
+        				$(row).addClass('table-secondary');
         				break;
         			default:
         				$(row).addClass('table-warning');
@@ -436,20 +451,22 @@
 			data : { year : year_dataset, month : month_dataset },
 			success : function(res){
 				// chart update
-				c_days_prog.data.datasets[0].data[0] = res.days_total;
+				c_days_prog.data.datasets[0].data[0] = res.days_total - res.days_left;
 				c_days_prog.data.datasets[0].data[1] = res.days_left;
 
 				c_doc_prog.data.datasets[0].data[0] = res.completed;
 				c_doc_prog.data.datasets[0].data[1] = res.pending;
 				
 				c_in_standard.data.datasets[0].data[0] = res.standard_met;
-				c_in_standard.data.datasets[0].data[1] = res.reported;
-				c_in_standard.data.datasets[0].data[2] = res.pending;
+				c_in_standard.data.datasets[0].data[1] = res.deprecation;
+				c_in_standard.data.datasets[0].data[2] = res.reported;
+				c_in_standard.data.datasets[0].data[3] = res.pending;
 				
 				$('.my-display').html(res.month+ ' '+res.year);
 				$('#rd_completed').html(res.completed);
 				$('#rd_pending').html(res.pending);
 				$('#rd_standard').html(res.standard_met);
+				$('#rd_deprecation').html(res.deprecation);
 				$('#rd_reported').html(res.reported);
 				$('#rd_unassigned').html(res.unassigned);
 				$('.u_limit').html(' /'+res.documents);
@@ -478,7 +495,7 @@
 					recents_row += '<td>'+b.doc_name+'</td>';
 					recents_row += '<td>'+b.department+'</td>';
 					recents_row += '<td>'+b.status+'</td>';
-					recents_row += '<td class="rdempdetails" data-empid="'+emp_id+'">'+b.completed_by+'</td>';
+					recents_row += '<td class="rdempdetails" data-empid="'+b.emp_id+'">'+b.completed_by+'</td>';
 					recents_row += '<td>'+b.completed_on+'</td>';
 					recents_row += '</tr>';
 				});
@@ -511,6 +528,10 @@
 	//events
 
 	$(document).ready(function(){
+		app_name = '<?= $method = $this->router->fetch_method(); ?>';
+		page_type = 'app';
+		version = $('#app_version').html();
+
 		$.contextMenu({
         	selector: '.rdtablemenu',
         	build: function($triggerElement,e){
@@ -830,6 +851,10 @@
 								$(eline)
 								.find('input[name="process[]"]')
 								.val(v.process);
+
+								$(eline)
+								.find('input[name="process_id[]"]')
+								.val(v.process_id);
 
 								$(eline)
 								.find('select option[value="'+v.principle_id+'"]')

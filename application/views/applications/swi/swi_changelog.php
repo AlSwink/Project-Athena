@@ -5,6 +5,39 @@
 		</div>
 	</div>
 	<div class="col-lg-12">
+		<h3>As of 09/04/2018 <small>v0.4.9</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-secondary">Changed</span>Revised document saving procedures to preserve document after deletion.</li>
+			<li><span class="badge bg-secondary">Changed</span>Revised document assignment saving procedures to preserve document assignment after deletion.</li>
+			<li><span class="badge bg-secondary">Changed</span>Revised process saving procedures to preserve process after deletion.</li>
+			<li><span class="badge bg-secondary">Changed</span>Refined chart and reporting data to only reflect documents and assignments added on the current dataset.</li>
+			<li><span class="badge bg-secondary">Changed</span>Updated August Dataset to reflect Deprecation status.</li>
+			<li><span class="badge bg-success">New</span> Added new document status "Deprecation" to seperate BAD from NA's.</li>
+			<li><span class="badge bg-primary">Added</span> Added documents for September assignments.</li>
+			<li><span class="badge bg-primary">Added</span> Added table field for "Deprecation" status on reporting tab.</li>
+			<li><span class="badge bg-primary">Added</span> Added color code for "Deprecation" status as grey.</li>
+			<li><span class="badge bg-primary">Added</span> Added chart section for "Deprecation" status.</li>
+			<li><span class="badge bg-primary">Added</span> Added status filter on document reporting tab for "Deprecation" status.</li>
+			<li><span class="badge bg-primary">Added</span> Added session checking to redirect to login when session has expired.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
+		<h3>As of 08/30/2018 <small>v0.4.8</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-success">New</span> Deparment progress board accessible via <a href="http://10.89.96.128/athena/swi/progress_board/1" target="_blank">http://10.89.96.128/athena/swi/progress_board/1</a>. the number should be the department's id.</li>
+			<li><span class="badge bg-success">New</span> Completion progress bar on progress board.</li>
+			<li><span class="badge bg-success">New</span> Standard met,reported and pending progress bar on progress board.</li>
+			<li><span class="badge bg-success">New</span> Monthly document tracking table on progress board.</li>
+			<li><span class="badge bg-success">New</span> Department ID list is added on the documentation tab.</li>
+			<li><span class="badge bg-secondary">Changed</span>Documentation tab has been renabled and is open for any resources available.</li>
+			<li><span class="badge bg-primary">Added</span> Employee tooltip on recently audited table.</li>
+			<li><span class="badge bg-primary">Added</span> Right click controls on recently audited table.</li>
+			<li><span class="badge bg-primary">Added</span> Right click controls on progress by department to show progress boards.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
 		<h3>As of 08/30/2018 <small>v0.4.8</small></h3>
 		Changes made:
 		<ul>

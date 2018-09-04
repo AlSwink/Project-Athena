@@ -3,13 +3,14 @@
 		<table class="table table-sm text-center table-bordered mb-1">
 			<thead>
 				<tr>
-					<th colspan="5" class="my-display table-dark">August 2018</th>
+					<th colspan="6" class="my-display table-dark"></th>
 				</tr>
 				<tr>
-					<th class="table-secondary">Completed Documents</th>
+					<th class="table-primary">Completed Documents</th>
 					<th class="table-info">Unassigned Documents</th>
 					<th class="table-warning">Pending Documents</th>
 					<th class="table-success">Standard Met</th>
+					<th class="table-secondary">Deprecations</th>
 					<th class="table-danger">Reported</th>
 				</tr>
 			</thead>
@@ -19,6 +20,7 @@
 					<td class="display-4"><span id="rd_unassigned"><?= $totals['unassigned']; ?></span></td>
 					<td class="display-4"><span id="rd_pending"><?= $totals['pending']; ?></span><span class="u_limit"> /<?= $totals['documents'] ?></span></td>
 					<td class="display-4"><span id="rd_standard"><?= $totals['standard_met']; ?></span><span class="u_limit"> /<?= $totals['documents'] ?></span></td>
+					<td class="display-4"><span id="rd_deprecation"><?= $totals['deprecation']; ?></span><span class="u_limit"> /<?= $totals['documents'] ?></span></td>
 					<td class="display-4"><span id="rd_reported"><?= $totals['reported']; ?></span><span class="u_limit"> /<?= $totals['documents'] ?></span></td>
 				</tr>
 			</tbody>
@@ -39,6 +41,7 @@
 		<select id="status_filter" class="form-control form-control-sm is_filter document_report_filters">
 			<option value="">Show all</option>
 			<option>Standard Met</option>
+			<option>Deprecation</option>
 			<option>Pending</option>
 			<option>Reported</option>
 		</select>

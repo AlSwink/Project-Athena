@@ -1,7 +1,10 @@
 var site_url = 'http://'+window.location.hostname+'/athena/';
+var app_name = '';
 var loading = '';
 var	active = '';
 var	submit_original = '';
+var last_activity = '';
+var page_type = '';
 
 $.get({
 	url : site_url+'template/getLoading',
@@ -109,6 +112,7 @@ function loadDependencies(data){
 }
 
 $(document).ready(function(){
+	last_activity = moment();
 	update();
 
 	$('.clock').FlipClock({
@@ -121,6 +125,30 @@ $(document).ready(function(){
 			templater(site_url+'template/getNotifications','#notification_container',null,0,1,false);
 			//update();
 		}
+	})
+
+	//check window last activity
+	$(document).click(function(){
+		reload = false;
+		now = moment();
+		difference = (now.subtract(last_activity,'seconds'));
+		diff = difference.format('s');
+		url = site_url + 'api/get_'+page_type+'/'+app_name;
+		
+		/*$.get(url,function(res){
+			if(version != res.version){
+				reload = true;
+			}
+		});*/
+		
+		if(diff >= 7200){
+			reload = true;
+		}else{
+			last_activity = moment();
+		}
+
+		if(reload)
+			window.location.reload();
 	})
 });
 

@@ -9,6 +9,11 @@ class Api extends CI_Controller {
          $this->load->model('applications/swi_model');
     }
 
+    public function get_app($app)
+    {
+        echo json_encode($this->db->get_where('apps',array('method_name'=>$app))->row());
+    }
+
     public function get_dashboard_chart()
     {
         $year = date('Y');

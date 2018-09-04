@@ -15,9 +15,10 @@ class Swi_model extends XPO_Model {
 		$m = ($m ? $m : date('m'));
 		$this->today = new DateTime;
 		$this->from = new DateTime(date($y.'-'.$m.'-01'.' 00:00:00'));
-		$this->to = new DateTime(date($y.'-'.$m.'-t'.' 23:59:59'));
-		$this->ffrom = $this->from->format('Y-m-d H:i:s');
-		$this->fto = $this->to->format('Y-m-d H:i:s');
+		$this->to = new DateTime(date($y.'-'.$m.'-01'.' 00:00:00'));
+		$this->to = $this->to->modify('last day of this month');
+		$this->ffrom = $this->from->format('Y-m-d 00:00:00');
+		$this->fto = $this->to->format('Y-m-d 23:59:59');
 	}
 
 	public function setDepartment($dept_id)
@@ -48,7 +49,7 @@ class Swi_model extends XPO_Model {
 		if($id){
 			$this->db->where('doc_id',$id);
 		}
-
+		$this->db->where('deleted',0);
 		$process = $this->db->get('swi_processes');
 		$process = $process->result();
 		return $process;
@@ -116,30 +117,70 @@ class Swi_model extends XPO_Model {
 		$this->db->where_in('doc_id',$id);
 		$this->db->update('swi_processes');
 
-		$tables = array('swi_process_assignment','swi_document_assignment');
+		$this->db->set('deleted',1);
 		$this->db->where_in('doc_id',$id);
-		$this->db->delete($tables);
+		$this->db->update('swi_process_assignment');
+
+		$this->db->set('deleted',1);
+		$this->db->where_in('doc_id',$id);
+		$this->db->update('swi_document_assignment');
 	}
 
 	public function save_process($data,$save=false)
 	{
+		var_dump($data);
 		if($save){
-			$this->db->where('doc_id',$data['doc_id']);
-			$this->db->delete('swi_processes');
-		}
+			$this->db->where('deleted',0);
+			$existing = $this->db->get_where('swi_processes',array('doc_id'=>$data['doc_id']))->result_array();
+			$existing_process = array_column($existing,'process_id');
 
-		for($x=0;$x<count($data['process']);$x++){
-			$insert_process[] = array(
+			for($x=0;$x<count($data['process_id']);$x++){
+				if(in_array($data['process_id'][$x],$existing_process)){
+					$update[] = array(
+									'process_id' => $data['process_id'][$x],
+									'process' => $data['process'][$x],
+									'principle_id' => $data['principle'][$x],
+									'modified_on' => date('Y-m-d H:i:s'),
+									'modified_by' => $this->session->userdata('user_id')
+								);
+					$key = array_search($data['process_id'][$x],$existing_process);
+					unset($existing_process[$key]);
+				}else{
+					$insert[] = array(
 									'process' => $data['process'][$x],
 									'principle_id' => $data['principle'][$x],
 									'doc_id' => $this->doc_id,
 									'added_on' => date('Y-m-d H:i:s'),
-									'added_by' => 2,
+									'added_by' => $this->session->userdata('user_id'),
 									'deleted' => 0
 									);
+				}
+			}
+			if($existing_process){
+				$this->db->set('deleted',1);
+				$this->db->where_in('process_id',$existing_process);
+				$this->db->update('swi_processes');
+			}
+			if($update){
+				$this->db->update_batch('swi_processes',$update,'process_id');	
+			}
+			
+			if($insert){
+				$this->db->insert_batch('swi_processes',$insert);
+			}
+		}else{
+			for($x=0;$x<count($data['process']);$x++){
+				$insert[] = array(
+							'process' => $data['process'][$x],
+							'principle_id' => $data['principle'][$x],
+							'doc_id' => $this->doc_id,
+							'added_on' => date('Y-m-d H:i:s'),
+							'added_by' => $this->session->userdata('user_id'),
+							'deleted' => 0
+							);
+			}
+			$this->db->insert_batch('swi_processes',$insert);
 		}
-
-		$this->db->insert_batch('swi_processes',$insert_process);
 	}
 
 	public function get_unique_process()
@@ -154,34 +195,45 @@ class Swi_model extends XPO_Model {
 	{
 		$completed = 0;
 		$reported = 0;
+		$deprecation = 0;
 		$standard_met = 0;
 		$unassigned = 0;
 
 		$this->db->join('swi_documents','swi_documents.doc_id = swi_document_assignment.doc_id');
 		$this->db->where('assigned_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
-		$this->db->or_where('completed_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
-		$this->db->or_where('swi_document_assignment.modified_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
+		$this->db->where('swi_documents.deleted',0);
+		$this->db->where('swi_document_assignment.deleted',0);
+		$this->db->where('(completed_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
+		$this->db->or_where('swi_document_assignment.modified_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'")');
 		$documents = $this->db->get('swi_document_assignment')->result();
-
+		//echo $this->db->last_query();
 		foreach($documents as $doc)
 		{
 			if($doc->status != 'pending'){
 				$completed++;
 
-				if($doc->result == 1)
-					$reported++;
-
-				if($doc->result == 0)
-					$standard_met++;
+				switch($doc->result){
+					case 1:
+						$reported++;
+						break;
+					case 3:
+						$deprecation++;
+						break;
+					default:
+						$standard_met++;
+						break;	
+				}
 			} //anything not pending is completed
 
 			if($doc->result == 2)
 				$unassigned++;
 		}
-
+		
 		$this->db->select('COUNT(doc_id) as docs');
-		$docs = $this->db->get_where('swi_documents',array('deleted'=>0))->row();
-
+		$this->db->where('added_on < "'.$this->fto.'"');
+		$this->db->where('deleted',0);
+		$docs = $this->db->get('swi_documents')->row();
+		//echo $this->db->last_query();
 		//$pending = $docs->docs - ($completed + $unassigned);
 		$pending = $docs->docs - $completed;
 		$all_docs = (int)$docs->docs;
@@ -194,10 +246,11 @@ class Swi_model extends XPO_Model {
 					'standard_met' => $standard_met,
 					'documents' => $all_docs,
 					'pending' => $pending,
+					'deprecation' => $deprecation,
 					'unassigned' => $unassigned,
 					'year' => $this->from->format('Y'),
 					'month' => $this->from->format('F'),
-					'days_left' => ($days_left->invert ? 0 : $days_left->d),
+					'days_left' => ($days_left->invert ? 0 : $days_left->d + 1),
 					'days_total' => (int)$this->to->format('d'),
 					'departments' => $this->summary_department(),
 					'recents' => $this->recently_audited()
@@ -237,8 +290,9 @@ class Swi_model extends XPO_Model {
 		$query = "SELECT department_id,department, count(completed_on) as completed, count(assigned_on) as total
 					FROM athena.swi_document_assignment
 					JOIN swi_documents ON swi_document_assignment.doc_id = swi_documents.doc_id
-					JOIN departments on swi_documents.dept_id = departments.department_id
-					WHERE assigned_on BETWEEN '".$this->ffrom."' AND '".$this->fto."'
+					JOIN departments ON swi_documents.dept_id = departments.department_id
+					WHERE swi_document_assignment.deleted = 0
+					AND assigned_on BETWEEN '".$this->ffrom."' AND '".$this->fto."'
 					GROUP BY dept_id";
 
 		$departments = $this->db->query($query)->result_array();
@@ -440,6 +494,7 @@ class Swi_model extends XPO_Model {
 
 	public function get_document_report($y=null,$m=null)
 	{
+		$this->db->where('swi_document_assignment.deleted',0);
 		$this->db->where('assigned_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
 		$this->db->or_where('swi_document_assignment.modified_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
 
@@ -537,8 +592,10 @@ class Swi_model extends XPO_Model {
 
 	public function save_input_swi($data)
 	{
-		if(in_array('bad',$data['standard']) || in_array('na',$data['standard'])){
+		if(in_array('bad',$data['standard'])){
 			$status = 1;
+		}elseif(!in_array('bad',$data['standard']) && in_array('na',$data['standard'])){
+			$status = 3;
 		}else{
 			$status = 0;
 		}
@@ -589,14 +646,13 @@ class Swi_model extends XPO_Model {
 
 	public function delete_assignment($id='all')
 	{
-		if(count($wheres)){
-			foreach($wheres as $value){
-				$this->db->where($value);
-			}
-		}
+		$this->db->set('deleted',1);
 		$this->db->where_in($ids);
-		$tables = array('swi_process_assignment','swi_document_assignment');
-		$this->db->delete($tables);
+		$this->db->update('swi_process_assignment');
+
+		$this->db->set('deleted',1);
+		$this->db->where_in($ids);
+		$this->db->update('swi_document_assignment');
 	}
 
 	public function unassign_assignment($id='all')

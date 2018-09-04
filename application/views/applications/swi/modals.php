@@ -124,6 +124,7 @@
                   <tr id="edit_process">
                     <td class="border-0">
                       <input type="text" class="form-control form-control-sm text-input process" name="process[]" placeholder="Enter process" autocomplete="off">
+                      <input type="hidden" name="process_id[]" value=""/>
                     </td>
                     <td class="border-0" style='width: 35%'>
                       <?= createDropdown('principle[]','swi_principles','principle','',[],'form-control form-control-sm'); ?>
@@ -382,8 +383,8 @@
           <div class="col">
             <label>Month</label>
             <select id="dataset_month" class="form-control">
-              <option value="07">July</option>
               <option value="08">August</option>
+              <option value="09">September</option>
             </select>
           </div>
         </div>
