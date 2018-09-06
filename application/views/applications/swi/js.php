@@ -138,7 +138,8 @@
 	   		standard_met = (chart.data.datasets[0].data[0] ? chart.data.datasets[0].data[0] : 0);
 	   		deprecation = (chart.data.datasets[0].data[1] ? chart.data.datasets[0].data[1] : 0);
 	   		reported = (chart.data.datasets[0].data[2] ? chart.data.datasets[0].data[2] : 0);
-	   		total = standard_met + deprecation + reported;
+	   		pending = (chart.data.datasets[0].data[3] ? chart.data.datasets[0].data[3] : 0);
+	   		total = standard_met + deprecation + reported + pending;
 	   		if(standard_met){
 	   			doughnut_text = Math.ceil(standard_met / total * 100) + '%';
 	   		}else{
