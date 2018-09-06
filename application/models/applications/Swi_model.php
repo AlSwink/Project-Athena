@@ -626,23 +626,31 @@ class Swi_model extends XPO_Model {
 
 	public function mass_update_process()
 	{
-		$swis = $this->get_swi();
-		$process = $this->get_process(193);
-		
+		$this->db->join('swi_documents','swi_documents.doc_id = swi_document_assignment.doc_id');
+		$this->db->join('departments','departments.department_id = swi_documents.dept_id');
+		$this->db->where_in('dept_id',array(2,7));
+		$this->db->where('assigned_on > "2018-09-01 00:00:00"');
+		$swis = $this->db->get('swi_document_assignment')->result();
+		$process = $this->get_process(197);
+		echo '<pre>';
+		//var_dump($swis);
 		foreach($swis as $swi){
 			foreach($process as $p){
 				$insert_batch[] = array(
-									'process' => $p->process,
-									'principle_id' => $p->principle_id,
+									'assignment_id' => $swi->assignment_id,
+									'process_id' => $p->process_id,
 									'doc_id' => $swi->doc_id,
 									'added_on' => date('Y-m-d H:i:s'),
-									'added_by' => 2,
+									'added_by' => 3,
 									'deleted' => 0
 									);
 			}
+			$this->db->insert_batch('swi_process_assignment',$insert_batch);
 		}
-		$this->db->truncate('swi_processes');
-		$this->db->insert_batch('swi_processes',$insert_batch);
+
+		//var_dump($insert_batch);
+
+		
 	}
 
 	public function delete_assignment($id='all')

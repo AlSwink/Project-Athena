@@ -33,7 +33,7 @@ class Tools extends CI_Controller {
     public function reprint_nf($standalone=false){
         $data['tool_info'] = $this->Tools_model->get_tool_info('reprint_nf');
         $data['page'] = 'tools/reprint_nf';
-
+        
         if($standalone){
             $this->load->view('page',$data);
         }else{

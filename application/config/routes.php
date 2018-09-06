@@ -74,7 +74,9 @@ $route['swi/assign_documents/(:any)'] = 'apps/swi/assign_documents/$1';
 $route['health_check'] = 'applications/system_health_check';
 $route['health_check/standalone'] = 'applications/system_health_check/1';
 $route['health_check/(:any)'] = 'apps/system_health_check/$1';
-
+//argus routes
+$route['argus'] = 'applications/argus';
+$route['argus/standalone'] = 'applications/argus/1';
 //referral routes
 $route['referral/(:any)/(:any)'] = 'redirect/referral/$1/$2';
 

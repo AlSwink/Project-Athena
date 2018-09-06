@@ -263,16 +263,16 @@
 		return json_encode($loading);
 	}
 
-	function loadSubTemplate($pages)
+	function loadSubTemplate($pages,$data=null)
 	{
 		$ci =&get_instance();
 
 		if(is_array($pages)){
 			foreach($pages as $page){
-				$ci->load->view($ci->page_dir.'/'.$page);	
+				$ci->load->view($ci->page_dir.'/'.$page,$data);	
 			}
 		}else{
-			$ci->load->view($ci->page_dir.'/'.$pages);
+			$ci->load->view($ci->page_dir.'/'.$pages,$data);
 		}
 	}
 

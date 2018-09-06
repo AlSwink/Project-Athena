@@ -66,7 +66,7 @@
 					</div>
 					<div class="col-6">
 						<h6>Progress by Department</h6>
-						<table id="department_progress_table" class="table table-sm table-bordered table-hover">
+						<table id="department_progress_table" class="table table-sm table-bordered table-hover rounded">
 							<?php foreach($totals['departments'] as $key => $dept){ ?>
 								<tr class="dashrow dashrow_<?= $key; ?> dept_progress" data-deptid="<?= $dept['dept']; ?>" data-dept="<?= $key; ?>">
 									<td><?= $key; ?></td>
