@@ -1,8 +1,8 @@
 <div class="row mt-3">
-	<div class="col-4">
+	<div class="col-lg-4 col-sm-12">
 		<input id="search_swi" type="text" class="form-control form-control-sm text-input" placeholder="Search SWI document">
 	</div>
-	<div class="col-8 text-right">
+	<div class="col-lg-8 col-sm-12 text-right">
 		<div class="btn-group">
 			<button type="button" class="btn btn-info" data-toggle="modal" data-target="#add_swi_document"><i class="fas fa-plus-square"></i></button>
 			<button id="edit" type="button" data-toggle="modal" data-target="#edit_swi_document" class="btn btn-info" disabled><i class="fas fa-edit"></i></button>
@@ -13,7 +13,7 @@
 	</div>
 </div>
 <div class="row mt-2">
-	<div class="col">
+	<div class="col-lg-12 col-sm-12">
 		<div class="card shadow">
 			<div class="card-body">
 				<table class="table table-sm table-bordered table-hover dtable">

@@ -1,5 +1,5 @@
 <div class="row mt-3">
-	<div class="col-3">
+	<div class="col-lg-3 col-sm-12">
 		<div class="card text-white bg-info">
 			<div class="card-header">
 	  			<i class="fas fa-bars"></i> Report Types
@@ -20,7 +20,7 @@
 			</ul>
 		</div>
 	</div>
-	<div class="col-9">
+	<div class="col-lg-9 col-sm-12">
 		<div class="tab-content">
 			<div class="tab-pane show active" id="report_documents">
 				<?php loadSubTemplate('swi_reports_documents'); ?>

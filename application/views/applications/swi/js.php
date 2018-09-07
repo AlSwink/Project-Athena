@@ -360,6 +360,7 @@
 		        	}
 		        }
 			],
+			responsive: true,
 		    scrollY:        '50vh',
 		    deferRender:    false,
 		    scroller: {

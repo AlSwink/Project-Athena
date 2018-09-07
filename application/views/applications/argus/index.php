@@ -1,18 +1,18 @@
 <div class="container-fluid">
 	<?= loadInclude('app_container_control',$this->app_info); ?>
-	<div class="row">
-		<div class="col-6">
-			<div class="form-group">
-				<label>Search WR/Shipment</label>
-				<input type="text" class="form-control"/>
-			</div>
+	<ul class="nav nav-tabs d-none" id="tabs" role="tablist">
+	  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#shipment_list" >Shipment List</a></li>
+	  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#verification_sheet" >Verification</a></li>
+	</ul>
+	<div class="tab-content">
+		<div id="shipment_list" class="tab-pane active">
+			<?php loadSubTemplate('argus_shipment_list'); ?>
 		</div>
-		<div class="col">
-			
+		<div id="verification_sheet" class="tab-pane">
+			<?php loadSubTemplate('argus_verification_sheet'); ?>
 		</div>
 	</div>
-	<?php loadSubTemplate('argus_shipment_list'); ?>
 </div>
 <?php
-	loadSubTemplate('js/index');
+	loadSubTemplate(['modals','js/index','js/start','js/verification']);
 ?>

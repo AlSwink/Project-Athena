@@ -6,5 +6,6 @@
 	<body onLoad="">
 		<?php $this->load->view($this->page); ?>
 		<?php $this->load->view('includes/bootstrap'); ?>
+		<?php $this->load->view('includes/hermes'); ?>
 	</body>
 </html>

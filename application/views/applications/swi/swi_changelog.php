@@ -5,6 +5,15 @@
 		</div>
 	</div>
 	<div class="col-lg-12">
+		<h3>As of 09/07/2018 <small>v0.4.9a</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-secondary">Changed</span> Page layout has been updated to display better on mobile devices.</li>
+			<li><span class="badge bg-secondary">Fixed</span> Corrected standard met calculation after the addition of deprecation status.</li>
+			<li><span class="badge bg-success">New</span> Added NodeJs in preparation for real-time requests.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
 		<h3>As of 09/04/2018 <small>v0.4.9</small></h3>
 		Changes made:
 		<ul>

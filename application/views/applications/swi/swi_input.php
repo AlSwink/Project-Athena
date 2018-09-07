@@ -3,7 +3,7 @@
 <?php } ?>
 <div class="container-fluid d-print-none">
 	<div class="row mt-3">
-		<div class="col-3">
+		<div class="col-lg-3 col-sm-12">
 			<label>Assignment ID</label><br>
 			<div class="input-group mb-3">
 			  <input type="text" id="assignment_id" class="form-control alpha-no" placeholder="check the top left corner of the sheet">

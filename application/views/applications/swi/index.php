@@ -2,7 +2,7 @@
 <div class="container-fluid d-print-none">
 	<?= loadInclude('app_container_control',$this->app_info); ?>
 	<div class="row mt-2">
-		<div class="col">
+		<div class="col col-sm-12">
 			<ul class="nav nav-tabs nav-fill dashboard_tabs">
 				<li class="nav-item  ">
 			    	<a class="nav-link active" data-toggle="tab" href="#swi_dash"><i class="fas fa-tachometer-alt"></i>  Dashboard</a>

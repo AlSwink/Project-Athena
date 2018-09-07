@@ -1,5 +1,5 @@
 <div class="row mt-3">
-	<div class="col-3">
+	<div class="col-lg-3 col-sm-12">
 		<h5 class="display-5">Table of Contents</h5>
 		<hr>
 		<div id="table_of_contents" class="list-group">
@@ -7,7 +7,7 @@
 		  <a class="list-group-item list-group-item-action" href="#dept_ids">Department IDs</a>
 		</div>
 	</div>
-	<div class="col" data-spy="scroll" data-target="#table_of_contents" data-offset="0">
+	<div class="col-lg-9 col-sm-12" data-spy="scroll" data-target="#table_of_contents" data-offset="0">
 		<div id="overview">
 			<h5>Overview</h5>
 			<p>The objective of this application is to help ensure our SWI's are updated and is being properly followed. The application will also manage SWI documents and convert them to a more trackable data.</p>

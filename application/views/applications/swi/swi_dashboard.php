@@ -1,5 +1,5 @@
 <div class="row mt-3">
-	<div class="col-3">
+	<div class="col-lg-3 col-sm-12">
 		<div class="card text-white bg-info">
 		  <div class="card-header">
 		  	<i class="fas fa-wrench"></i> Quick Controls
@@ -19,24 +19,24 @@
 			</ul>
 		</div>
 	</div>
-	<div class="col-9">
+	<div class="col-lg-9 col-sm-12">
 		<div class="card shadow">
 			<div class="card-body">
 				<div class="row">
-					<div class="col text-center">
+					<div class="col-lg-12 col-sm-12 text-center">
 						<h5 class="display-5"><span class="my-display"><?= date('F Y'); ?></span> Overview</h5>
 					</div>
 				</div>
 				<hr>
 				<div class="row">
-					<div class="col">
-						<canvas id="days_prog" height="200px" style="position:absolute;bottom:0"></canvas>
+					<div class="col-lg-4 col-sm-12">
+						<canvas id="days_prog" height="200px"></canvas>
 					</div>
-					<div class="col">
+					<div class="col-lg-4 col-sm-12">
 						<canvas id="doc_prog" height="235px"></canvas>
 					</div>
-					<div class="col">
-						<canvas id="standard_acc" height="200px" style="position:absolute;bottom:0"></canvas>
+					<div class="col-lg-4 col-sm-12">
+						<canvas id="standard_acc" height="200px"></canvas>
 					</div>
 				</div>
 			</div>
@@ -48,23 +48,25 @@
 		<div class="card shadow">
 			<div class="card-body">
 				<div class="row">
-					<div class="col-6">
+					<div class="col-lg-6 col-sm-12">
 						<h6>Recently Audited</h6>
-						<table id="recently_audited_table" class="table table-sm table-bordered table-hover">
-							<?php foreach($totals['recents'] as $recent){ ?>
-								<tr class="table-<?= $recent['color']; ?> rdtablemenu">
-									<td class="d-none"><?= $recent['assignment_id']; ?></td>
-									<td><?= $recent['doc_id']; ?></td>
-									<td><?= $recent['doc_name']; ?></td>
-									<td><?= $recent['department']; ?></td>
-									<td><?= $recent['status']; ?></td>
-									<td><span class='rdempdetails' data-empid='<?= $recent['emp_id'];?>'><?= $recent['completed_by']; ?></span></td>
-									<td><?= $recent['completed_on']; ?></td>
-								</tr>
-							<?php } ?>
-						</table>
+						<div class="table-responsive">
+							<table id="recently_audited_table" class="table table-sm table-bordered table-hover">
+								<?php foreach($totals['recents'] as $recent){ ?>
+									<tr class="table-<?= $recent['color']; ?> rdtablemenu">
+										<td class="d-none"><?= $recent['assignment_id']; ?></td>
+										<td><?= $recent['doc_id']; ?></td>
+										<td><?= $recent['doc_name']; ?></td>
+										<td><?= $recent['department']; ?></td>
+										<td><?= $recent['status']; ?></td>
+										<td><span class='rdempdetails' data-empid='<?= $recent['emp_id'];?>'><?= $recent['completed_by']; ?></span></td>
+										<td><?= $recent['completed_on']; ?></td>
+									</tr>
+								<?php } ?>
+							</table>
+						</div>
 					</div>
-					<div class="col-6">
+					<div class="col-lg-6 col-sm-12">
 						<h6>Progress by Department</h6>
 						<table id="department_progress_table" class="table table-sm table-bordered table-hover rounded">
 							<?php foreach($totals['departments'] as $key => $dept){ ?>
