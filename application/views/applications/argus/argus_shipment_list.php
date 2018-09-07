@@ -24,7 +24,7 @@
 		  </div>
 		</div>
 	</div>
-	<div class="col-12 mb-1" data-shipment="WR15892565">
+	<div class="col-12 mb-1 shipment_item" data-shipment="WR15892565" data-stage="verified">
 		<div class="card text-white" style="background-color: #872f2f">
 		  <div class="card-body">
 		  	<?php $data['stage'] = array('started','verified'); ?>
@@ -41,7 +41,7 @@
 		  </div>
 		</div>
 	</div>
-	<div class="col-12 mb-1" data-shipment="WR87987458">
+	<div class="col-12 mb-1 shipment_item" data-shipment="WR87987458" data-stage="verification">
 		<div class="card text-white" style="background-color: #872f2f">
 		  <div class="card-body">
 		  	<?php $data['stage'] = array('started'); ?>
@@ -58,7 +58,7 @@
 		  </div>
 		</div>
 	</div>
-	<div class="col-12 mb-1" data-shipment="14878999987">
+	<div class="col-12 mb-1 shipment_item" data-shipment="14878999987" data-stage="verified">
 		<div class="card text-white" style="background-color: #135458">
 		  <div class="card-body">
 		  	<?php $data['stage'] = array('started','verified'); ?>
@@ -75,7 +75,7 @@
 		  </div>
 		</div>
 	</div>
-	<div class="col-12 mb-1" data-shipment="15787899363">
+	<div class="col-12 mb-1 shipment_item" data-shipment="15787899363" data-stage="ship_complete">
 		<div class="card text-white" style="background-color: #135458">
 		  <div class="card-body">
 		  	<?php $data['stage'] = array('started','verified','loaded','signed','released'); ?>

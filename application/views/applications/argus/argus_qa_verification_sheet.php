@@ -1,7 +1,7 @@
-<input id="verify_shipment_id" type="hidden" class="shipment_val"/>
+<input id="verify2_shipment_id" type="hidden" class="shipment_val"/>
 <div class="row">
 	<div class="col">
-		<h4>Verification Sheet</h4>
+		<h4>QA Verification</h4>
 	</div>
 </div>
 <div class="row mb-1">
@@ -17,6 +17,10 @@
 			</tr>
 			<tr>
 				<td>Loader</td>
+				<td><?= $this->session->userdata('user_info')['fname'].' '.$this->session->userdata('user_info')['lname']; ?></td>
+			</tr>
+			<tr>
+				<td>QA</td>
 				<td><?= $this->session->userdata('user_info')['fname'].' '.$this->session->userdata('user_info')['lname']; ?></td>
 			</tr>
 			<tr>
@@ -38,7 +42,7 @@
 		</table>
 		<div class="btn-group w-100">
 			<button type="button" class="cancel_verification_btn btn btn-secondary w-50">Cancel</button>
-			<button id="ready_qa_btn" type="button" class="btn btn-success w-50">Ready for QA <i class="fas fa-check"></i></button>
+			<button id="verified_btn" type="button" class="btn btn-success w-50">Verified <i class="fas fa-check"></i></button>
 		</div>
 	</div>
 </div>
@@ -55,10 +59,16 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td><input type="text" class="form-control form-control-sm"/></td>
-					<td><input type="text" class="form-control form-control-sm"/></td>
-					<td><input type="text" class="form-control form-control-sm"/></td>
-					<td><input type="text" class="form-control form-control-sm"/></td>
+					<td>WR123456789</td>
+					<td>16789489852</td>
+					<td>1</td>
+					<td>30</td>
+					<td>
+						<div class="btn-group">
+							<button type="button" class="btn btn-success"><i class="fas fa-check"></i></button>
+							<button type="button" class="btn btn-danger"><i class="fas fa-times"></i></button>
+						</div>
+					</td>
 				</tr>
 			</tbody>
 		</table>
