@@ -52,6 +52,16 @@ class Applications extends CI_Controller {
         loadView($argus);
     }
 
+    public function cycle_count(){
+         $cyc = array(
+                    'dependencies' => array(
+                                        'js'    => array('chart.min')
+                                        )
+                );
+         
+        loadView($cyc);
+    }
+
     public function system_health_check(){
         $shc = array(
                     'intervals' => $this->model->getIntervals(),

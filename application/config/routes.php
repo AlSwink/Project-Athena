@@ -79,7 +79,9 @@ $route['argus'] = 'applications/argus';
 $route['argus/standalone'] = 'applications/argus/1';
 //referral routes
 $route['referral/(:any)/(:any)'] = 'redirect/referral/$1/$2';
-
+//cycle_count routes
+$route['cycle_count'] = 'applications/cycle_count';
+$route['cycle_count/standalone'] = 'applications/cycle_count/1';
 //api
 $route['test'] = 'api/test';
 
