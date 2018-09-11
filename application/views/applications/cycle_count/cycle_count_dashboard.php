@@ -9,7 +9,7 @@
 			</div>
 			<div class="row">
 				<div class="col">
-					<div class="progress progress-bar-vertical" style="width: 100%;height: 70%">
+					<div class="progress progress-bar-vertical" style="width: 100%;height: 65%">
 						<div class="progress-bar progress-bar-striped bg-success"  style="height: 43%"><h4>43%</h4></div>
 					</div>
 				</div>
@@ -48,13 +48,13 @@
 				<div class="col">
 					<div class="row text-center">
 						<div class="col-4">
-							<canvas id="netvsabs" height="250px"></canvas>
+							<canvas id="netvsabs" height="225px"></canvas>
 						</div>
 						<div class="col-4">
-							<canvas id="netpercentage" height="250px"></canvas>
+							<canvas id="netpercentage" height="225px"></canvas>
 						</div>
 						<div class="col-4">
-							<canvas id="abspercentage" height="250px"></canvas>
+							<canvas id="abspercentage" height="225px"></canvas>
 						</div>
 					</div>
 				</div>

@@ -20,6 +20,15 @@
     transition: height 0.6s ease;
   }
 
+  .nav-tabs .nav-link:not(.active){
+    border: 1px solid #e9ecef !important;
+    color: #495057;
+  }
+
+  .nav-tabs .active{
+    color: red !important;
+  }
+
   .smaller{
     font-size: 25px;
     color: #969696;
@@ -29,4 +38,6 @@
     font-size: 17px;
     color: #969696;
   }
+
+
 </style>

@@ -3,6 +3,10 @@
 	<div class="row mt-2">
 		<div class="col col-sm-12">
 			<ul class="nav nav-tabs nav-fill">
+				<li class="nav-item ">
+					<a class="nav-link active"><b><i class="fas fa-warehouse"></i> DC - KNT</b></a></li>
+			</ul>
+			<ul class="nav nav-tabs nav-fill">
 				<li class="nav-item">
 			    	<a class="nav-link active" data-toggle="tab" href="#cyc_dash"><i class="fas fa-tachometer-alt"></i>  Dashboard</a>
 			  	</li>
@@ -20,10 +24,10 @@
 	</div>
 	<div class="row">
 		<div class="tab-content col">
-			<div class="tab-pane " id="cyc_dash" role="tabpanel">
+			<div class="tab-pane active" id="cyc_dash" role="tabpanel">
 				<?= loadSubTemplate('cycle_count_dashboard'); ?>
 			</div>
-			<div class="tab-pane active" id="cyc_controls" role="tabpanel">
+			<div class="tab-pane " id="cyc_controls" role="tabpanel">
 				<?= loadSubTemplate('cycle_count_controls'); ?>
 			</div>
 			<div class="tab-pane" id="cyc_logs" role="tabpanel">
