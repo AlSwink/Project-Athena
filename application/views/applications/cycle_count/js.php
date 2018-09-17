@@ -237,7 +237,14 @@
 		$('.r2_progress').html(data.r2_today.progress);
 	}
 
-	$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {		
+	$(document).ready(function(){
+		app_name = '<?= $method = $this->router->fetch_method(); ?>';
+		page_type = 'app';
+		version = $('#app_version').html();
+	});
+
+
+	$('a[data-toggle="tab"],a[data-toggle="pill"]').on('shown.bs.tab', function (e) {		
 		$.fn.dataTable.tables({visible: true, api: true}).columns.adjust();
 	})
 

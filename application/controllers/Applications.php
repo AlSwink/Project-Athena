@@ -56,7 +56,7 @@ class Applications extends CI_Controller {
          $cyc = array(
                     'totals' => $this->model->getTotals('KNK'),
                     'dependencies' => array(
-                                        'js'    => array('chart.min')
+                                        'js'    => array('hermes','chart.min','jquery-barcode.min')
                                         )
                 );
 

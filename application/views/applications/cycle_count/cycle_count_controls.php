@@ -21,10 +21,10 @@
 	</div>
 	<div class="col-9">
 		<div class="tab-content">
-			<div class="tab-pane " id="round_controls">
+			<div class="tab-pane active" id="round_controls">
 				<?= loadSubTemplate('cycle_count_round_control'); ?>
 			</div>
-			<div class="tab-pane active" id="generate_locations">
+			<div class="tab-pane " id="generate_locations">
 				<?= loadSubTemplate('cycle_count_generate_location'); ?>
 			</div>
 		</div>

@@ -1,0 +1,8 @@
+//hermes commands can be executed by clicking the lifesaver icon on the top right corner of every application.
+//It also serves as a live IT support.
+
+//globally enabled commands
+/refresh-[app_method] //refresh any page that has the method provided in app_method field. eg. /refresh-swi
+
+//argus related commands
+/do-argus-[stage]-[shipment] //dummy real-time stage update for argus stages are as follows [started,ready_qa,verified,loading,loaded,release,ship_completed] eg. /do-argus-ready_qa-WR01535889
