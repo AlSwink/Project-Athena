@@ -39,5 +39,17 @@
     color: #969696;
   }
 
+  .bbr-0{
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+
+  th{
+    font-size: 11px !important;
+  }
+
+  td{
+    font-size: 10px !important;
+  }
 
 </style>

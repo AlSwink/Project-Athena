@@ -6,7 +6,8 @@ class Api extends CI_Controller {
 	public function __construct()
     {
         parent::__construct();
-         $this->load->model('applications/swi_model');
+        $this->load->model('applications/swi_model');
+        $this->load->model('applications/Cycle_count_model');
     }
 
     public function get_app($app)
@@ -79,5 +80,13 @@ class Api extends CI_Controller {
         $printable = $this->load->view('page_printer',$print,TRUE);
 
         echo json_encode($page);
+    }
+
+    public function getCycToday($dataset='KNK')
+    {
+        $this->Cycle_count_model->dataset = $dataset;
+        $this->Cycle_count_model->setShift();
+        $data = $this->Cycle_count_model->getCycToday();
+        echo json_encode($data);
     }
 }

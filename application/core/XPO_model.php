@@ -7,6 +7,8 @@ class XPO_Model extends CI_Model {
   protected $firstdayofmonth;
 	public $site_name;
   public $user_id;
+  public $wms;
+  public $wms_test;
 
   function __construct()
   {
@@ -22,9 +24,12 @@ class XPO_Model extends CI_Model {
       if($this->session->userdata('user_id') != ''){
         $this->user_id =  $this->session->userdata('user_id');
       }
-
+      
       $this->firstdayofmonth = date('Y-m-01 00:00:00');
       $this->lastdayofmonth = date('Y-m-t 23:59:59');
+
+      $this->wms = $this->load->database('wms',TRUE);
+      $this->wms_test = $this->load->database('wms_test',TRUE);
   }
 
   public function getSetting($key)

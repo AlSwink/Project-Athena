@@ -282,4 +282,20 @@
 		$ci->load->view('includes/'.$page,$param);
 	}
 
+	function getShift($type)
+  	{
+    	$now = date('H:i:s');
+    	if($now > '06:00:00' AND $now < '17:00:00'){
+    		$shift['start'] = date('Y-m-d 05:00:00');
+    		$shift['end'] = date('Y-m-d 16:59:59');
+	      	$shift['display'] = '1st';
+	    }else{
+	    	$shift['start'] = date('Y-m-d 17:00:00');
+    		$shift['end'] = date('Y-m-d 04:59:59');
+	     	$shift['display'] = '2nd';
+	    }
+
+	    return $shift[$type];
+  	}
+
 ?>

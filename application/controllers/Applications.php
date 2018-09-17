@@ -54,11 +54,12 @@ class Applications extends CI_Controller {
 
     public function cycle_count(){
          $cyc = array(
+                    'totals' => $this->model->getTotals('KNK'),
                     'dependencies' => array(
                                         'js'    => array('chart.min')
                                         )
                 );
-         
+
         loadView($cyc);
     }
 
