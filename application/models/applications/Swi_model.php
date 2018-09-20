@@ -128,7 +128,6 @@ class Swi_model extends XPO_Model {
 
 	public function save_process($data,$save=false)
 	{
-		var_dump($data);
 		if($save){
 			$this->db->where('deleted',0);
 			$existing = $this->db->get_where('swi_processes',array('doc_id'=>$data['doc_id']))->result_array();
@@ -529,11 +528,10 @@ class Swi_model extends XPO_Model {
 			$final[$x]['doc_name'] = $docs[$x]->doc_name;
 
 			for($y=01;$y<=12;$y++){
-				$cm_start = new DateTime(date('Y-'.$y.'-01 00:00:00'));
-				$cm_end = new DateTime(date('Y-'.$y.'-t 23:59:59'));
+				$cm = new DateTime(date('Y-'.$y.'-01 00:00:00'));
 
 				$this->db->join('employees','employees.user_id = swi_document_assignment.user_id','LEFT');
-				$this->db->where('assigned_on BETWEEN "'.$cm_start->format('Y-m-d H:i:s').'" AND "'.$cm_end->format('Y-m-d H:i:s').'"');
+				$this->db->where('assigned_on BETWEEN "'.$cm->format('Y-m-d 00:00:00').'" AND "'.$cm->format('Y-m-t 23:59:59').'"');
 				$this->db->where('doc_id',$docs[$x]->doc_id);
 
 				$doc_month = $this->db->get('swi_document_assignment')->row();
@@ -542,13 +540,22 @@ class Swi_model extends XPO_Model {
 
 				if($doc_month)
 					if($doc_month->completed_on)
-						$val .= '<i class="fas fa-check-circle text-success"></i>';
-
-
+						switch($doc_month->result) {
+							case 0:
+								$val .= '<i class="fas fa-check-circle text-success"></i>';		
+								break;
+							case 1:
+								$val .= '<i class="fas fa-exclamation-circle text-danger"></i>';
+								break;
+							case 3:
+								$val .= '<i class="fas fa-exclamation-circle text-secondary"></i>';
+								break;
+						}
+						
 				if((int)$today_num == (int)$y){
 					$fname = (isset($doc_month->e_fname) ? $doc_month->e_fname : NULL);
 					$lname = (isset($doc_month->e_lname) ? $doc_month->e_lname : NULL);
-					$val .= ' '.$fname.' '.$lname;
+					//$val .= ' '.$fname.' '.$lname;
 
 					switch($doc_month->status){
 						case 'completed':
@@ -570,8 +577,6 @@ class Swi_model extends XPO_Model {
 											'value' => $val
 											);
 			}
-
-
 		}
 
 		$final_completed = ceil(($completed / $total) * 100);
@@ -595,6 +600,7 @@ class Swi_model extends XPO_Model {
 	{
 		if(in_array('bad',$data['standard'])){
 			$status = 1;
+			$this->insert_adjustment($data);
 		}elseif(!in_array('bad',$data['standard']) && in_array('na',$data['standard'])){
 			$status = 3;
 		}else{
@@ -632,7 +638,7 @@ class Swi_model extends XPO_Model {
 		$this->db->where('assigned_on > "2018-09-01 00:00:00"');
 		$swis = $this->db->get('swi_document_assignment')->result();
 		$process = $this->get_process(197);
-		echo '<pre>';
+		//echo '<pre>';
 		//var_dump($swis);
 		foreach($swis as $swi){
 			foreach($process as $p){
@@ -775,5 +781,10 @@ class Swi_model extends XPO_Model {
 				return 'ban';
 				break;
 		}
+	}
+
+	private function insert_adjustment($data)
+	{
+
 	}
 }

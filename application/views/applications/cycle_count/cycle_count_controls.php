@@ -9,7 +9,7 @@
 		  </div>
 		  	<ul class="list-group list-group-flush-nav">
 		  		<li class="nav-item">
-		  			<a href="#round_controls" class="nav-link bbr-0 list-group-item list-group-item-action list-group-item-secondary" data-toggle="pill"> <i class="fas fa-redo-alt"></i> Basic Controls</a>
+		  			<a href="#round_controls" class="nav-link list-group-item list-group-item-action list-group-item-secondary bbr-0" data-toggle="pill"> <i class="fas fa-redo-alt"></i> Basic Controls</a>
 		  		</li>
 		  		<li class="nav-item">
 			    	<a href="#generate_locations" class="nav-link list-group-item list-group-item-action list-group-item-secondary" data-toggle="pill"> <i class="fas fa-plus-circle"></i> Generate Locations</a>

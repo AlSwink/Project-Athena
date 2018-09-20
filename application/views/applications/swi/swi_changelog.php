@@ -5,6 +5,19 @@
 		</div>
 	</div>
 	<div class="col-lg-12">
+		<!-- not pushed -->
+		<h3>As of 09/19/2018 <small>v0.5.0</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-secondary">Changed</span> Progress board has been moved to a static controller that doesn't require logins.</li>
+			<li><span class="badge bg-success">New</span> Added global progress in progress board.</li>
+			<li><span class="badge bg-success">New</span> Added extra space for showing counter measures taken.</li>
+			<li><span class="badge bg-secondary">Changed</span> Icon's changed for progress board to reflect its result.</li>
+			<li><span class="badge bg-secondary">Fixed</span> Corrected standard met calculation after the addition of deprecation status.</li>
+			<li><span class="badge bg-success">New</span> Added NodeJs in preparation for real-time requests.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
 		<h3>As of 09/07/2018 <small>v0.4.9a</small></h3>
 		Changes made:
 		<ul>

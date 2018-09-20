@@ -111,7 +111,7 @@
 	    if(dividend && divisor){
 	    	chart_text = (100 - (dividend / divisor * 100)).toFixed(2)+'%';
 	    }else{
-	    	chart_text = '0%';
+	    	chart_text = '100%';
 	    }
 
 	    var text = chart_text;
@@ -149,20 +149,18 @@
 			},
 			columns : [
 				{ data: "loc" },
-		        { data: "sku" },
-		        { data: "pkg" },
 		        { data: "act_qty" },
-		        { data: "qty",
+		        { data: "qty" },
+		        { data: "r1_qty",
 		        	render: function(data,type,row,meta){
-		        		if(row.act_qty != row.r1_qty){
+		        		if(row.act_qty != row.qty){
 		        			sum = parseInt(row.act_qty) + parseInt(row.r1_qty);
 		        			return (sum ? sum : null);
 		        		}else{
-		        			return row.act_qty;
+		        			return null;
 		        		}
 		        	}
 		        },
-		        { data: "r1_qty" },
 		        { data: "r2_qty" },
 		        { data: "final",
 		        	render: function(data,type,row,meta){
@@ -171,7 +169,7 @@
 		        	}
 		        }
 			],
-		    scrollY:        '60vh',
+		    scrollY:        '45vh',
 		    order : [0,'asc'],
 		    scroller: {
 		    	loadingIndicator : true
@@ -218,7 +216,7 @@
 
 	gltable.on('select deselect',function(e,dt,type,indexes){
 		if(gltable.rows({selected:true}).data().length){
-			$('#generate_cycle_count').prop('disabled',false);
+			$('.start_cycle_count').prop('disabled',false);
 		}else{
 			$('#generate_cycle_count').prop('disabled',true);
 		}
@@ -235,6 +233,8 @@
 		$('.r2_assigned').html(data.r2_today.assigned);
 		$('.r2_progress').css('width',data.r2_today.progress);
 		$('.r2_progress').html(data.r2_today.progress);
+
+		cttable.ajax.reload();
 	}
 
 	$(document).ready(function(){
@@ -242,7 +242,6 @@
 		page_type = 'app';
 		version = $('#app_version').html();
 	});
-
 
 	$('a[data-toggle="tab"],a[data-toggle="pill"]').on('shown.bs.tab', function (e) {		
 		$.fn.dataTable.tables({visible: true, api: true}).columns.adjust();
@@ -303,7 +302,7 @@
 		});
 	});
 
-	$('#generate_cycle_count').click(function(){
+	$('#nike_cycle_count').click(function(){
 		url = '<?= site_url("cycle_count/insert_locations"); ?>/'+dataset;
 		selected = [];
 		selected_locs = gltable.rows({selected:true}).data();
@@ -317,13 +316,13 @@
 			dataType: 'json',
 			data: { post : selected },
 			beforeSend: function(){
-				startSubmit('#generate_cycle_count');
+				startSubmit('#nike_cycle_count');
 			},
 			success: function(res){
 				gltable.clear();
 			},
 			complete: function(){
-				endSubmit('#generate_cycle_count');
+				endSubmit('#nike_cycle_count');
 				gltable.draw();
 			}
 		});

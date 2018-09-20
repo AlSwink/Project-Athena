@@ -49,7 +49,7 @@
   }
 
   td{
-    font-size: 10px !important;
+    font-size: 10px;
   }
 
 </style>

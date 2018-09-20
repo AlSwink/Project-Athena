@@ -83,6 +83,9 @@
 		<div class="alert alert-warning">
 			 Select/Deselect locations that should be generated for cycle counting.
 		</div>
-		<button type="button" id="generate_cycle_count" disabled class="btn btn-success w-100">Generate Cycle Count <i class="fas fa-bolt"></i></button>
+		<div class="btn-group w-100">
+			<button type="button" id="nike_cycle_count" disabled class="btn btn-primary start_cycle_count w-100">Start Nike Cycle Count <i class="fas fa-bolt"></i></button>
+			<button type="button" id="internal_cycle_count" disabled class="btn btn-dark w-100">Start Internal Cycle Count <i class="fas fa-bolt"></i></button>
+		</div>
 	</div>
 </div>

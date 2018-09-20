@@ -23,21 +23,38 @@ class Cycle_count_model extends XPO_Model {
 
 		if($this->dataset == 'KNK'){
 			for($x=49;$x<64;$x++){
-				$rack_query = "SELECT TRIM(lc_f.loc) as loc, iv_f.sku, iv_f.pkg, pm_f.tariff_desc,iv_f.qty
+				$loc_query = "SELECT TRIM(lc_f.loc) as loc,SUM(qty) as qty
+								FROM lc_f 
+								LEFT JOIN iv_f ON iv_f.loc = lc_f.loc
+								WHERE lc_f.loc LIKE '".$x."%'
+								GROUP BY loc,qty
+								ORDER BY loc";
+
+				/*$rack_query = "SELECT TRIM(lc_f.loc) as loc, iv_f.sku, iv_f.pkg, pm_f.tariff_desc,iv_f.qty
 								FROM (lc_f LEFT JOIN iv_f ON lc_f.loc = iv_f.loc) LEFT JOIN pm_f ON (iv_f.pkg = pm_f.pkg) AND (iv_f.sku = pm_f.sku)
 								WHERE lc_f.loc LIKE '".$x."%'
-								ORDER BY lc_f.loc";
+								ORDER BY lc_f.loc";*/
 
-				$locs = $this->wms->query($rack_query)->result_array();
+				$locs = $this->wms->query($loc_query)->result_array();
+				
+
 				$final_locs = array_merge($final_locs,$locs);
 			}	
 
-			$sb_query = "SELECT TRIM(lc_f.loc) as loc, iv_f.sku, iv_f.pkg, pm_f.tariff_desc,iv_f.qty
+			$loc_query = "SELECT TRIM(lc_f.loc) as loc,SUM(qty) as qty
+							FROM lc_f 
+							LEFT JOIN iv_f ON iv_f.loc = lc_f.loc
+							WHERE lc_f.loc LIKE 'SB%'
+							AND lc_f.loc NOT LIKE 'SBRCV%'
+							GROUP BY loc,qty
+							ORDER BY loc";
+
+			/*$sb_query = "SELECT TRIM(lc_f.loc) as loc, iv_f.sku, iv_f.pkg, pm_f.tariff_desc,iv_f.qty
 							FROM (lc_f LEFT JOIN iv_f ON lc_f.loc = iv_f.loc) LEFT JOIN pm_f ON (iv_f.pkg = pm_f.pkg) AND (iv_f.sku = pm_f.sku)
 							WHERE lc_f.loc LIKE 'SB%'
-							ORDER BY lc_f.loc";
+							ORDER BY lc_f.loc";*/
 
-			$locs = $this->wms->query($sb_query)->result_array();
+			$locs = $this->wms->query($loc_query)->result_array();
 			$final_locs = array_merge($final_locs,$locs);
 		}
 		
@@ -85,10 +102,7 @@ class Cycle_count_model extends XPO_Model {
 								'added_on' => date('Y-m-d H:i:s'),
 								'enabled' => true,
 								'dataset' => $this->dataset,
-								'cc_rid' => $cc_rid,
-								'tariff_desc' => $record[$x]['tariff_desc'],
-								'sku' => $record[$x]['sku'],
-								'pkg' => $record[$x]['pkg']
+								'cc_rid' => $cc_rid
 							);
 			}
 
@@ -108,6 +122,7 @@ class Cycle_count_model extends XPO_Model {
 
 			foreach($location as $detail)
 			{	
+
 				$count_details = array(
 									'entry_id' => $insert_id,
 									'loc' => $detail['loc'],
@@ -158,8 +173,8 @@ class Cycle_count_model extends XPO_Model {
 
 	public function crossCheck()
 	{
-		$start = getShift('end');
-		$end = getShift('start');
+		$start = getShift('start');
+		$end = getShift('end');
 
 		$prefix = ($this->dataset == 'KNK' ? 'SB' : 'NM');
 		$this->getTemplate();
@@ -172,16 +187,17 @@ class Cycle_count_model extends XPO_Model {
 		foreach($locs as $cc){
 			$cadj = NULL;
 			$cycc = NULL;
+			$cycf = NULL;
 
 			if($cc['round'] == 1){
 				$check_query = "SELECT transact,opr,dtimecre,qty FROM it_f
 								WHERE ob_oid = '".$prefix.$cc['cc_rid']."'
-								AND transact IN ('CYCC','CADJ')";	
+								AND transact IN ('CYCC','CADJ','CYCF')";	
 			}else{
 				$check_query = "SELECT FIRST 5 transact,opr,dtimecre,qty FROM it_f
 								WHERE ob_oid = '".$prefix.$cc['cc_rid']."'
-								AND transact IN ('CYCC','CADJ')
-								AND dtimecre > '".$cc['counted_on']."'
+								AND transact IN ('CYCC','CADJ','CYCF')
+								AND dtimecre > '".$cc['added_on']."'
 								ORDER BY dtimecre DESC";	
 			}
 			
@@ -190,17 +206,21 @@ class Cycle_count_model extends XPO_Model {
 
 			$cadj_key = search_key_val('transact','CADJ',$itf);
 			$cycc_key = search_key_val('transact','CYCC',$itf);
+			$cycf_key = search_key_val('transact','CYCF',$itf);
 
 			if($cadj_key !== NULL)
 				$cadj = $itf[$cadj_key];
 
 			if($cycc_key !== NULL)
 				$cycc = $itf[$cycc_key];
+
+			if($cycf_key !== NULL)
+				$cycf = $itf[$cycf_key];
 			
 			
 			if($itf){
 				$detail = array(
-						'counted_on' => (isset($cycc) ? $cycc['dtimecre'] : date('Y-m-d H:i:s')),
+						'counted_on' => (isset($cycf_key) ? $cycf['dtimecre'] : date('Y-m-d H:i:s')),
 						'type' => ($cadj_key !== NULL ? 'Adjusted' : 'Counted'),
 						'qty' =>  ($cadj_key !== NULL ? (int)$cadj['qty'] : (int)$cycc['qty']),
 						'opr' => trim($cycc['opr'])
@@ -254,51 +274,42 @@ class Cycle_count_model extends XPO_Model {
 		$this->get_lc_f();
 		$total_locs = count($this->cyc_locs);
 
-		$this->db->join('cyc_count_details','cyc_count_details.entry_id = cyc_master_pool.entry_id');
-		$this->db->group_by('cyc_master_pool.entry_id');
-		$master = $this->db->get_where('cyc_master_pool',array('type !='=>NULL,'dataset'=>$this->dataset))->result_array();
-
-		$this->db->where('cyc_master_pool.added_on BETWEEN "'.$this->start.'" AND "'.$this->end.'"');
-		$this->db->join('cyc_count_details','cyc_count_details.entry_id = cyc_master_pool.entry_id');
-		$this->db->group_by('cyc_master_pool.entry_id');
-		$today = $this->db->get_where('cyc_master_pool',array('type !='=>NULL,'dataset'=>$this->dataset))->result_array();
-		
-		$this->db->select('count(entry_id) as assigned');
-		$this->db->where('added_on BETWEEN "'.$this->start.'" AND "'.$this->end.'"');
+		$this->db->where('annual_counter !=',0);
 		$this->db->where('dataset',$this->dataset);
-		$assigned = $this->db->get('cyc_master_pool')->row_array();
-		
-		$rounds = $this->getRoundTotal();
+		$master = $this->db->get('cyc_master_pool')->result_array();
+		//echo $this->db->last_query();
+		$query = "SELECT 
+					count(cm.entry_id) as created,
+					(SELECT count(entry_id) FROM cyc_count_details WHERE type ='Adjusted') as adjusted_locs,
+					(SELECT count(entry_id) FROM cyc_count_details WHERE type ='Counted') as counted_locs,
+					(SELECT sum(qty) FROM cyc_count_details WHERE type ='Counted') as qty,
+					(SELECT sum(qty) FROM cyc_count_details WHERE type ='Adjusted') as net_adj,
+					(SELECT sum(ABS(qty)) FROM cyc_count_details WHERE type ='Adjusted') as abs_adj
+					FROM cyc_master_pool as cm
+					JOIN cyc_count_details as cd
+					WHERE dataset = '".$this->dataset."'
+					AND cm.added_on BETWEEN '".$this->start."' AND '".$this->end."'
+					GROUP BY cm.entry_id
+					LIMIT 1";
 
-		$this->db->select('sum(qty) as net,sum(ABS(qty)) as absolute');
-		$this->db->join('cyc_master_pool','cyc_count_details.entry_id = cyc_master_pool.entry_id');
-		$this->db->where('cyc_count_details.added_on BETWEEN "'.$this->start.'" AND "'.$this->end.'"');
-		$this->db->where('dataset',$this->dataset);
-		$this->db->where('type','Adjusted');
-		$percentages = $this->db->get('cyc_count_details')->row_array();
-
-		$this->db->select('sum(act_qty) as qty');
-		$this->db->join('cyc_master_pool','cyc_count_details.entry_id = cyc_master_pool.entry_id');
-		$this->db->where('cyc_count_details.added_on BETWEEN "'.$this->start.'" AND "'.$this->end.'"');
-		$this->db->where('dataset',$this->dataset);
-		$this->db->where('cyc_count_details.round',1);
-		$qty = $this->db->get('cyc_count_details')->row_array();		
+		$totals = $this->db->query($query)->row_array();
+		$rounds = $this->getRoundTotal();	
 
 		$final = array(
 					'percentage' => ceil((count($master) / $total_locs) * 100).'%',
 					'total_locs' => number_format($total_locs),
-					'counted' => number_format(count($master)),
-					'counted_today'=> number_format(count($today)),
+					'counted' => count($master),
+					'counted_today'=> number_format($totals['counted_locs']),
 					'pending' => number_format($total_locs - count($master)),
-					'assigned_today' => $assigned['assigned'],
+					'assigned_today' => $totals['created'],
 					'r1_today' => ($rounds ? $rounds[1] : NULL),
 					'r2_today' => ($rounds ? $rounds[2] : NULL),
 					'dataset' => $dataset,
 					'dataset_header' => $this->getDatasetHeader(),
-					'remainder_today' => ($assigned['assigned'] ? $assigned['assigned'] - count($today) : 0),
-					'net_adj' => $percentages['net'],
-					'abs_adj' => $percentages['absolute'],
-					'qty' => $qty['qty'],
+					'remainder_today' => ($totals['created'] ? $totals['created'] - $totals['counted_locs'] : 0),
+					'net_adj' => ($totals['net_adj'] ? $totals['net_adj'] : 0),
+					'abs_adj' => ($totals['abs_adj'] ? $totals['abs_adj'] : 0),
+					'qty' => $totals['qty'],
 					'cyc_all' => $this->getCycToday()
 					);
 
@@ -307,7 +318,7 @@ class Cycle_count_model extends XPO_Model {
 
 	public function getCycToday()
 	{
-		$query = "SELECT cm.loc, cm.sku,cm.pkg,cd.act_qty,cd.type,
+		$query = "SELECT cm.loc, cm.sku,cm.pkg,cd.act_qty,cd.type,cd.qty,
 					(SELECT qty FROM cyc_count_details r1cd WHERE cm.entry_id = r1cd.entry_id AND r1cd.round = 1) as r1_qty,
 					(SELECT qty FROM cyc_count_details r2cd WHERE cm.entry_id = r2cd.entry_id AND r2cd.round = 2) as r2_qty
 					FROM cyc_master_pool as cm

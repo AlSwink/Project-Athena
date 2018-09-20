@@ -113,23 +113,8 @@ class Swi extends CI_Controller {
         $this->load->view('page');
     }
 
-    public function getDepartmentProgress($dept_id)
-    {
-        $this->swi_model->setDepartment($dept_id);
-        $this->swi_model->setFromAndTo();
-        $data['summary'] = $this->swi_model->getProgressBoard();
-        $this->swi_model->setDepartment($dept_id);
-        $this->swi_model->setFromAndTo();
-        $data['bars'] = $this->swi_model->get_document_report();
-
-        $this->page = $this->page_dir.'/swi_progress_board';
-       
-        $this->load->view('page',$data);
-    }
-
     public function request_action()
     {
         $post = $this->input->post();
-
     }
 }

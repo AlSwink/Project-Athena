@@ -5,13 +5,13 @@
 		<div class="col col-sm-12">
 			<ul class="nav nav-tabs nav-fill dashboard_tabs">
 				<li class="nav-item  ">
-			    	<a class="nav-link active" data-toggle="tab" href="#swi_dash"><i class="fas fa-tachometer-alt"></i>  Dashboard</a>
+			    	<a class="nav-link " data-toggle="tab" href="#swi_dash"><i class="fas fa-tachometer-alt"></i>  Dashboard</a>
 			  	</li>
 			  	<li class="nav-item">
 			    	<a class="nav-link" data-toggle="tab" href="#swi_input"><i class="fas fa-pen-square"></i>  Input SWI</a>
 			  	</li>
 			  	<li class="nav-item ">
-			    	<a class="nav-link" data-toggle="tab" href="#swi_reports"><i class="fas fa-chart-line"></i>  Reporting</a>
+			    	<a class="nav-link active" data-toggle="tab" href="#swi_reports"><i class="fas fa-chart-line"></i>  Reporting</a>
 			  	</li>
 				<li class="nav-item">
 			    	<a class="nav-link" data-toggle="tab" href="#swi_docs"><i class="fas fa-file"></i>  SWI Documents</a>
@@ -33,7 +33,7 @@
 	</div>
 	<div class="row">
 		<div class="tab-content col">
-			<div class="tab-pane active" id="swi_dash" role="tabpanel">
+			<div class="tab-pane " id="swi_dash" role="tabpanel">
 			  	<?php loadSubTemplate('swi_dashboard'); ?>
 			</div>
 			<div class="tab-pane" id="swi_input" role="tabpanel">
@@ -45,7 +45,7 @@
 			<div class="tab-pane " id="swi_requests" role="tabpanel">
 			  	<?php loadSubTemplate('swi_requests'); ?>
 			</div>
-			<div class="tab-pane " id="swi_reports" role="tabpanel">
+			<div class="tab-pane active" id="swi_reports" role="tabpanel">
 			  	<?php loadSubTemplate('swi_reports'); ?>
 			</div>
 			<div class="tab-pane " id="swi_settings" role="tabpanel">

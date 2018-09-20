@@ -12,6 +12,9 @@
 		  			<a href="#report_documents" class="nav-link bbr-0 list-group-item list-group-item-action list-group-item-secondary" data-toggle="pill">All Documents</a>
 		  		</li>
 		  		<li class="nav-item">
+		  			<a href="#report_document_reported" class="nav-link bbr-0 list-group-item list-group-item-action list-group-item-secondary" data-toggle="pill">Reported Documents</a>
+		  		</li>
+		  		<li class="nav-item">
 		  			<a href="#report_employees" class="nav-link bbr-0 list-group-item list-group-item-action list-group-item-secondary" data-toggle="pill">Employees Progress</a>
 		  		</li>
 		  		<li class="nav-item">
@@ -22,8 +25,11 @@
 	</div>
 	<div class="col-lg-9 col-sm-12">
 		<div class="tab-content">
-			<div class="tab-pane show active" id="report_documents">
+			<div class="tab-pane " id="report_documents">
 				<?php loadSubTemplate('swi_reports_documents'); ?>
+			</div>
+			<div class="tab-pane show active" id="report_document_reported">
+				<?php loadSubTemplate('swi_reports_document_reported'); ?>
 			</div>
 			<div class="tab-pane" id="report_employees">
 				<?php loadSubTemplate('swi_reports_employees'); ?>
