@@ -75,4 +75,18 @@ class Applications extends CI_Controller {
 
         loadView($shc);
     }
+	
+	public function it_5s(){
+		$it5s = array(
+					'incomplete' => $this->model->getTasks(false),
+					'complete' => $this->model->getTasks(true),
+					'total' => $this->model->getTotal(),
+					'percent' => $this->model->getPercentComplete(),
+					'js' => array(
+							'hermes'
+						)
+					);
+		loadView($it5s);
+		
+	}
 }

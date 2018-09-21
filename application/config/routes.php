@@ -85,5 +85,10 @@ $route['cycle_count/standalone'] = 'applications/cycle_count/1';
 $route['cycle_count/(:any)'] = 'apps/cycle_count/$1';
 $route['cycle_count/(:any)/(:any)'] = 'apps/cycle_count/$1/$2';
 $route['cycle_count/(:any)/(:any)/(:any)'] = 'apps/cycle_count/$1/$2/$3';
+//it_5s routes
+$route['it_5s'] = 'applications/it_5s';
+$route['it_5s/standalone'] = 'applications/it_5s/1';
+$route['it_5s/save'] = 'apps/it_5s/saveStatus';
+$route['it_5s/(:any)/(:any)'] = 'apps/it_5s/$1/$2';
 
 //tool routes
