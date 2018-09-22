@@ -30,6 +30,7 @@ class XPO_Model extends CI_Model {
 
       $this->wms = $this->load->database('wms',TRUE);
       $this->wms_test = $this->load->database('wms_test',TRUE);
+	  $this->xpo=$this->load->database('xpo',TRUE);
   }
 
   public function getSetting($key)

@@ -11,6 +11,7 @@
 	border-bottom: 5px solid green;
 	
 }
+
 #incomplete{
 	
 	background-image: url(<?=base_url('assets/img/it_5s/before.jpg');?>);

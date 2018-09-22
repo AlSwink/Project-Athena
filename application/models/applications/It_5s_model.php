@@ -3,6 +3,7 @@
 class it_5s_model extends XPO_Model {
 	public $id;
 	public $completed;
+	public $progress;
 	
 	function getTasks($status){
 		return $this->xpo->get_where('it_5s',array('completed'=>$status))->result_array();
@@ -32,6 +33,7 @@ class it_5s_model extends XPO_Model {
 		
 		$this->xpo->where('id',$this->id);
 		$this->xpo->set('completed',$this->completed);
+		$this->xpo->set('percentage',$this->progress);
 		$this->xpo->set('date_modified',$date->format('Y-m-d H:i:s'));
 		$this->xpo->update('it_5s');
 		

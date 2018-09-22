@@ -1,11 +1,13 @@
 <script>
-	$('.changeStatus').click(function(){
+	$(document).on('click','.changeStatus', function(){
 		var id = $(this).data('id');
+		var progress = $(this).data('progress');
 		var status = $(this).data('status');
 		var title = $(this).children('.card-body').html();
 		console.log(title);
 		$("input[name='id']").val(id);
 		$(".modal-title").html(title);
+		$("input[name='progress']").val(progress);
 		$("select[name='status']").find('option:selected').prop('selected',false);
 		$("select[name='status']").find('option[value="'+status+'"]').prop('selected',true);
 		$('#statusControl').modal('show');
@@ -30,10 +32,13 @@
 			},
 			complete: function(){
 				endSubmit('#submit');
+				
 			}
 		});
+		console.log('stop');
 	});
 	function updateScreen(result){
+		console.log(result.incomplete);
 		$("#incompleteList").html(result.incomplete);
 		$("#completeList").html(result.complete);
 		$("#percentComplete").html(Math.ceil(result.percent*100));

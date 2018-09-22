@@ -14,6 +14,8 @@
 			<option value="0">Incomplete</option>
 			<option value="1">Complete</option>
 		</select>
+		<p>Percent complete:</p>
+		<input type='number' name='progress'>
 		<input type="hidden" name="id">
 		</form>
       </div>

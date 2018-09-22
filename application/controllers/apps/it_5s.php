@@ -14,6 +14,7 @@ class It_5s extends CI_Controller {
 		parse_str($this->input->post('post'),$post);
 		$this->It_5s_model->id=$post['id'];
 		$this->It_5s_model->completed=$post['status'];
+		$this->It_5s_model->progress=$post['progress'];
 		$this->It_5s_model->save();
 		$data = array(
 			'complete' => $this->getList('complete'),
