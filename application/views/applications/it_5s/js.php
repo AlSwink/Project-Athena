@@ -1,13 +1,13 @@
 <script>
 	$(document).on('click','.changeStatus', function(){
 		var id = $(this).data('id');
-		var progress = $(this).data('progress');
+		
 		var status = $(this).data('status');
 		var title = $(this).children('.card-body').html();
 		console.log(title);
 		$("input[name='id']").val(id);
 		$(".modal-title").html(title);
-		$("input[name='progress']").val(progress);
+		
 		$("select[name='status']").find('option:selected').prop('selected',false);
 		$("select[name='status']").find('option[value="'+status+'"]').prop('selected',true);
 		$('#statusControl').modal('show');
