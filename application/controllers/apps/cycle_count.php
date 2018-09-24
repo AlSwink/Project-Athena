@@ -69,6 +69,15 @@ class Cycle_count extends CI_Controller {
     	echo json_encode($totals);
     }
 
+    public function delete_locations()
+    {
+        parse_str($this->input->post('post'),$post);
+        $ids = explode('-',$post['ids']);
+        $dataset = $post['dataset'];
+        $this->Cycle_count_model->deleteLocations($ids);
+        $this->getTotals($dataset);
+    }
+
     public function resetLastChecktoRound1()
     {
 

@@ -56,7 +56,8 @@ class Applications extends CI_Controller {
          $cyc = array(
                     'totals' => $this->model->getTotals('KNK'),
                     'dependencies' => array(
-                                        'js'    => array('hermes','chart.min','jquery-barcode.min')
+                                        'css'   => array('daterangepicker','jquery.contextMenu.min'),
+                                        'js'    => array('hermes','chart.min','jquery-barcode.min','daterangepicker','jquery.contextMenu.min','jquery.ui.position.min')
                                         )
                 );
 

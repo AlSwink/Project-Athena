@@ -10,8 +10,8 @@
 					labels : ['Adj','Correct'],
 					datasets : [{
 						data : [
-							<?= $totals['abs_adj']; ?>,
-							<?= $totals['qty']; ?>
+							<?= $totals['today']['units']['abs_adj']; ?>,
+							<?= $totals['today']['units']['all']; ?>
 						],
 						backgroundColor : [
 							'rgba(50, 50,50, 1)',
@@ -40,8 +40,8 @@
 					labels : ['Adj','Correct'],
 					datasets : [{
 						data : [
-							Math.abs(<?= $totals['net_adj']; ?>),
-							<?= $totals['qty']; ?>
+							Math.abs(<?= $totals['today']['units']['net_adj']; ?>),
+							<?= $totals['today']['units']['all']; ?>
 						],
 						backgroundColor : [
 							'rgba(50, 50,50, 1)',
@@ -53,36 +53,6 @@
 					title : {
 						display: true,
 						text: 'Net Percentage'
-					},
-					cutoutPercentage : 60,
-					legend:{
-						position: 'bottom',
-						labels: {
-							boxWidth: 11
-						}
-					}
-				}
-		});
-
-	var loc_accuracy = new Chart(loc_acc,{
-				type : 'doughnut',
-				data : {
-					labels : ['Adjusted','Counted'],
-					datasets : [{
-						data : [
-							13,
-							43
-						],
-						backgroundColor : [
-							'rgba(50, 50,50, 1)',
-							'#41958a'
-						]
-	                }]
-				},
-				options: {
-					title : {
-						display: true,
-						text: 'Net vs Absolute Adjustment'
 					},
 					cutoutPercentage : 60,
 					legend:{
@@ -135,12 +105,17 @@
 		            className: 'tr_excel d-none'
 		        },
 		        {
-		            text: 'Print',
+		            text: 'Print Blind',
 		            extend: 'print',
-		            className: 'tr_print d-none',
+		            className: 'trb_print d-none',
 		            exportOptions: {
 	                    columns: [ 0 ]
 	                }
+		        },
+		        {
+		            text: 'Print All',
+		            extend: 'print',
+		            className: 'tr_print d-none'
 		        }
 	        ],
 			ajax: {
@@ -148,6 +123,7 @@
         		dataSrc: ''
 			},
 			columns : [
+				{ data: "entry_id" },
 				{ data: "loc" },
 		        { data: "act_qty" },
 		        { data: "qty" },
@@ -169,7 +145,7 @@
 		        	}
 		        }
 			],
-		    scrollY:        '45vh',
+		    scrollY: '45vh',
 		    order : [0,'asc'],
 		    scroller: {
 		    	loadingIndicator : true
@@ -178,19 +154,6 @@
 		    	style : 'multi+shift'
 		    },
 		     "createdRow" : function(row,data,index){
-
-		    	/*switch(data['type']){
-		    		case 'Counted':
-		    			$(row).addClass('table-success');
-		    			break;
-		    		case 'Adjusted':
-		    			$(row).addClass('table-danger');
-		    			break;
-		    		default:
-		    			$(row).addClass('table-warning');
-		    			break;
-        		}*/
-
         		$(row).addClass('trmenu');
 		    }
 		});
@@ -214,6 +177,47 @@
 		    }
 		});
 
+	var crtable = $('#custom_detail_table').DataTable({
+			dom : '<"row"<"col"t>><"row"<"col"ip>>',
+			pagingType : 'numbers',
+			info : true,
+			responsive: true,
+			columns : [
+				{ data: "entry_id" },
+				{ data: "loc" },
+		        { data: "act_qty" },
+		        { data: "qty" },
+		        { data: "r1_qty",
+		        	render: function(data,type,row,meta){
+		        		if(row.act_qty != row.qty){
+		        			sum = parseInt(row.act_qty) + parseInt(row.r1_qty);
+		        			return (sum ? sum : null);
+		        		}else{
+		        			return null;
+		        		}
+		        	}
+		        },
+		        { data: "r2_qty" },
+		        { data: "final",
+		        	render: function(data,type,row,meta){
+		        		sum = parseInt(row.act_qty) + parseInt(row.r2_qty);
+		        		return (sum ? sum : null);
+		        	}
+		        }
+			],
+		    scrollY: '35vh',
+		    order : [0,'asc'],
+		    scroller: {
+		    	loadingIndicator : true
+		    },
+		    select: {
+		    	style : 'multi+shift'
+		    },
+		     "createdRow" : function(row,data,index){
+        		$(row).addClass('trmenu');
+		    }
+		});
+
 	gltable.on('select deselect',function(e,dt,type,indexes){
 		if(gltable.rows({selected:true}).data().length){
 			$('.start_cycle_count').prop('disabled',false);
@@ -222,25 +226,104 @@
 		}
 	});
 
+	cttable.on('select deselect',function(e,dt,type,indexes){
+		if(cttable.rows({selected:true}).data().length){
+			$('.delete_locations').prop('disabled',false);
+		}else{
+			$('.delete_locations').prop('disabled',true);
+		}
+	});
+
 	function updateData(data)
 	{
-		$('.r1_counted').html(data.r1_today.counted);
-		$('.r1_assigned').html(data.r1_today.assigned);
-		$('.r1_progress').css('width',data.r1_today.progress);
-		$('.r1_progress').html(data.r1_today.progress);
+		$('.r1_counted').html(data.today.r1.counted);
+		$('.r1_assigned').html(data.today.r1.assigned);
+		$('.r1_progress').css('width',data.today.r1.progress);
+		$('.r1_progress').html(data.today.r1.progress);
 
-		$('.r2_counted').html(data.r2_today.counted);
-		$('.r2_assigned').html(data.r2_today.assigned);
-		$('.r2_progress').css('width',data.r2_today.progress);
-		$('.r2_progress').html(data.r2_today.progress);
+		$('.r2_counted').html(data.today.r2.counted);
+		$('.r2_assigned').html(data.today.r2.assigned);
+		$('.r2_progress').css('width',data.today.r2.progress);
+		$('.r2_progress').html(data.today.r2.progress);
 
 		cttable.ajax.reload();
+	}
+
+	function updateCustom(data)
+	{
+		$('.custom_counted').html(data.today.counted);
+		$('.custom_error').html(data.today.adjusted);
+		$('.custom_units').html(data.today.units.all);
+		$('.custom_net').html(data.today.units.net_adj);
+		$('.custom_adj').html(data.today.units.abs_adj);
+
+		//crtable.ajax.reload();
+	}
+
+	function setDeleteLocs(ids,locations)
+	{
+		locs = '';
+
+		$(locations).each(function(k,v){
+			locs += '<div class="col-3 border p-2 text-center bg-danger text-white">'+v+'</div>';
+		});
+
+		$('input[name="ids"]').val(ids.join('-'));
+		$('.loc_list').html(locs);
 	}
 
 	$(document).ready(function(){
 		app_name = '<?= $method = $this->router->fetch_method(); ?>';
 		page_type = 'app';
 		version = $('#app_version').html();
+
+		start = moment().subtract(29, 'days');
+	    end = moment();
+
+	    $.contextMenu({
+        	selector: '.trmenu',
+        	build: function($triggerElement,e){
+   				entry = $($triggerElement[0]).find('td')[0];
+   				loc = $($triggerElement[0]).find('td')[1];
+   				entry_id = $(entry).html();
+   				
+        		return {
+        			callback: function(key, options,e){
+		                switch(key){
+		                	case 'delete':
+		                		setDeleteLocs([entry_id],[$(loc).html()]);
+		                		$('#delete_location').modal('show');
+		                		break;
+		                }
+        			},
+        			items: {
+        				delete: {name:"Delete Location",icon:"fas fa-trash-alt text-danger"}
+        			}
+        		}
+        	}
+        });
+
+	    function setRange(start, end) {
+	        $('input[name="report_from"]').val(start.format('YYYY-MM-DD'));
+	        $('input[name="report_to"]').val(end.format('YYYY-MM-DD'));
+	    }
+
+	    $('.report_range').daterangepicker({
+	        startDate: start,
+	        endDate: end,
+	        maxDate: moment(),
+	        showDropdowns: true,
+	        ranges: {
+	           'Today': [moment(), moment()],
+	           'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+	           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+	           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+	           'This Month': [moment().startOf('month'), moment().endOf('month')],
+	           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+	        }
+	    }, setRange);
+
+	    setRange(start, end);
 	});
 
 	$('a[data-toggle="tab"],a[data-toggle="pill"]').on('shown.bs.tab', function (e) {		
@@ -257,6 +340,10 @@
 
 	$('#tr_print').click(function(){
 		$('.tr_print').click();
+	});
+
+	$('#trb_print').click(function(){
+		$('.trb_print').click();
 	});
 
 	$('.check_progress').click(function(){
@@ -328,6 +415,50 @@
 		});
 	});
 
+	$('#generate').click(function(){
+		start = $('input[name="report_from"]').val();
+		end = $('input[name="report_to"]').val();
+		url = '<?= site_url("api/getCycCustom"); ?>'+'/KNK/'+start+'/'+end;
+
+		$.ajax({
+			type: 'GET',
+			url: url,
+			dataType: 'json',
+			beforeSend: function(){
+				startSubmit('#generate');
+			},
+			success: function(result){
+				updateCustom(result);
+				crtable.rows.add(result.cyc_all).draw();
+			},
+			complete: function(){
+				endSubmit('#generate');
+			}
+		});
+	});
+
+	$('#delete_loc').click(function(){
+		form = $('#delete_loc_form');
+		url = $(form).attr('action');
+		post = $(form).serialize();
+		console.log(url);
+		$.ajax({
+			type: 'POST',
+			url: url,
+			dataType: 'json',
+			data: { post : post },
+			beforeSend: function(){
+				startSubmit('#delete_loc');
+			},
+			success: function(result){
+				updateData(result);
+			},
+			complete: function(){
+				endSubmit('#delete_loc');
+			}
+		});
+	});
+
 
 	$('.ajaxForms').on('keyup keypress', function(e) {
 	  var keyCode = e.keyCode || e.which;
@@ -335,5 +466,17 @@
 	    e.preventDefault();
 	    return false;
 	  }
+	});
+
+	$('.delete_locations').click(function(){
+		to_delete = [];
+		locations = [];
+		$(cttable.rows({selected:true}).data()).each(function(k,v,){
+			to_delete.push(v.entry_id);
+			locations.push(v.loc);
+		});
+
+		setDeleteLocs(to_delete,locations);
+		$('#delete_location').modal('show');
 	});
 </script>

@@ -8,8 +8,8 @@ class Cycle_count_model extends XPO_Model {
 	public $cc_f_insert;
 	public $master_pool_insert;
 	public $location;
-	private $start;
-	private $end;
+	public $start;
+	public $end;
 
 	public function setShift()
 	{
@@ -178,7 +178,8 @@ class Cycle_count_model extends XPO_Model {
 
 		$prefix = ($this->dataset == 'KNK' ? 'SB' : 'NM');
 		$this->getTemplate();
-
+		$status = $this->getAnnualStatus();
+		
 		$this->db->join('cyc_count_details','cyc_count_details.entry_id = cyc_master_pool.entry_id');
 		$this->db->where('cyc_master_pool.added_on BETWEEN "'.$start.'" AND "'.$end.'"');
 		$locs = $this->db->get('cyc_master_pool')->result_array();
@@ -260,6 +261,11 @@ class Cycle_count_model extends XPO_Model {
 				}
 			}
 
+			$this_year = date_format(date_create($cc['added_on']),'Y');
+			if($cc['annual_counter'] < $status['status'] && $status['year'] == $this_year){
+				$this->db->set('annual_counter','annual_counter + 1',FALSE);
+			}
+
 			$this->db->set('last_check',date('Y-m-d H:i:s'));
 			$this->db->where('entry_id',$cc['entry_id']);
 			$this->db->update('cyc_master_pool');
@@ -268,57 +274,59 @@ class Cycle_count_model extends XPO_Model {
 
 	public function getTotals($dataset='KNK')
 	{
-		$this->setShift();
+		if(!$this->start){
+			$this->setShift();
+		}
 
 		$this->dataset = $dataset;
 		$this->get_lc_f();
 		$total_locs = count($this->cyc_locs);
 
+		$created = $this->getCreated();
+		$counted = $this->getCountedToday();
+		$adjusted_today = $this->getTypeToday('Adjusted');		
+		$qty_today = $this->getTypeQTY();
+		$qty_net = $this->getTypeQTY('net');
+		$qty_abs = $this->getTypeQTY('abs');
+
 		$this->db->where('annual_counter !=',0);
 		$this->db->where('dataset',$this->dataset);
 		$master = $this->db->get('cyc_master_pool')->result_array();
-		//echo $this->db->last_query();
-		$query = "SELECT 
-					count(cm.entry_id) as created,
-					(SELECT count(entry_id) FROM cyc_count_details WHERE type ='Adjusted') as adjusted_locs,
-					(SELECT count(entry_id) FROM cyc_count_details WHERE type ='Counted') as counted_locs,
-					(SELECT sum(qty) FROM cyc_count_details WHERE type ='Counted') as qty,
-					(SELECT sum(qty) FROM cyc_count_details WHERE type ='Adjusted') as net_adj,
-					(SELECT sum(ABS(qty)) FROM cyc_count_details WHERE type ='Adjusted') as abs_adj
-					FROM cyc_master_pool as cm
-					JOIN cyc_count_details as cd
-					WHERE dataset = '".$this->dataset."'
-					AND cm.added_on BETWEEN '".$this->start."' AND '".$this->end."'
-					GROUP BY cm.entry_id
-					LIMIT 1";
-
-		$totals = $this->db->query($query)->row_array();
+	
 		$rounds = $this->getRoundTotal();	
 
-		$final = array(
-					'percentage' => ceil((count($master) / $total_locs) * 100).'%',
-					'total_locs' => number_format($total_locs),
-					'counted' => count($master),
-					'counted_today'=> number_format($totals['counted_locs']),
-					'pending' => number_format($total_locs - count($master)),
-					'assigned_today' => $totals['created'],
-					'r1_today' => ($rounds ? $rounds[1] : NULL),
-					'r2_today' => ($rounds ? $rounds[2] : NULL),
+		$finals = array(
+					'master' => array(
+								'all' => number_format($total_locs),
+								'counted' => count($master),
+								'pending' => number_format($total_locs - count($master)),
+								'progress' => ceil((count($master) / $total_locs) * 100).'%'
+								),
+					'today' => array(
+								'created' => $created,
+								'counted' => $counted,
+								'adjusted' => $adjusted_today,
+								'remainder' => $created - $counted,
+								'r1' => ($rounds ? $rounds[1] : NULL),
+								'r2' => ($rounds ? $rounds[2] : NULL),
+								'units' => array(
+											'all' => ($qty_today ? $qty_today : 0),
+											'net_adj' => ($qty_net ? $qty_net : 0),
+											'abs_adj' => ($qty_abs ? $qty_abs : 0)
+											)
+								),
 					'dataset' => $dataset,
 					'dataset_header' => $this->getDatasetHeader(),
-					'remainder_today' => ($totals['created'] ? $totals['created'] - $totals['counted_locs'] : 0),
-					'net_adj' => ($totals['net_adj'] ? $totals['net_adj'] : 0),
-					'abs_adj' => ($totals['abs_adj'] ? $totals['abs_adj'] : 0),
-					'qty' => $totals['qty'],
-					'cyc_all' => $this->getCycToday()
+					'cyc_all' => $this->getCycToday(),
+					'start' => $this->start
 					);
 
-		return $final;
+		return $finals;
 	}
 
 	public function getCycToday()
 	{
-		$query = "SELECT cm.loc, cm.sku,cm.pkg,cd.act_qty,cd.type,cd.qty,
+		$query = "SELECT cm.entry_id,cm.loc, cm.sku,cm.pkg,cd.act_qty,cd.type,cd.qty,
 					(SELECT qty FROM cyc_count_details r1cd WHERE cm.entry_id = r1cd.entry_id AND r1cd.round = 1) as r1_qty,
 					(SELECT qty FROM cyc_count_details r2cd WHERE cm.entry_id = r2cd.entry_id AND r2cd.round = 2) as r2_qty
 					FROM cyc_master_pool as cm
@@ -331,7 +339,19 @@ class Cycle_count_model extends XPO_Model {
 		return $cyc_all;
 	}
 
+	public function deleteLocations($ids)
+	{
+		$tables = array('cyc_count_details','cyc_master_pool');
+		//$this->db->where_in('entry_id',$ids);
+		//$this->db->delete($tables);
+	}
+
 	//Private functions
+
+	private function getAnnualStatus()
+	{
+		return $this->db->get_where('cyc_status',array('dataset'=>$this->dataset))->row_array();
+	}
 
 	private function getRoundTotal($round=1)
 	{
@@ -348,11 +368,11 @@ class Cycle_count_model extends XPO_Model {
 			$rounds = $this->db->get('cyc_count_details')->result_array();
 
 			foreach($rounds as $round_detail){
-				if($round_detail['type'] == 'Counted'){
-					$counted++;
-				}elseif($round_detail['type'] == 'Adjusted'){
+				if($round_detail['type'] == 'Adjusted'){
 					$adjusted++;
 				}
+				
+				$counted++;
 			}
 
 			$assigned = count($rounds);
@@ -402,5 +422,50 @@ class Cycle_count_model extends XPO_Model {
 		$query = "SELECT FIRST 1 cc_rid FROM cc_f ORDER BY cc_rid DESC";
 		$cc_rid = $this->wms->query($query)->row()->cc_rid;
 		return $cc_rid;
+	}
+
+	private function setWhere()
+	{
+		$this->db->join('cyc_count_details','cyc_count_details.entry_id = cyc_master_pool.entry_id');
+		$this->db->where('dataset',$this->dataset);
+		$this->db->where('cyc_master_pool.added_on BETWEEN "'.$this->start.'" AND "'.$this->end.'"');
+	}
+
+	private function getCreated()
+	{
+		$this->db->select('count(cyc_master_pool.entry_id) as created');
+		$this->setWhere();
+		return $this->db->get('cyc_master_pool')->row_array()['created'];
+	}
+
+	private function getCountedToday()
+	{
+		$this->db->select('count(cyc_count_details.entry_id) as counted');
+		$this->setWhere();
+		return $this->db->get('cyc_master_pool')->row_array()['counted'];
+	}
+
+	private function getTypeToday($type)
+	{
+		$this->db->select('count(cyc_count_details.entry_id) as counted');
+		$this->setWhere();
+		$this->db->where('type',$type);
+		return $this->db->get('cyc_master_pool')->row_array()['counted'];
+	}
+
+	private function getTypeQTY($type=null)
+	{
+		if($type == 'net'){
+			$this->db->select('SUM(cyc_count_details.qty) as qty');
+			$this->db->where('type','Adjusted');
+		}elseif($type == 'abs'){
+			$this->db->select('SUM(ABS(cyc_count_details.qty)) as qty');
+			$this->db->where('type','Adjusted');
+		}else{
+			$this->db->select('SUM(cyc_count_details.qty) as qty');
+		}
+
+		$this->setWhere();
+		return $this->db->get('cyc_master_pool')->row_array()['qty'];
 	}
 }

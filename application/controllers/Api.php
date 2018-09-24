@@ -89,4 +89,15 @@ class Api extends CI_Controller {
         $data = $this->Cycle_count_model->getCycToday();
         echo json_encode($data);
     }
+
+    public function getCycCustom($dataset='KNK',$start=null,$end=null)
+    {
+        $start = date_format(date_create($start),'Y-m-d 00:00:00');
+        $end = date_format(date_create($end),'Y-m-d 23:59:59');
+        $this->Cycle_count_model->start = $start;
+        $this->Cycle_count_model->end = $end;
+        $data = $this->Cycle_count_model->getTotals($dataset);
+
+        echo json_encode($data);
+    }
 }
