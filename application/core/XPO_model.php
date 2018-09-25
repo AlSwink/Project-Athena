@@ -28,6 +28,7 @@ class XPO_Model extends CI_Model {
       $this->firstdayofmonth = date('Y-m-01 00:00:00');
       $this->lastdayofmonth = date('Y-m-t 23:59:59');
 
+      $this->xpo = $this->load->database('xpo',TRUE);
       $this->wms = $this->load->database('wms',TRUE);
       $this->wms_test = $this->load->database('wms_test',TRUE);
   }
