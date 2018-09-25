@@ -262,7 +262,7 @@ class Cycle_count_model extends XPO_Model {
 			}
 
 			$this_year = date_format(date_create($cc['added_on']),'Y');
-			if($cc['annual_counter'] < $status['status'] && $status['year'] == $this_year){
+			if($cc['annual_counter'] < $status['status'] && $status['year'] == $this_year && $cycf_key !== NULL){
 				$this->db->set('annual_counter','annual_counter + 1',FALSE);
 			}
 
@@ -292,7 +292,7 @@ class Cycle_count_model extends XPO_Model {
 		$this->db->where('annual_counter !=',0);
 		$this->db->where('dataset',$this->dataset);
 		$master = $this->db->get('cyc_master_pool')->result_array();
-	
+
 		$rounds = $this->getRoundTotal();	
 
 		$finals = array(
@@ -342,8 +342,8 @@ class Cycle_count_model extends XPO_Model {
 	public function deleteLocations($ids)
 	{
 		$tables = array('cyc_count_details','cyc_master_pool');
-		//$this->db->where_in('entry_id',$ids);
-		//$this->db->delete($tables);
+		$this->db->where_in('entry_id',$ids);
+		$this->db->delete($tables);
 	}
 
 	//Private functions
@@ -372,7 +372,8 @@ class Cycle_count_model extends XPO_Model {
 					$adjusted++;
 				}
 				
-				$counted++;
+				if($round_detail['type'])
+					$counted++;
 			}
 
 			$assigned = count($rounds);
@@ -442,6 +443,7 @@ class Cycle_count_model extends XPO_Model {
 	{
 		$this->db->select('count(cyc_count_details.entry_id) as counted');
 		$this->setWhere();
+		$this->db->where('type !=',NULL);
 		return $this->db->get('cyc_master_pool')->row_array()['counted'];
 	}
 

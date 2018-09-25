@@ -7,6 +7,7 @@ class Cycle_count extends CI_Controller {
     {
         parent::__construct();
         $this->load->model('applications/Cycle_count_model');
+        $this->load->model('Logger_model');
     }
 
     public function insert_locations($dataset='KNK')
@@ -18,6 +19,12 @@ class Cycle_count extends CI_Controller {
 
     	$this->Cycle_count_model->insert_master_pool($selected);
     	echo json_encode('Location Inserted');
+        $log = array(
+                'for' => $dataset,
+                'action' => "Insert Locations",
+                'reason' => "Cycle count ".count($selected)." locations"
+                );
+        $this->Logger_model->create('cyc_logs',$log);
     }
 
     public function generate_defaults($dataset='KNK',$count=5)
@@ -43,6 +50,12 @@ class Cycle_count extends CI_Controller {
     	}   	
     	
 		sort($insert_rows);
+        $log = array(
+                'for' => $dataset,
+                'action' => "Fetch Locations",
+                'reason' => "Creating ".$count." locations"
+                );
+        $this->Logger_model->create('cyc_logs',$log);
     	echo json_encode($insert_rows);
     }
 
@@ -61,6 +74,12 @@ class Cycle_count extends CI_Controller {
     	$this->Cycle_count_model->dataset = 'KNK';
     	$this->Cycle_count_model->crossCheck();
     	$this->getTotals($dataset);
+        $log = array(
+                'for' => $dataset,
+                'action' => "Check Progress",
+                'reason' => "Updating counts"
+                );
+        $this->Logger_model->create('cyc_logs',$log);
     }
 
     public function getTotals($dataset='KNK')
@@ -73,8 +92,15 @@ class Cycle_count extends CI_Controller {
     {
         parse_str($this->input->post('post'),$post);
         $ids = explode('-',$post['ids']);
+        $locations = explode('-',$post['locations']);
         $dataset = $post['dataset'];
         $this->Cycle_count_model->deleteLocations($ids);
+        $log = array(
+                'for' => implode(',',$locations),
+                'action' => "Remove Locations",
+                'reason' => $post['reason']
+                );
+        $this->Logger_model->create('cyc_logs',$log);
         $this->getTotals($dataset);
     }
 

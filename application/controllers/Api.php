@@ -8,6 +8,7 @@ class Api extends CI_Controller {
         parent::__construct();
         $this->load->model('applications/swi_model');
         $this->load->model('applications/Cycle_count_model');
+        $this->load->model('Logger_model');
     }
 
     public function get_app($app)
@@ -99,5 +100,12 @@ class Api extends CI_Controller {
         $data = $this->Cycle_count_model->getTotals($dataset);
 
         echo json_encode($data);
+    }
+
+    public function getLogs($table,$from=null,$to=null)
+    {
+        $this->Logger_model->table = $table;
+        $logs = $this->Logger_model->get();
+        echo json_encode($logs);
     }
 }

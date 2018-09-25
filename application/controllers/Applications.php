@@ -53,11 +53,13 @@ class Applications extends CI_Controller {
     }
 
     public function cycle_count(){
-         $cyc = array(
+        check_session();
+
+        $cyc = array(
                     'totals' => $this->model->getTotals('KNK'),
                     'dependencies' => array(
                                         'css'   => array('daterangepicker','jquery.contextMenu.min'),
-                                        'js'    => array('hermes','chart.min','jquery-barcode.min','daterangepicker','jquery.contextMenu.min','jquery.ui.position.min')
+                                        'js'    => array('hermes','chart.min','jquery-barcode.min','daterangepicker','jquery.contextMenu.min','jquery.ui.position.min','notify.min')
                                         )
                 );
 

@@ -218,6 +218,49 @@
 		    }
 		});
 
+	var logtable = $('#log_table').DataTable({
+			dom : '<"row"<"col"t>><"row"<"col"iBp>>',
+			pagingType : 'numbers',
+			info : true,
+			responsive: true,
+			buttons: [
+		        {
+		            text: 'Excel',
+		            extend: 'excel',
+		            className: 'log_excel d-none'
+		        },
+		        {
+		            text: 'Print All',
+		            extend: 'print',
+		            className: 'log_print d-none'
+		        }
+	        ],
+			ajax: {
+				url: '<?= site_url("api/getLogs/cyc_logs"); ?>',
+        		dataSrc: ''
+			},
+			columns : [
+				{ data: "action" },
+				{ data: "for" },
+		        { data: "reason" },
+		        { data: "triggered_by",
+		        	render: function(data,type,row,meta){
+		        		return row.e_fname+' '+row.e_lname;
+		        	}
+		        },
+		        { data: "executed_on" }
+			],
+		    scrollY: '55vh',
+		    order : [4,'desc'],
+		    scroller: {
+		    	loadingIndicator : true
+		    },
+		    select: {
+		    	style : 'multi+shift'
+		    }
+		});
+
+
 	gltable.on('select deselect',function(e,dt,type,indexes){
 		if(gltable.rows({selected:true}).data().length){
 			$('.start_cycle_count').prop('disabled',false);
@@ -269,6 +312,7 @@
 		});
 
 		$('input[name="ids"]').val(ids.join('-'));
+		$('input[name="locations"]').val(locations.join('-'));
 		$('.loc_list').html(locs);
 	}
 
@@ -314,7 +358,6 @@
 	        maxDate: moment(),
 	        showDropdowns: true,
 	        ranges: {
-	           'Today': [moment(), moment()],
 	           'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
 	           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
 	           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
@@ -331,6 +374,11 @@
 	})
 
 	$('a[href="#cyc_reports"]').on('shown.bs.tab', function (e) {		
+		//$.fn.dataTable.tables({visible: true, api: true}).ajax.reload();
+		cttable.ajax.reload();
+	})
+
+	$('a[href="#cyc_logs"]').on('shown.bs.tab', function (e) {		
 		$.fn.dataTable.tables({visible: true, api: true}).ajax.reload();
 	})
 
@@ -344,6 +392,14 @@
 
 	$('#trb_print').click(function(){
 		$('.trb_print').click();
+	});
+
+	$('#log_excel').click(function(){
+		$('.log_excel').click();
+	});
+
+	$('#log_print').click(function(){
+		$('.log_print').click();
 	});
 
 	$('.check_progress').click(function(){
@@ -429,7 +485,10 @@
 			},
 			success: function(result){
 				updateCustom(result);
-				crtable.rows.add(result.cyc_all).draw();
+				
+				crtable.ajax.url(url);
+				crtable.ajax.json(result.cyc_all);
+				crtable.clear().rows.add(result.cyc_all).draw();
 			},
 			complete: function(){
 				endSubmit('#generate');
@@ -441,22 +500,27 @@
 		form = $('#delete_loc_form');
 		url = $(form).attr('action');
 		post = $(form).serialize();
-		console.log(url);
-		$.ajax({
-			type: 'POST',
-			url: url,
-			dataType: 'json',
-			data: { post : post },
-			beforeSend: function(){
-				startSubmit('#delete_loc');
-			},
-			success: function(result){
-				updateData(result);
-			},
-			complete: function(){
-				endSubmit('#delete_loc');
-			}
-		});
+		reason = $('textarea[name="reason"]').val();
+
+		if(reason.length){
+			$.ajax({
+				type: 'POST',
+				url: url,
+				dataType: 'json',
+				data: { post : post },
+				beforeSend: function(){
+					startSubmit('#delete_loc');
+				},
+				success: function(result){
+					updateData(result);
+				},
+				complete: function(){
+					endSubmit('#delete_loc');
+				}
+			});
+		}else{
+			$('textarea[name="reason"]').notify('Reason is required','error');
+		}
 	});
 
 

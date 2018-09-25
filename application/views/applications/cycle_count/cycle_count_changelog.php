@@ -1,6 +1,25 @@
 <div class="row mt-3" style="max-height: 80%; overflow: auto">
 	<div class="col-lg-12">
-		<h3>As of 09/21/2018 <small>v0.4.2</small></h3>
+		<h3>As of 09/25/2018 <small>v0.4.3</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-success">New</span> Enabled location deleted from report.</li>
+			<li><span class="badge bg-success">New</span> Added required reason for location deletion from report.</li>
+			<li><span class="badge bg-success">New</span> Added logger model for handling logs.</li>
+			<li><span class="badge bg-success">New</span> Added log tracking for location generation.</li>
+			<li><span class="badge bg-success">New</span> Added log tracking for location insertion.</li>
+			<li><span class="badge bg-success">New</span> Added log tracking for location deletion.</li>
+			<li><span class="badge bg-success">New</span> Added log tracking for checking progress.</li>
+			<li><span class="badge bg-success">New</span> Added notify.js for handling single page notifications.</li>
+			<li><span class="badge bg-success">New</span> Enabled log table in logs tab.</li>
+			<li><span class="badge bg-success">New</span> Added excel export for logs.</li>
+			<li><span class="badge bg-success">New</span> Added print function for logs.</li>
+			<li><span class="badge bg-warning">Fixed</span> Fixed an alert bug when switching tabs while custom report is open.</li>
+			<li><span class="badge bg-secondary">Changed</span> Check session has been enabled for accountability.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
+		<h3>As of 09/24/2018 <small>v0.4.2</small></h3>
 		Changes made:
 		<ul>
 			<li><span class="badge bg-success">New</span> Added generate report button in reporting tab.</li>
