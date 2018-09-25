@@ -109,7 +109,7 @@
 		            extend: 'print',
 		            className: 'trb_print d-none',
 		            exportOptions: {
-	                    columns: [ 0 ]
+	                    columns: [ 1 ]
 	                }
 		        },
 		        {
@@ -124,6 +124,7 @@
 			},
 			columns : [
 				{ data: "entry_id" },
+				{ data: "mark" },
 				{ data: "loc" },
 		        { data: "act_qty" },
 		        { data: "qty" },
@@ -240,6 +241,7 @@
         		dataSrc: ''
 			},
 			columns : [
+				{ data: "log_id" },
 				{ data: "action" },
 				{ data: "for" },
 		        { data: "reason" },
@@ -248,10 +250,14 @@
 		        		return row.e_fname+' '+row.e_lname;
 		        	}
 		        },
-		        { data: "executed_on" }
+		        { data: "executed_on",
+		        	render: function(data,type,row,meta){
+		        		return moment(data).format('MM/DD/YY hh:mma');
+		        	}
+		        }
 			],
+			order : [0,'desc'],
 		    scrollY: '55vh',
-		    order : [4,'desc'],
 		    scroller: {
 		    	loadingIndicator : true
 		    },
@@ -327,8 +333,8 @@
 	    $.contextMenu({
         	selector: '.trmenu',
         	build: function($triggerElement,e){
-   				entry = $($triggerElement[0]).find('td')[0];
-   				loc = $($triggerElement[0]).find('td')[1];
+   				entry = $($triggerElement[0]).find('td')[1];
+   				loc = $($triggerElement[0]).find('td')[2];
    				entry_id = $(entry).html();
    				
         		return {
@@ -402,6 +408,10 @@
 		$('.log_print').click();
 	});
 
+	$('#search_loc').keyup(function(){
+		cttable.columns(1).search(this.value).draw();
+	})
+
 	$('.check_progress').click(function(){
 		$.ajax({
 			type : 'GET',
@@ -457,7 +467,7 @@
 			type: 'POST',
 			url: url,
 			dataType: 'json',
-			data: { post : selected },
+			data: { post : selected, type : 'nike' },
 			beforeSend: function(){
 				startSubmit('#nike_cycle_count');
 			},

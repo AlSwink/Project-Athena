@@ -18,6 +18,7 @@ class Logger_model extends XPO_Model {
      public function get()
      {
           $this->db->join('employees','employees.user_id = '.$this->table.'.triggered_by');
+          $this->db->order_by('executed_on','DESC');
           return $this->db->get($this->table)->result_array();
      }
 }  

@@ -10,6 +10,7 @@ class Cycle_count_model extends XPO_Model {
 	public $location;
 	public $start;
 	public $end;
+	public $mark;
 
 	public function setShift()
 	{
@@ -98,11 +99,12 @@ class Cycle_count_model extends XPO_Model {
 								'loc' => $record[$x]['loc'],
 								'annual_counter' => 0,
 								'round' => 1,
-								'added_by' => 1,
+								'added_by' => $this->user_id,
 								'added_on' => date('Y-m-d H:i:s'),
 								'enabled' => true,
 								'dataset' => $this->dataset,
-								'cc_rid' => $cc_rid
+								'cc_rid' => $cc_rid,
+								'mark' => ($this->type ? $this->type : null)
 							);
 			}
 
@@ -130,7 +132,6 @@ class Cycle_count_model extends XPO_Model {
 									'round' => 1,
 									'added_on' => date('Y-m-d H:i:s')
 								);
-				
 				$insert_id++;
 				$this->db->insert('cyc_count_details',$count_details);
 				//echo 'Location '.$detail['loc'].' Added<br>';
@@ -326,7 +327,7 @@ class Cycle_count_model extends XPO_Model {
 
 	public function getCycToday()
 	{
-		$query = "SELECT cm.entry_id,cm.loc, cm.sku,cm.pkg,cd.act_qty,cd.type,cd.qty,
+		$query = "SELECT cm.entry_id,cm.mark,cm.loc, cm.sku,cm.pkg,cd.act_qty,cd.type,cd.qty,
 					(SELECT qty FROM cyc_count_details r1cd WHERE cm.entry_id = r1cd.entry_id AND r1cd.round = 1) as r1_qty,
 					(SELECT qty FROM cyc_count_details r2cd WHERE cm.entry_id = r2cd.entry_id AND r2cd.round = 2) as r2_qty
 					FROM cyc_master_pool as cm

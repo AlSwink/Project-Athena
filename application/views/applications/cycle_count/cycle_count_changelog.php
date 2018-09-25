@@ -14,8 +14,11 @@
 			<li><span class="badge bg-success">New</span> Enabled log table in logs tab.</li>
 			<li><span class="badge bg-success">New</span> Added excel export for logs.</li>
 			<li><span class="badge bg-success">New</span> Added print function for logs.</li>
+			<li><span class="badge bg-success">New</span> Added search location control in Today's report.</li>
+			<li><span class="badge bg-success">New</span> Added audit field in Today's report for determining audit type.</li>
 			<li><span class="badge bg-warning">Fixed</span> Fixed an alert bug when switching tabs while custom report is open.</li>
 			<li><span class="badge bg-secondary">Changed</span> Check session has been enabled for accountability.</li>
+			<li><span class="badge bg-secondary">Changed</span> Enabled mark field for sorting between nike and internal audit types.</li>
 		</ul>
 	</div>
 	<div class="col-lg-12">

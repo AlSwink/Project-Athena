@@ -8,10 +8,10 @@
 			</ul>
 			<ul class="nav nav-tabs nav-fill">
 				<li class="nav-item">
-			    	<a class="nav-link " data-toggle="tab" href="#cyc_dash"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+			    	<a class="nav-link active" data-toggle="tab" href="#cyc_dash"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
 			  	</li>
 			  	<li class="nav-item">
-			    	<a class="nav-link active" data-toggle="tab" href="#cyc_reports"><i class="fas fa-chart-line"></i> Reports</a>
+			    	<a class="nav-link " data-toggle="tab" href="#cyc_reports"><i class="fas fa-chart-line"></i> Reports</a>
 			  	</li>
 			  	<li class="nav-item">
 			    	<a class="nav-link " data-toggle="tab" href="#cyc_controls"><i class="fas fa-sliders-h"></i> Controls</a>
@@ -27,10 +27,10 @@
 	</div>
 	<div class="row">
 		<div class="tab-content col">
-			<div class="tab-pane " id="cyc_dash" role="tabpanel">
+			<div class="tab-pane active" id="cyc_dash" role="tabpanel">
 				<?= loadSubTemplate('cycle_count_dashboard'); ?>
 			</div>
-			<div class="tab-pane active" id="cyc_reports" role="tabpanel">
+			<div class="tab-pane " id="cyc_reports" role="tabpanel">
 				<?= loadSubTemplate('cycle_count_reports'); ?>
 			</div>
 			<div class="tab-pane " id="cyc_controls" role="tabpanel">

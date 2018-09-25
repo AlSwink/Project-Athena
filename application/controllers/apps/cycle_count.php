@@ -13,18 +13,21 @@ class Cycle_count extends CI_Controller {
     public function insert_locations($dataset='KNK')
     {
     	$selected = $this->input->post('post');
+        $this->Cycle_count_model->type = $this->input->post('type');
     	$this->Cycle_count_model->dataset = $dataset;
     	$this->Cycle_count_model->getTemplate();
     	$this->Cycle_count_model->applyTemplate($selected);
 
     	$this->Cycle_count_model->insert_master_pool($selected);
-    	echo json_encode('Location Inserted');
+    	
         $log = array(
                 'for' => $dataset,
                 'action' => "Insert Locations",
                 'reason' => "Cycle count ".count($selected)." locations"
                 );
         $this->Logger_model->create('cyc_logs',$log);
+
+        echo json_encode('Location Inserted');
     }
 
     public function generate_defaults($dataset='KNK',$count=5)

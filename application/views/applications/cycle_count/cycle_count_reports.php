@@ -19,10 +19,10 @@
 	</div>
 	<div class="col-9">
 		<div class="tab-content">
-			<div class="tab-pane " id="today_report">
+			<div class="tab-pane active" id="today_report">
 				<?= loadSubTemplate('cycle_count_today'); ?>
 			</div>
-			<div class="tab-pane active" id="generate_report">
+			<div class="tab-pane " id="generate_report">
 				<?= loadSubTemplate('cycle_count_generate_report'); ?>
 			</div>
 		</div>

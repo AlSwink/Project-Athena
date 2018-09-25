@@ -1,4 +1,4 @@
-<div class="row mt-3" style="max-height: 80%; overflow: auto">
+<div class="row mt-2">
 	<div class="col">
 		<div class="alert alert-warning">
 			Below is a list of all manual or automated commands executed within the system.
@@ -15,7 +15,8 @@
 	<div class="col-12">
 		<table id="log_table" class="table table-sm table-hover table-bordered">
 			<thead>
-				<tr>
+				<tr class="thead-dark">
+					<th>Log ID</th>
 					<th>Action</th>
 					<th>For</th>
 					<th>Reason</th>
