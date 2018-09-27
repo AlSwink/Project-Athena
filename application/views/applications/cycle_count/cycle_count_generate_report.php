@@ -16,7 +16,6 @@
 		<ul class="nav nav-tabs">
 			<li class="nav-item "><a class="nav-link active" data-toggle="tab" href="#custom_details"><i class="fas fa-list-alt"></i> Details</a></li>
 			<li class="nav-item "><a class="nav-link" data-toggle="tab" href="#custom_charts"><i class="fas fa-chart-bar"></i> Charts</a></li>
-			<li class="nav-item "><a class="nav-link" data-toggle="tab" href="#custom_logs"><i class="fas fa-table"></i> Logs</a></li>
 		</ul>
 	</div>
 </div>

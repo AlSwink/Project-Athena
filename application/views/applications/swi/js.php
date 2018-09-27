@@ -1,4 +1,5 @@
 <script>
+	loadDependencies(<?= json_encode($dependencies);?>);
 	var totals = {
 					'completed' : <?= $totals['completed']; ?>,
 					'pending'	: <?= $totals['pending']; ?>,

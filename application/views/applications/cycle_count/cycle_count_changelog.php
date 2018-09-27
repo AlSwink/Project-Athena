@@ -1,5 +1,23 @@
 <div class="row mt-3" style="max-height: 80%; overflow: auto">
 	<div class="col-lg-12">
+		<h3>As of 09/26/2018 <small>v0.4.4</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-success">New</span> Added Regenerate function for recreating cycle count drops.</li>
+			<li><span class="badge bg-success">New</span> Added Regenerate commands button for recreating cycle count drops.</li>
+			<li><span class="badge bg-success">New</span> Added Regenerate commands menu on right click for recreating cycle count drops.</li>
+			<li><span class="badge bg-success">New</span> Added Regenerate commands modal to confirm action and provide reason for recreating cycle count drops.</li>
+			<li><span class="badge bg-success">New</span> Added Logging for regenerating commands.</li>
+			<li><span class="badge bg-success">New</span> Added Excel export button for custom reports.</li>
+			<li><span class="badge bg-success">New</span> Added Print button for custom reports.</li>
+			<li><span class="badge bg-success">New</span> Added Export buttons for custom reports.</li>
+			<li><span class="badge bg-success">New</span> Added Total created locations on Today's report as counted's upper limit.</li>
+			<li><span class="badge bg-success">New</span> Summary numbers will now update on change.</li>
+			<li><span class="badge bg-warning">Fixed</span> Fixed print blind bug where it would pick up the 2nd column instead of the locations column.</li>
+			<li><span class="badge bg-secondary">Changed</span> Single right click of item is now treated as multiple.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
 		<h3>As of 09/25/2018 <small>v0.4.3</small></h3>
 		Changes made:
 		<ul>

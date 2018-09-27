@@ -1,4 +1,7 @@
 <script>
+	<?php if(!$this->standalone){ ?>
+		loadDependencies(<?= json_encode($dependencies);?>);
+	<?php } ?>
 	var loc_acc = $("#loc_acc");
 	var	dataset = $('#dataset').val();
 	var abs_percentage = $("#abspercentage");
@@ -109,7 +112,7 @@
 		            extend: 'print',
 		            className: 'trb_print d-none',
 		            exportOptions: {
-	                    columns: [ 1 ]
+	                    columns: [ 2 ]
 	                }
 		        },
 		        {
@@ -156,6 +159,10 @@
 		    },
 		     "createdRow" : function(row,data,index){
         		$(row).addClass('trmenu');
+
+        		if(!data.qty){
+        			$(row).addClass('table-warning');
+        		}
 		    }
 		});
 
@@ -179,10 +186,22 @@
 		});
 
 	var crtable = $('#custom_detail_table').DataTable({
-			dom : '<"row"<"col"t>><"row"<"col"ip>>',
+			dom : '<"row"<"col"Bt>><"row"<"col"ip>>',
 			pagingType : 'numbers',
 			info : true,
 			responsive: true,
+			buttons: [
+		        {
+		            text: 'Excel',
+		            extend: 'excel',
+		            className: 'cr_excel d-none'
+		        },
+		        {
+		            text: 'Print All',
+		            extend: 'print',
+		            className: 'cr_print d-none'
+		        }
+	        ],
 			columns : [
 				{ data: "entry_id" },
 				{ data: "loc" },
@@ -277,14 +296,27 @@
 
 	cttable.on('select deselect',function(e,dt,type,indexes){
 		if(cttable.rows({selected:true}).data().length){
-			$('.delete_locations').prop('disabled',false);
+			$('.delete_locations,.regenerate_locations').prop('disabled',false);
 		}else{
-			$('.delete_locations').prop('disabled',true);
+			$('.delete_locations,.regenerate_locations').prop('disabled',true);
 		}
 	});
 
 	function updateData(data)
 	{
+		$('.total_created').html(data.today.created);
+		$('.total_counted').html(data.today.counted);
+		$('.total_remainder').html(data.today.remainder);
+		$('.total_adj_loc').html(data.today.adjusted);
+		$('.total_qty').html(data.today.units.all);
+		$('.total_net_adj').html(data.today.units.net_adj);
+		$('.total_abs_adj').html(data.today.units.abs_adj);
+
+		$('.master_all').html(data.master.all);
+		$('.master_pending').html(data.master.pending);
+		$('.master_counted').html(data.master.counted);
+		$('.master_progress').css('height',data.master.progress);
+
 		$('.r1_counted').html(data.today.r1.counted);
 		$('.r1_assigned').html(data.today.r1.assigned);
 		$('.r1_progress').css('width',data.today.r1.progress);
@@ -305,21 +337,19 @@
 		$('.custom_units').html(data.today.units.all);
 		$('.custom_net').html(data.today.units.net_adj);
 		$('.custom_adj').html(data.today.units.abs_adj);
-
-		//crtable.ajax.reload();
 	}
 
-	function setDeleteLocs(ids,locations)
+	function setLocList(ids,locations,target)
 	{
 		locs = '';
 
 		$(locations).each(function(k,v){
-			locs += '<div class="col-3 border p-2 text-center bg-danger text-white">'+v+'</div>';
+			locs += '<div class="col-3 border p-2 text-center bg-secondary text-white">'+v+'</div>';
 		});
 
 		$('input[name="ids"]').val(ids.join('-'));
 		$('input[name="locations"]').val(locations.join('-'));
-		$('.loc_list').html(locs);
+		$(target).html(locs);
 	}
 
 	$(document).ready(function(){
@@ -340,14 +370,18 @@
         		return {
         			callback: function(key, options,e){
 		                switch(key){
+		                	case 'regenerate':
+		                		$('.regenerate_locations').click();
+		                		break;
 		                	case 'delete':
-		                		setDeleteLocs([entry_id],[$(loc).html()]);
-		                		$('#delete_location').modal('show');
+		                		$('.delete_locations').click();
 		                		break;
 		                }
         			},
         			items: {
-        				delete: {name:"Delete Location",icon:"fas fa-trash-alt text-danger"}
+        				regenerate: {name:"Regenerate Command",icon:"fas fa-redo-alt"},
+        				"sep1": "---------",
+        				delete: {name:"Delete Record",icon:"fas fa-trash-alt text-danger"}
         			}
         		}
         	}
@@ -408,8 +442,16 @@
 		$('.log_print').click();
 	});
 
+	$('#cr_excel').click(function(){
+		$('.cr_excel').click();
+	});
+
+	$('#cr_print').click(function(){
+		$('.cr_print').click();
+	});
+
 	$('#search_loc').keyup(function(){
-		cttable.columns(1).search(this.value).draw();
+		cttable.columns(2).search(this.value).draw();
 	})
 
 	$('.check_progress').click(function(){
@@ -473,6 +515,7 @@
 			},
 			success: function(res){
 				gltable.clear();
+				updateData(res);
 			},
 			complete: function(){
 				endSubmit('#nike_cycle_count');
@@ -495,7 +538,7 @@
 			},
 			success: function(result){
 				updateCustom(result);
-				
+
 				crtable.ajax.url(url);
 				crtable.ajax.json(result.cyc_all);
 				crtable.clear().rows.add(result.cyc_all).draw();
@@ -533,6 +576,33 @@
 		}
 	});
 
+	$('#regen_loc').click(function(){
+		form = $('#regen_loc_form');
+		url = $(form).attr('action');
+		post = $(form).serialize();
+		reason = $('textarea[name="reason"]:visible').val();
+
+		if(reason.length){
+			$.ajax({
+				type: 'POST',
+				url: url,
+				dataType: 'json',
+				data: { post : post },
+				beforeSend: function(){
+					startSubmit('#regen_loc');
+				},
+				success: function(result){
+					updateData(result);
+				},
+				complete: function(){
+					endSubmit('#regen_loc');
+				}
+			});
+		}else{
+			$('textarea[name="reason"]').notify('Reason is required','error');
+		}
+	});
+
 
 	$('.ajaxForms').on('keyup keypress', function(e) {
 	  var keyCode = e.keyCode || e.which;
@@ -550,7 +620,20 @@
 			locations.push(v.loc);
 		});
 
-		setDeleteLocs(to_delete,locations);
+		setLocList(to_delete,locations,'.loc_list');
 		$('#delete_location').modal('show');
+	});
+
+	$('.regenerate_locations').click(function(){
+		to_regen = [];
+		locations = [];
+
+		$(cttable.rows({selected:true}).data()).each(function(k,v,){
+			to_regen.push(v.entry_id);
+			locations.push(v.loc);
+		});
+
+		setLocList(to_regen,locations,'.loc_list_2');
+		$('#regenerate_command').modal('show');
 	});
 </script>

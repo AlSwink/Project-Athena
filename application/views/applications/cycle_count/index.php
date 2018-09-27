@@ -1,5 +1,5 @@
 <input type="hidden" id="dataset" value="<?= $totals['dataset']; ?>">
-<div class="container-fluid d-print-none">
+<div class="container-fluid d-print-none pb-5">
 	<?= loadInclude('app_container_control',$this->app_info); ?>
 	<div class="row mt-2">
 		<div class="col col-sm-12">

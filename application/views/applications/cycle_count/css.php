@@ -62,6 +62,10 @@
     border-bottom-right-radius: 0 !important;
   }
 
+  .u_limit{
+    font-size: 35% !important;
+  }
+
   th{
     font-size: 11px !important;
   }

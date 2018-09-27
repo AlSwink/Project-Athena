@@ -107,6 +107,28 @@ class Cycle_count extends CI_Controller {
         $this->getTotals($dataset);
     }
 
+    public function regenerate_cyc()
+    {
+        parse_str($this->input->post('post'),$post);
+        $ids = explode('-',$post['ids']);
+        $locs = explode('-',$post['locations']);
+        $dataset = $post['dataset'];
+        $this->Cycle_count_model->dataset = $dataset;
+
+        $this->Cycle_count_model->entry_id = $ids;
+        $locations = $this->Cycle_count_model->getMaster();
+        $this->Cycle_count_model->getTemplate();
+        $this->Cycle_count_model->applyTemplate($locations);
+        $this->Cycle_count_model->insert_cc_f();
+        $log = array(
+                'for' => implode(',',$locs),
+                'action' => "Regenerate Commands",
+                'reason' => $post['reason']
+                );
+        $this->Logger_model->create('cyc_logs',$log);
+        $this->getTotals($dataset);
+    }
+
     public function resetLastChecktoRound1()
     {
 

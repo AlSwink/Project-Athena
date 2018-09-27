@@ -23,11 +23,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-if(defined('STDIN')){
-	$config['base_url'] = 'http://10.89.96.183/athena/';
-}else{
+
 	$config['base_url'] = 'http://'.$_SERVER['HTTP_HOST'].'/athena/';
-}
+
 
 /*
 |--------------------------------------------------------------------------

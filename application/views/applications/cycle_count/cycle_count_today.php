@@ -13,19 +13,19 @@
 			<tbody>
 				<tr>
 					<td class="display-4">
-						<span class="total_counted"><?= $totals['today']['counted']; ?></span>
+						<span class="total_counted"><?= $totals['today']['counted']; ?></span><span class="u_limit"> /<span class="total_created"><?= $totals['today']['created']; ?></span></span>
 					</td>
 					<td class="display-4">
-						<span class="total_qty"><?= $totals['today']['adjusted']; ?></span>
+						<span class="total_adj_loc"><?= $totals['today']['adjusted']; ?></span>
 					</td>
 					<td class="display-4">
-						<span class="total_adj"><?= $totals['today']['units']['all']; ?></span>
+						<span class="total_qty"><?= $totals['today']['units']['all']; ?></span>
 					</td>
 					<td class="display-4">
-						<span class="total_adj"><?= $totals['today']['units']['net_adj']; ?></span>
+						<span class="total_net_adj"><?= $totals['today']['units']['net_adj']; ?></span>
 					</td>
 					<td class="display-4">
-						<span class="total_adj"><?= $totals['today']['units']['abs_adj']; ?></span>
+						<span class="total_abs_adj"><?= $totals['today']['units']['abs_adj']; ?></span>
 					</td>
 				</tr>
 			</tbody>
@@ -39,6 +39,7 @@
 	<div class="col-lg-8 col-sm-12 mt-1 text-right">
 		<div class="btn-group">
 			<button type="button" class="delete_locations btn btn-sm btn-danger" disabled>Delete Records <i class="fas fa-trash"></i></button>
+			<button type="button" class="regenerate_locations btn btn-sm btn-warning" disabled>Regenerate Commands <i class="fas fa-redo-alt"></i></button>
 			<button type="button" class="check_progress btn btn-sm btn-info">Check Progress <i class="fas fa-sync-alt"></i></button>
 			<button type="button" class="btn btn-sm btn-success" id="tr_excel"><i class="fas fa-file-excel"></i> Excel</button>
 			<button type="button" class="btn btn-sm btn-secondary" id="trb_print"><i class="fas fa-print"></i> Print Blind</button>

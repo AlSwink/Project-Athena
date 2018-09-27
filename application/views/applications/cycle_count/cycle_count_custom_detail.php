@@ -1,5 +1,11 @@
 <div class="row mt-2">
-	<div class="col">
+	<div class="col-12">
+		<div class="btn-group">
+			<button type="button" class="btn btn-sm btn-success" id="cr_excel"><i class="fas fa-file-excel"></i> Excel</button>
+			<button type="button" class="btn btn-sm btn-dark" id="cr_print"><i class="fas fa-print"></i> Print</button>
+		</div>
+	</div>
+	<div class="col-12 mt-1">
 		<table class="table table-sm text-center table-bordered mb-1">
 			<thead>
 				<tr>
