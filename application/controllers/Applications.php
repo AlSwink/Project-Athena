@@ -89,4 +89,11 @@ class Applications extends CI_Controller {
 		loadView($it5s);
 		
 	}
+	
+	public function e_roster(){
+		//$eroster = array();	
+		
+			
+		
+	}
 }
