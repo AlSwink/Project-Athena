@@ -348,7 +348,7 @@
 		});
 
 		$('input[name="ids"]').val(ids.join('-'));
-		$('input[name="locations"]').val(locations.join('-'));
+		$('input[name="locations"]').val(locations.join(';'));
 		$(target).html(locs);
 	}
 

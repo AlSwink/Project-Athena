@@ -96,12 +96,12 @@ class Cycle_count_model extends XPO_Model {
 			$temp['release_date'] = date('Y-m-d');
 			$temp['start_loc'] = $record[$x]['loc'];
 			$temp['end_loc'] = $record[$x]['loc'];
-			$temp['dt_start'] = date('Y-m-d H:i:s');
-			$temp['dt_end'] = date('Y-m-d H:i:s');
+			//$temp['dt_start'] = date('Y-m-d H:i:s');
+			//$temp['dt_end'] = date('Y-m-d H:i:s');
 			$temp['gen_by'] = 'ATHENA';
 			$temp['usrmod'] = 'ATHENA';
-			$temp['dtimecre'] = date('Y-m-d H:i:s');
-			$temp['dtimemod'] = date('Y-m-d H:i:s');
+			//$temp['dtimecre'] = date('Y-m-d H:i:s');
+			//$temp['dtimemod'] = date('Y-m-d H:i:s');
 
 			if(!isset($record[$x]['annual_counter'])){
 				$master_pool[] = array(

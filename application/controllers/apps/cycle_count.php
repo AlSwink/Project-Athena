@@ -27,7 +27,7 @@ class Cycle_count extends CI_Controller {
                 );
         $this->Logger_model->create('cyc_logs',$log);
 
-        echo json_encode('Location Inserted');
+        $this->getTotals($dataset);
     }
 
     public function generate_defaults($dataset='KNK',$count=5)
@@ -95,7 +95,7 @@ class Cycle_count extends CI_Controller {
     {
         parse_str($this->input->post('post'),$post);
         $ids = explode('-',$post['ids']);
-        $locations = explode('-',$post['locations']);
+        $locations = explode(';',$post['locations']);
         $dataset = $post['dataset'];
         $this->Cycle_count_model->deleteLocations($ids);
         $log = array(
@@ -111,7 +111,7 @@ class Cycle_count extends CI_Controller {
     {
         parse_str($this->input->post('post'),$post);
         $ids = explode('-',$post['ids']);
-        $locs = explode('-',$post['locations']);
+        $locs = explode(';',$post['locations']);
         $dataset = $post['dataset'];
         $this->Cycle_count_model->dataset = $dataset;
 
