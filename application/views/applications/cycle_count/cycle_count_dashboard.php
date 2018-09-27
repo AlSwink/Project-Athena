@@ -6,7 +6,7 @@
 					<h4 class="display-4 mb-0 master_counted" style="line-height: 53px"><?= $totals['master']['counted']; ?></h4> 
 					<span class="sub-header float-right">counted</span>
 					<div class="progress progress-bar-vertical" style="width: 100%;height: 65%">
-						<div class="progress-bar progress-bar-striped bg-success master_progress"  style="height: <?= $totals['master']['progress'];?>%"><h4><?= $totals['master']['progress'];?></h4></div>
+						<div class="progress-bar progress-bar-striped bg-success master_progress"  style="height: <?= $totals['master']['progress'];?>"><h4><?= $totals['master']['progress'];?></h4></div>
 					</div>
 					Round 1
 				</div>
