@@ -229,7 +229,7 @@ class Swi_model extends XPO_Model {
 		}
 		
 		$this->db->select('COUNT(doc_id) as docs');
-		$this->db->where('added_on < "'.$this->fto.'"');
+		$this->db->where('added_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
 		$this->db->where('deleted',0);
 		$docs = $this->db->get('swi_documents')->row();
 		//echo $this->db->last_query();

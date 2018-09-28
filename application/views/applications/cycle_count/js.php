@@ -636,4 +636,14 @@
 		setLocList(to_regen,locations,'.loc_list_2');
 		$('#regenerate_command').modal('show');
 	});
+
+	$('select[name="dataset"]').change(function(){
+		selected = $(this).val();
+		//console.log(selected);
+		if(selected == 'KNT'){
+			$('#'+selected+'_fields').removeClass('d-none');
+		}else{
+			$('.fields').addClass('d-none');
+		}
+	});
 </script>

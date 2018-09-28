@@ -7,10 +7,10 @@ class Import extends CI_Controller {
     private $in_wms;
     private $wms_users;
 
-
 	public function __construct()
     {
         parent::__construct();
+        $this->load->model('XPO_model');
     }
 
     public function xpo_athena_update()
@@ -147,6 +147,51 @@ class Import extends CI_Controller {
                 $this->db->where('supervisor_id',$super->supervisor_id);
                 $this->db->update('employees');
             }
+        }
+    }
+
+    public function insert()
+    {
+        $template = "SELECT FIRST 1 * FROM pm_f WHERE sku LIKE 'PBB6%'";
+        $temp = $this->XPO_model->wms->query($template)->row_array();
+        
+        //[sku,pkg,upc]
+        $to_insert = array(
+                        ['PBB682-855','7','884802117773'],
+                        ['PBB683-855','7','884802118091'],
+                        ['PBB684-855','7','884802118848'],
+                        ['PBB685-855','7','884802120391'],
+                        ['PBB686-855','6','884802120421'],
+                        ['PBB686-855','7','884802120476'],
+                        ['PBB687-855','7','884802122647'],
+                        ['PBB688-855','6','884802123750'],
+                        ['PBB688-855','7','884802123835'],
+                        ['PBB689-855','7','884802123842'],
+                        ['PBB690-855','7','884802123927'],
+                        ['PBB691-855','6','884802125372'],
+                        ['PBB691-855','7','884802126355'],
+                        ['PBB692-855','7','884802944485'],
+                        ['PBB693-855','6','884802944492'],
+                        ['PBB693-855','7','884802944508'],
+                        ['PBB694-855','6','884802944515'],
+                        ['PBB694-855','7','884802944522']
+                        );
+
+        foreach($to_insert as $insert){
+            $temp['sku'] = $insert[0];
+            $temp['pkg'] = $insert[1];
+            $temp['upc'] = $insert[2];
+            $insert_batch[] = $temp;
+        }
+        
+        $fields = array_keys($insert_batch[0]);
+        $fields = implode(',',$fields);
+        
+        foreach($insert_batch as $row){
+                $values = " ('".implode("','",$row)."')";
+                $query = 'INSERT INTO pm_f ('.$fields.') VALUES'.$values;
+                //echo $query;
+                $this->XPO_model->wms->query($query);
         }
     }
 }

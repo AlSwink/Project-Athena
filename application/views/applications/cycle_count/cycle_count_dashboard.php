@@ -58,21 +58,21 @@
 			<div class="row mt-3">
 				<div class="col">
 					<div class="row">
-						<div class="col-2 mt-5">
+						<div class="col-3 mt-5">
 							<span class="sub-header">Net Adjustment</span>
 							<hr>
 							<h4 class="display-4 mb-0 text-right total_net_adj"><?= $totals['today']['units']['net_adj']; ?></h4>
 						</div>
-						<div class="col-4 text-center">
-							<canvas id="netpercentage" height="175px"></canvas>
+						<div class="col-3 text-center">
+							<canvas id="netpercentage" height="225px"></canvas>
 						</div>
-						<div class="col-2 mt-5">
+						<div class="col-3 mt-5">
 							<span class="sub-header">Absolute Adjustment</span>
 							<hr>
 							<h4 class="display-4 mb-0 text-right total_abs_adj"><?= $totals['today']['units']['abs_adj']; ?></h4>
 						</div>
-						<div class="col-4 text-center">
-							<canvas id="abspercentage" height="175px"></canvas>
+						<div class="col-3 text-center">
+							<canvas id="abspercentage" height="225px"></canvas>
 						</div>
 					</div>
 				</div>

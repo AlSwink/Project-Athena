@@ -7,7 +7,7 @@ class Cycle_count extends CI_Controller {
     {
         parent::__construct();
         $this->load->model('applications/Cycle_count_model');
-        $this->load->model('Logger_model');
+        $this->load->model('Logger_model');   
     }
 
     public function insert_locations($dataset='KNK')
@@ -35,6 +35,8 @@ class Cycle_count extends CI_Controller {
     	if($this->input->post()){
     		parse_str($this->input->post('post'),$post);
     		$count = ($post['num_locs'] ? $post['num_locs'] : 5);
+            $dataset = $post['dataset'];
+            $this->Cycle_count_model->loc_type = ($post['loc_type'] ? $post['loc_type'] : null);
     	}
 
     	$this->Cycle_count_model->dataset = $dataset;
@@ -129,8 +131,5 @@ class Cycle_count extends CI_Controller {
         $this->getTotals($dataset);
     }
 
-    public function resetLastChecktoRound1()
-    {
-
-    }
+    
 }

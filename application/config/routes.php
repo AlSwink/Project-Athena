@@ -77,6 +77,9 @@ $route['health_check/(:any)'] = 'apps/system_health_check/$1';
 //argus routes
 $route['argus'] = 'applications/argus';
 $route['argus/standalone'] = 'applications/argus/1';
+//access_verifier routes
+$route['access_verifier'] = 'applications/access_verifier';
+$route['access_verifier/standalone'] = 'applications/access_verifier/1';
 //referral routes
 $route['referral/(:any)/(:any)'] = 'redirect/referral/$1/$2';
 //cycle_count routes

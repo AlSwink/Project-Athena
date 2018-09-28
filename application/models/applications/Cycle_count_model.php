@@ -4,6 +4,7 @@ class Cycle_count_model extends XPO_Model {
 
 	public $dataset;
 	public $entry_id;
+	public $loc_type;
 	public $cyc_locs;
 	public $cc_template;
 	public $cc_f_insert;
@@ -12,6 +13,7 @@ class Cycle_count_model extends XPO_Model {
 	public $start;
 	public $end;
 	public $mark;
+	public $query;
 
 	public function setShift()
 	{
@@ -29,46 +31,52 @@ class Cycle_count_model extends XPO_Model {
 
 	public function get_lc_f()
 	{
-		$final_locs = array();
-
 		if($this->dataset == 'KNK'){
-			for($x=49;$x<64;$x++){
-				$loc_query = "SELECT TRIM(lc_f.loc) as loc,SUM(qty) as qty
-								FROM lc_f 
-								LEFT JOIN iv_f ON iv_f.loc = lc_f.loc
-								WHERE lc_f.loc LIKE '".$x."%'
-								GROUP BY loc,qty
-								ORDER BY loc";
-
-				/*$rack_query = "SELECT TRIM(lc_f.loc) as loc, iv_f.sku, iv_f.pkg, pm_f.tariff_desc,iv_f.qty
-								FROM (lc_f LEFT JOIN iv_f ON lc_f.loc = iv_f.loc) LEFT JOIN pm_f ON (iv_f.pkg = pm_f.pkg) AND (iv_f.sku = pm_f.sku)
-								WHERE lc_f.loc LIKE '".$x."%'
-								ORDER BY lc_f.loc";*/
-
-				$locs = $this->wms->query($loc_query)->result_array();
-				
-
-				$final_locs = array_merge($final_locs,$locs);
-			}	
-
-			$loc_query = "SELECT TRIM(lc_f.loc) as loc,SUM(qty) as qty
-							FROM lc_f 
-							LEFT JOIN iv_f ON iv_f.loc = lc_f.loc
-							WHERE lc_f.loc LIKE 'SB%'
-							AND lc_f.loc NOT LIKE 'SBRCV%'
-							GROUP BY loc,qty
-							ORDER BY loc";
-
-			/*$sb_query = "SELECT TRIM(lc_f.loc) as loc, iv_f.sku, iv_f.pkg, pm_f.tariff_desc,iv_f.qty
-							FROM (lc_f LEFT JOIN iv_f ON lc_f.loc = iv_f.loc) LEFT JOIN pm_f ON (iv_f.pkg = pm_f.pkg) AND (iv_f.sku = pm_f.sku)
-							WHERE lc_f.loc LIKE 'SB%'
-							ORDER BY lc_f.loc";*/
-
-			$locs = $this->wms->query($loc_query)->result_array();
-			$final_locs = array_merge($final_locs,$locs);
+			$final_locs = $this->getKNK();
+		}else{
+			$final_locs = $this->getKNT();
 		}
 		
 		$this->cyc_locs = $final_locs;
+	}
+
+	public function getKNK()
+	{
+		$final_locs = array();
+
+		for($x=49;$x<64;$x++){
+			$loc_query = "SELECT TRIM(lc_f.loc) as loc,SUM(qty) as qty
+							FROM lc_f 
+							LEFT JOIN iv_f ON iv_f.loc = lc_f.loc
+							WHERE lc_f.loc LIKE '".$x."%'
+							GROUP BY loc,qty
+							ORDER BY loc";
+
+			$locs = $this->wms->query($loc_query)->result_array();
+			$final_locs = array_merge($final_locs,$locs);
+		}	
+
+		$loc_query = "SELECT TRIM(lc_f.loc) as loc,SUM(qty) as qty
+						FROM lc_f 
+						LEFT JOIN iv_f ON iv_f.loc = lc_f.loc
+						WHERE lc_f.loc LIKE 'SB%'
+						AND lc_f.loc NOT LIKE 'SBRCV%'
+						GROUP BY loc,qty
+						ORDER BY loc";
+
+		$locs = $this->wms->query($loc_query)->result_array();
+		$final_locs = array_merge($final_locs,$locs);
+
+		return $final_locs;
+	}
+
+	public function getKNT()
+	{
+		$this->query = "SELECT lc_f.loc,qty FROM lc_f LEFT JOIN iv_f ON iv_f.loc = lc_f.loc WHERE lc_f.loc IS NOT NULL ";
+		$this->setLocType($this->loc_type);
+		$this->query .= "GROUP BY lc_f.loc,qty ORDER BY lc_f.loc";
+		
+		return $this->wms->query($this->query)->result_array();
 	}
 
 	public function getTemplate()
@@ -443,6 +451,27 @@ class Cycle_count_model extends XPO_Model {
 		return $cc_rid;
 	}
 
+	private function setLocType($type)
+	{		
+		$outside = array('A','B','SB','CW','BG','DR','TRUCK','RP','VT','VAN','US','OX','TRK','T1','TS','PA','UN','RCV','RTR','RES','RTN','RD','PROJ','STOP','TG','REC','UR','WET','Q','test','OS','RTS','MCO','MSL','AD','CR','MST','GSW','HNG');
+
+		$this->query .= 'AND (';
+		if($type == 'OUTSIDE'){
+			foreach($outside as $where){
+				$wheres[] = "lc_f.loc NOT LIKE '".$where."%'";
+			}
+			
+			for($x=49;$x<64;$x++){
+				$wheres[] = "lc_f.loc NOT LIKE '".$x."%'";
+			}	
+			$this->query .= implode(' AND ',$wheres);
+		}else{
+			$this->query .= "lc_f.loc LIKE 'A%' ";
+			$this->query .= "OR lc_f.loc LIKE 'B%' ";
+		}
+		$this->query .= ')';
+	}
+
 	private function setWhere()
 	{
 		$this->db->join('cyc_count_details','cyc_count_details.entry_id = cyc_master_pool.entry_id');
@@ -494,6 +523,9 @@ class Cycle_count_model extends XPO_Model {
 		switch($this->dataset){
 			case 'KNK':
 				$prefix = 'SB';
+				break;
+			case 'KNT':
+				$prefix = 'DC';
 				break;
 		}
 

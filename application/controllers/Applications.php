@@ -78,4 +78,11 @@ class Applications extends CI_Controller {
 
         loadView($shc);
     }
+
+    public function access_verifier(){
+        $ac = array(
+                );
+
+        loadView();
+    }
 }
