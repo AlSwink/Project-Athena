@@ -20,7 +20,7 @@ class Cycle_count extends CI_Controller {
     	$this->Cycle_count_model->getTemplate();
     	$this->Cycle_count_model->applyTemplate($selected);
 
-    	//$this->Cycle_count_model->insert_master_pool($selected);
+    	$this->Cycle_count_model->insert_master_pool($selected);
     	
         $log = array(
                 'for' => $this->input->post('dataset'),
