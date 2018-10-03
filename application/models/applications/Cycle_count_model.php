@@ -115,7 +115,7 @@ class Cycle_count_model extends XPO_Model {
 			$temp['cycc_oid'] = (isset($record[$x]['cc_rid']) ? $prefix.$record[$x]['cc_rid'] : $prefix.$cc_rid);
 			$temp['opr'] = 'AUTO';
 			$temp['cycc_stt'] = 'HOLD';
-			$temp['release_date'] = date('Y-m-d');
+			$temp['release_date'] = date('m-d-Y');
 			$temp['start_loc'] = $record[$x]['loc'];
 			$temp['end_loc'] = $record[$x]['loc'];
 			//$temp['dt_start'] = date('Y-m-d H:i:s');
