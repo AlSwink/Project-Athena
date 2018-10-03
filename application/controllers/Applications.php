@@ -65,7 +65,7 @@ class Applications extends CI_Controller {
         loadView($argus);
     }
 
-    public function cycle_count($dataset=null){
+    public function cycle_count($dataset='KNK'){
         check_session();
         
         $cyc = array(
