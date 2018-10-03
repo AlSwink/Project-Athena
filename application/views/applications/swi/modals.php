@@ -200,7 +200,7 @@
             <div class="col-5">
               <label>Search Associate</label>
               <input type="text" class="form-control form-control-sm text-input" name="assoc_search" required placeholder="eg Newt Scamander" autocomplete="off">
-              <table id="assign_emp_table" class="table table-sm">
+              <table class="table table-sm assign_emp_table">
                 <thead class="thead-dark">
                   <tr>
                     <th>Associate</th>
@@ -385,6 +385,7 @@
             <select id="dataset_month" class="form-control">
               <option value="08">August</option>
               <option value="09">September</option>
+              <option value="10">October</option>
             </select>
           </div>
         </div>
@@ -393,6 +394,81 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-md btn-secondary" data-dismiss="modal">Cancel</button>
         <button type="button" id="load_dataset_btn" class="btn btn-md btn-info">Load Dataset <i class="fas fa-download"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- override swi -->
+<div class="modal" id="override_assignment" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Override Assignment</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="override" action="<?= site_url('swi/override_assignment'); ?>" method="POST">
+        <input type="hidden" name="doc_id" value=""/>
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-6">
+              <label>Document Number</label>
+              <input type="text" class="form-control form-control-sm text-input" name="doc_num" readonly>
+            </div>
+            <div class="col-6">
+              <label>Document Name</label>
+              <input type="text" class="form-control form-control-sm text-input" name="doc_name" readonly>
+            </div>
+          </div>
+          <div class="row mt-4">
+            <div class="col">
+              <label>Assigned On</label>
+              <input type="text" class="form-control dtp text-center" name="assigned_on" value=""/>
+            </div>
+            <div class="col">
+              <label>Completed On</label>
+              <input type="text" class="form-control dtp text-center" name="completed_on" value=""/>
+              <small><a href="#" id="nullcomplete" class="form-text">set to empty</a></small>
+            </div>
+            <div class="col">
+              <label>Status</label>
+              <select class="form-control form-control" name="status">
+                <option value="">Pending</option>
+                <option value="0">Standard Met</option>
+                <option value="3">Deprecation</option>
+                <option value="1">Reported</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mt-4">
+            <div class="col-6">
+              <label>Search Associate</label>
+              <input type="text" class="form-control form-control-sm text-input" name="assoc_search" required placeholder="eg Newt Scamander" autocomplete="off">
+              <table class="table table-sm assign_emp_table">
+                <thead class="thead-dark">
+                  <tr>
+                    <th>Associate</th>
+                    <th>Department</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-6">
+              <label>Reason for overriding</label>
+              <textarea class="form-control" rows="8" name="reason"></textarea>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" name="assignment_id">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+        <button id="override_submit" type="button" class="btn btn-sm btn-primary">Submit</button>
       </div>
     </div>
   </div>

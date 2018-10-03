@@ -1,11 +1,4 @@
 <div class="row">
-	<div class="col">
-		<div class="alert alert-info">
-			 Create a filter for generating cycle count locations by selecting any of the below options.
-		</div>
-	</div>
-</div>
-<div class="row">
 	<div class="col-7">
 		<form id="generate_location_form" action="<?= site_url('cycle_count/generate_defaults/'); ?>" method="POST" class="ajaxForms">
 		<div class="form-row mb-2">
@@ -24,10 +17,17 @@
 		<div id="KNT_fields" class="fields d-none">
 			<div class="form-row mb-2">
 				<div class="col">
-					<label>Location Type</label>
-					<select class="form-control" name="loc_type">
+					<label>Count Type</label>
+					<select class="form-control" name="count_type">
 						<option value="MODS">MODS</option>
 						<option value="OUTSIDE">Outside</option>
+					</select>
+				</div>
+				<div class="col">
+					<label>Location Type</label>
+					<select class="form-control" name="loc_type">
+						<option value="FP">FP - Forward Pick </option>
+						<option value="BULK">BULK - FIFO,LIFO,BULK</option>
 					</select>
 				</div>
 			</div>

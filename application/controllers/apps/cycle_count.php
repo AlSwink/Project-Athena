@@ -10,24 +10,26 @@ class Cycle_count extends CI_Controller {
         $this->load->model('Logger_model');   
     }
 
-    public function insert_locations($dataset='KNK')
+    public function insert_locations()
     {
     	$selected = $this->input->post('post');
         $this->Cycle_count_model->type = $this->input->post('type');
-    	$this->Cycle_count_model->dataset = $dataset;
+    	$this->Cycle_count_model->dataset = $this->input->post('dataset');
+        $this->Cycle_count_model->count_type = $this->input->post('count_type');
+        $this->Cycle_count_model->loc_type = $this->input->post('loc_type');
     	$this->Cycle_count_model->getTemplate();
     	$this->Cycle_count_model->applyTemplate($selected);
 
-    	$this->Cycle_count_model->insert_master_pool($selected);
+    	//$this->Cycle_count_model->insert_master_pool($selected);
     	
         $log = array(
-                'for' => $dataset,
+                'for' => $this->input->post('dataset'),
                 'action' => "Insert Locations",
                 'reason' => "Cycle count ".count($selected)." locations"
                 );
         $this->Logger_model->create('cyc_logs',$log);
 
-        $this->getTotals($dataset);
+        $this->getTotals($this->input->post('dataset'));
     }
 
     public function generate_defaults($dataset='KNK',$count=5)
@@ -36,6 +38,7 @@ class Cycle_count extends CI_Controller {
     		parse_str($this->input->post('post'),$post);
     		$count = ($post['num_locs'] ? $post['num_locs'] : 5);
             $dataset = $post['dataset'];
+            $this->Cycle_count_model->count_type = ($post['count_type'] ? $post['count_type'] : null);
             $this->Cycle_count_model->loc_type = ($post['loc_type'] ? $post['loc_type'] : null);
     	}
 
@@ -46,6 +49,7 @@ class Cycle_count extends CI_Controller {
     	$counted = array_column($counted,'loc');
     	$generated = array_column($this->Cycle_count_model->cyc_locs,'loc');
     	$locations = array_diff($generated,$counted);
+
 		shuffle($locations);
 		$insert = array_slice($locations,0,$count);
     	

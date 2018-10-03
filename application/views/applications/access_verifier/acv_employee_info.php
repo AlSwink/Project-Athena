@@ -1,24 +1,24 @@
 <div class="row mb-2">
 	<div class="col">
-		<h2 class="display-2 mb-0">Employee Name</h2>
+		<h2 class="display-2 mb-0 emp_name info"></h2>
 		<span class="acv_labels">Name</span>
 	</div>
 </div>
 <div class="row mb-2">
 	<div class="col">
-		<h4 class="display-4 mb-0">Staffing Agency</h4>
+		<h4 class="display-4 mb-0 staffing info"></h4>
 		<span class="acv_labels">Staffing</span>
 	</div>
 </div>
 <div class="row mb-2">
 	<div class="col">
-		<h4 class="display-4 mb-0">Supervisor Name</h4>
+		<h4 class="display-4 mb-0 supervisor info"></h4>
 		<span class="acv_labels">Supervisor</span>
 	</div>
 </div>
 <div class="row mb-2">
 	<div class="col">
-		<h4 class="display-4 mb-0">Department Name</h4>
+		<h4 class="display-4 mb-0 department info"></h4>
 		<span class="acv_labels">Department</span>
 	</div>
 </div>

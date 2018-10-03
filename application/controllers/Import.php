@@ -10,7 +10,6 @@ class Import extends CI_Controller {
 	public function __construct()
     {
         parent::__construct();
-        $this->load->model('XPO_model');
     }
 
     public function xpo_athena_update()
@@ -150,6 +149,8 @@ class Import extends CI_Controller {
         }
     }
 
+
+    //ignore
     public function insert()
     {
         $template = "SELECT FIRST 1 * FROM pm_f WHERE sku LIKE 'PBB6%'";
@@ -157,24 +158,7 @@ class Import extends CI_Controller {
         
         //[sku,pkg,upc]
         $to_insert = array(
-                        ['PBB682-855','7','884802117773'],
-                        ['PBB683-855','7','884802118091'],
-                        ['PBB684-855','7','884802118848'],
-                        ['PBB685-855','7','884802120391'],
-                        ['PBB686-855','6','884802120421'],
-                        ['PBB686-855','7','884802120476'],
-                        ['PBB687-855','7','884802122647'],
-                        ['PBB688-855','6','884802123750'],
-                        ['PBB688-855','7','884802123835'],
-                        ['PBB689-855','7','884802123842'],
-                        ['PBB690-855','7','884802123927'],
-                        ['PBB691-855','6','884802125372'],
-                        ['PBB691-855','7','884802126355'],
-                        ['PBB692-855','7','884802944485'],
-                        ['PBB693-855','6','884802944492'],
-                        ['PBB693-855','7','884802944508'],
-                        ['PBB694-855','6','884802944515'],
-                        ['PBB694-855','7','884802944522']
+                        ['PBB646-855','7','884500847392']
                         );
 
         foreach($to_insert as $insert){
@@ -192,6 +176,23 @@ class Import extends CI_Controller {
                 $query = 'INSERT INTO pm_f ('.$fields.') VALUES'.$values;
                 //echo $query;
                 $this->XPO_model->wms->query($query);
+        }
+    }
+
+    public function update(){
+        $array = array(
+                    ['503321','SB27774876'],
+                    ['582332','SB27774902'],
+                    ['600951','SB27774909']
+                );
+
+        foreach($array as $row){
+            $query = "UPDATE it_f SET ob_oid = '".$row[1]."' 
+                        WHERE from_loc = '".$row[0]."' 
+                        AND transact LIKE 'C%'";
+
+            $this->XPO_model->wms->query($query);
+            echo $query.'<br>';
         }
     }
 }

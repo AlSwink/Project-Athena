@@ -12,9 +12,9 @@
 </div>
 <div class="row mt-5">
 	<div class="col">
-		<div class="card bg-secondary p-3 text-center text-white">
-			<h2 class="display-2">Waiting for input</h2>
+		<div id="status" class="card bg-secondary p-3 text-center text-white">
+			<h2 id="status_text" class="display-2">Waiting for input</h2>
 		</div>
 	</div>
 </div>
-<input type="text" id="id" class="d-none/>
+<input type="text" id="id" class="d-none"/>

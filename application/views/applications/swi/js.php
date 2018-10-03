@@ -184,7 +184,7 @@
 		    }
 		});
 
-	var aetable = $('#assign_emp_table').DataTable({
+	var aetable = $('.assign_emp_table').DataTable({
 			dom : '<"row"<"col"t>>',
 			ordering: true,
 			pagingType : 'numbers',
@@ -345,7 +345,7 @@
 		        { data: "assigned_on",
 		        	render: function(data,type,row,meta){
 		        		if(data){
-		        			return moment(data).format('MM/DD/YY hh:mma');
+		        			return moment(data).format('MM/DD/YY');
 		        		}else{
 		        			return data;
 		        		}
@@ -391,6 +391,115 @@
 		    }
 		});
 
+	var logtable = $('#log_table').DataTable({
+			dom : '<"row"<"col"t>><"row"<"col"iBp>>',
+			pagingType : 'numbers',
+			info : true,
+			responsive: true,
+			buttons: [
+		        {
+		            text: 'Excel',
+		            extend: 'excel',
+		            className: 'log_excel d-none'
+		        },
+		        {
+		            text: 'Print All',
+		            extend: 'print',
+		            className: 'log_print d-none'
+		        }
+	        ],
+			ajax: {
+				url: '<?= site_url("api/getLogs/swi_logs"); ?>',
+        		dataSrc: ''
+			},
+			columns : [
+				{ data: "log_id" },
+				{ data: "action" },
+				{ data: "for" },
+		        { data: "reason" },
+		        { data: "triggered_by",
+		        	render: function(data,type,row,meta){
+		        		return row.e_fname+' '+row.e_lname;
+		        	}
+		        },
+		        { data: "executed_on",
+		        	render: function(data,type,row,meta){
+		        		return moment(data).format('MM/DD/YY hh:mma');
+		        	}
+		        }
+			],
+			order : [0,'desc'],
+		    scrollY: '55vh',
+		    scroller: {
+		    	loadingIndicator : true
+		    },
+		    select: {
+		    	style : 'multi+shift'
+		    }
+		});
+
+	var rrtable = $('#reported_report').DataTable({
+			dom : '<"row"<"col"t>><"row"<"col"iBp>>',
+			pagingType : 'numbers',
+			info : true,
+			responsive: true,
+			buttons: [
+		        {
+		            text: 'Excel',
+		            extend: 'excel',
+		            className: 'log_excel d-none'
+		        },
+		        {
+		            text: 'Print All',
+		            extend: 'print',
+		            className: 'log_print d-none'
+		        }
+	        ],
+			ajax: {
+				url: '<?= site_url("swi/getReported"); ?>',
+        		dataSrc: ''
+			},
+			columns : [
+				{ data: "doc_number" },
+				{ data: "doc_name" },
+		        { data: "process" },
+		        { data: "comments" },
+		        { data: "correction_made" },
+		        { data: "resolver" },
+		        { data: "corrected_on",
+		        	render: function(data,type,row,meta){
+		        		if(data){
+		        			return moment(data).format('MM/DD/YY hh:mma');
+		        		}else{
+		        			return null;
+		        		}
+		        	}
+		        }
+			],
+		    scrollY: '55vh',
+		    scroller: {
+		    	loadingIndicator : true
+		    },
+		    select: {
+		    	style : 'multi+shift'
+		    },
+		    "createdRow": function(row,data,index){
+		    	if(data['status'] == 'resolved'){
+		    		$(row).addClass('table-success');
+		    	}else{
+		    		$(row).addClass('table-danger');
+		    	}
+		    },
+		    "drawCallback": function( settings ) {
+		    	resolved = $('#reported_report').find('.table-success').length;
+				$('.resolved_docs').html(resolved);
+		    },
+		    "initComplete":function(settings,json){
+				resolved = $('#reported_report').find('.table-success').length;
+				$('.resolved_docs').html(resolved);
+		    }
+		});
+
 	dtable.on('select deselect',function(e,dt,type,indexes){
 		if(dtable.rows({selected:true}).data().length){
 			$('#delete,#edit').prop('disabled',false);
@@ -416,6 +525,7 @@
 		doc_id = astable.rows(indexes).data().pluck('doc_id')[0];
 		$('input[name="assign_doc_id"]').val(doc_id);
 	});
+
 
 	//functions
 	function form_submit(target,is_edit=false){
@@ -470,7 +580,7 @@
 				$('#rd_pending').html(res.pending);
 				$('#rd_standard').html(res.standard_met);
 				$('#rd_deprecation').html(res.deprecation);
-				$('#rd_reported').html(res.reported);
+				$('.rd_reported').html(res.reported);
 				$('#rd_unassigned').html(res.unassigned);
 				$('.u_limit').html(' /'+res.documents);
 
@@ -512,6 +622,8 @@
 				rdtable.ajax.reload();
 			}
 		});
+
+		rrtable.ajax.reload();
 	}
 
 	function getEmployeeTooltip()
@@ -526,6 +638,29 @@
 			}
 		});
 		return tooltip;
+	}
+
+	function override_assignment(assignment_id)
+	{
+		$.ajax({
+			type: 'GET',
+			url: '<?= site_url('api/get_swi_assignment'); ?>/'+assignment_id,
+			dataType: 'json',
+			success: function(res){
+				assigned = (res.assigned_on ? moment(res.assigned_on).format('MM/DD/YYYY') : null);
+				completed = (res.completed_on ? moment(res.completed_on).format('MM/DD/YYYY') : null);
+				name = res.e_fname+' '+res.e_lname;
+				$('input[name="doc_num"]').val(res.doc_number);
+				$('input[name="doc_name"]').val(res.doc_name);
+				$('input[name="assigned_on"]').val(assigned);
+				$('input[name="completed_on"]').val(completed);
+				$('input[name="assignment_id').val(assignment_id);
+
+				$('input[name="assoc_search"]').val(name);
+				$('input[name="assoc_search"]').trigger('keyup');
+				aetable.rows(':visible').select();
+			}
+		});
 	}
 
 	//events
@@ -561,6 +696,8 @@
 		                		$('input[name="doc_search"]').trigger('keyup');
 		                		$('#assign_doc_table').DataTable().row(':eq(0)',{ page: 'current' }).select();
 		                		$('input[name="reassignment_id"]').val(assignment_id);
+		                		$('input[name="assoc_search"]').val('');
+		                		aetable.search('').draw();
 		                		$('#assign_swi_document').modal('show');
 		                		break;
 		                	case 'reset':
@@ -579,6 +716,10 @@
 		                		$('#confirm_action_label').html('<b>Delete</b>');
 		                		$('#confirm_action').modal('show');
 		                		break;
+		                	case 'override':
+		                		override_assignment(assignment_id);
+		                		$('#override_assignment').modal('show');
+		                		break;
 		                }		
 
         			},
@@ -589,6 +730,7 @@
         				reset: {name:"Reset Assignment",icon:"fas fa-undo"},
         				see_assignment: {name:"See Assignment",icon:"fas fa-clipboard-list"},
         				"sep1": "---------",
+        				override: {name:"Override Assignment",icon:"fas fa-edit text-warning"},
         				unassign: {name:"Unassign",icon:"fas fa-eraser"},
         				delete: {name:"Delete Assignment",icon:"fas fa-trash-alt text-danger"}
         			}
@@ -712,9 +854,9 @@
 		update_dashboard();
 	})
 
-	$('#assign_swi_document').on('shown.bs.modal', function (e) {
+	$('#assign_swi_document,#override_assignment').on('shown.bs.modal', function (e) {
 		$.fn.dataTable.tables({visible: true, api: true}).columns.adjust();
-	})
+	});
 
 	$('a[href="#assign_swi_document"]').click(function(){
 		$('input[name="doc_search"]').val('');
@@ -723,6 +865,11 @@
 		astable.rows().deselect();
 		astable.search('').draw();
 		aetable.search('').draw();
+	});
+
+	$('a[href="#report_document_reported"],a[href="#swi_resolution"]').click(function(){
+		rrtable.ajax.reload();
+		rtable.ajax.reload();
 	});
 
 	$('.document_report_filters').change(function(){
@@ -755,7 +902,7 @@
 					startSubmit('.reassign_submit');
 				},
 				success : function(res){
-					
+					console.log(res);
 				},
 				complete : function(){
 					endSubmit('.reassign_submit');
@@ -999,5 +1146,48 @@
 		month_dataset = $('#dataset_month').val();
 		update_dashboard();
 		$('.modal').modal('hide');
+	});
+
+	$('#override_submit').click(function(){
+		form = $('#override');
+		url = $(form).attr('action');
+		assigned = aetable.rows(':visible',{selected:true}).data().pluck('user_id')[0];
+		post = {
+				'assignment_id':$('input[name="assignment_id"]').val(),
+				'assigned_on':$('input[name="assigned_on"]').val(),
+				'completed_on':$('input[name="completed_on"]').val(),
+				'status':$('select[name="status"]').val(),
+				'reason':$('textarea[name="reason"]').val(),
+				'assigned':assigned
+			};
+
+		if($('textarea[name="reason"]').val().trim().length){
+			$.ajax({
+				type : 'POST',
+				url : url,
+				dataType : 'json',
+				data : post,
+				beforeSend:function(){
+					startSubmit('#override_submit');
+				},
+				success:function(res){
+					update_dashboard();
+				},
+				complete:function(){
+					endSubmit('#override_submit');
+				}
+			})
+		}else{
+			$('textarea[name="reason"]').notify('Reason is required','error');
+		}
+	});
+
+	$('#nullcomplete').click(function(){
+		$('input[name="completed_on"]').val('');
+	});
+
+	$('.dtp').daterangepicker({
+	    singleDatePicker: true,
+	    showDropdowns: true
 	});
 </script>

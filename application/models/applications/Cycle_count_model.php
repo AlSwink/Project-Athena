@@ -5,6 +5,7 @@ class Cycle_count_model extends XPO_Model {
 	public $dataset;
 	public $entry_id;
 	public $loc_type;
+	public $count_type;
 	public $cyc_locs;
 	public $cc_template;
 	public $cc_f_insert;
@@ -27,6 +28,11 @@ class Cycle_count_model extends XPO_Model {
 		$this->db->where_in('entry_id',$this->entry_id);
 		$locations = $this->db->get_where('cyc_master_pool')->result_array();
 		return $locations;
+	}
+
+	public function get_cm_f()
+	{
+
 	}
 
 	public function get_lc_f()
@@ -72,9 +78,17 @@ class Cycle_count_model extends XPO_Model {
 
 	public function getKNT()
 	{
-		$this->query = "SELECT lc_f.loc,qty FROM lc_f LEFT JOIN iv_f ON iv_f.loc = lc_f.loc WHERE lc_f.loc IS NOT NULL ";
-		$this->setLocType($this->loc_type);
-		$this->query .= "GROUP BY lc_f.loc,qty ORDER BY lc_f.loc";
+		$this->query = "SELECT DISTINCT(lc_f.loc) as loc,qty,tariff_desc
+						FROM lc_f 
+						LEFT JOIN iv_f ON iv_f.loc = lc_f.loc
+						JOIN pm_f ON  pm_f.sku = iv_f.sku AND pm_f.pkg = iv_f.pkg
+						WHERE lc_f.loc IS NOT NULL ";
+		if($this->count_type)
+			$this->setCountType($this->count_type);
+		if($this->loc_type)
+			$this->setLocType($this->loc_type);
+		
+		$this->query .= "GROUP BY lc_f.loc,qty,tariff_desc ORDER BY lc_f.loc";
 		
 		return $this->wms->query($this->query)->result_array();
 	}
@@ -101,7 +115,7 @@ class Cycle_count_model extends XPO_Model {
 			$temp['cycc_oid'] = (isset($record[$x]['cc_rid']) ? $prefix.$record[$x]['cc_rid'] : $prefix.$cc_rid);
 			$temp['opr'] = 'AUTO';
 			$temp['cycc_stt'] = 'HOLD';
-			$temp['release_date'] = date('m-d-Y');
+			$temp['release_date'] = date('Y-m-d');
 			$temp['start_loc'] = $record[$x]['loc'];
 			$temp['end_loc'] = $record[$x]['loc'];
 			//$temp['dt_start'] = date('Y-m-d H:i:s');
@@ -121,7 +135,10 @@ class Cycle_count_model extends XPO_Model {
 								'enabled' => true,
 								'dataset' => $this->dataset,
 								'cc_rid' => $cc_rid,
-								'mark' => ($this->type ? $this->type : null)
+								'mark' => ($this->type ? $this->type : null),
+								'loc_type' => ($this->loc_type ? $this->loc_type : null),
+								'count_type' => ($this->count_type ? $this->count_type : null),
+								'tariff_desc' => (isset($record[$x]['tariff_desc']) ? $record[$x]['tariff_desc'] : null)
 							);
 			}
 
@@ -452,6 +469,16 @@ class Cycle_count_model extends XPO_Model {
 	}
 
 	private function setLocType($type)
+	{
+		$types = array(
+					'FP' => array('FP'),
+					'BULK' => array('FIFO','LIFO','BULK')
+					);
+		$in = implode('","',$types[$type]);
+		$this->query .= 'AND loc_type IN ("'.$in.'")';
+	}
+
+	private function setCountType($type)
 	{		
 		$outside = array('A','B','SB','CW','BG','DR','TRUCK','RP','VT','VAN','US','OX','TRK','T1','TS','PA','UN','RCV','RTR','RES','RTN','RD','PROJ','STOP','TG','REC','UR','WET','Q','test','OS','RTS','MCO','MSL','AD','CR','MST','GSW','HNG');
 

@@ -229,7 +229,7 @@ class Swi_model extends XPO_Model {
 		}
 		
 		$this->db->select('COUNT(doc_id) as docs');
-		$this->db->where('added_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
+		$this->db->where('added_on < "'.$this->fto.'"');
 		$this->db->where('deleted',0);
 		$docs = $this->db->get('swi_documents')->row();
 		//echo $this->db->last_query();
@@ -274,7 +274,7 @@ class Swi_model extends XPO_Model {
 							'user_id' => $employee->user_id,
 							'name' => $employee->e_fname.' '.$employee->e_lname,
 							'assigned' => (isset($swi_doc) ? count($swi_doc) : 0),
-							'department' => $this->getDepartment($employee->department),
+							'department' => $employee->department_name,
 							'status' => $this->check_completion($swi_doc)
 							);
 		}
@@ -600,7 +600,6 @@ class Swi_model extends XPO_Model {
 	{
 		if(in_array('bad',$data['standard'])){
 			$status = 1;
-			$this->insert_adjustment($data);
 		}elseif(!in_array('bad',$data['standard']) && in_array('na',$data['standard'])){
 			$status = 3;
 		}else{
@@ -625,6 +624,10 @@ class Swi_model extends XPO_Model {
 									'standard'=>$this->get_status_icon($data['standard'][$x]),
 									'comments'=> (isset($data['comments'][$x]) ? $data['comments'][$x] : NULL)
 									);
+
+			if($data['standard'][$x] == 'bad'){
+				$this->insert_adjustment($data['process_assignment_id'],$data['question_id'][$x]);
+			}
 		}
 
 		$this->db->update_batch('swi_process_assignment',$update_process,'pa_id');
@@ -687,6 +690,27 @@ class Swi_model extends XPO_Model {
 		$this->db->set('comments',NULL);
 		$this->db->where('assignment_id',$id);
 		$this->db->update('swi_process_assignment');
+	}
+
+	public function updateAssignment($data)
+	{
+		$completed = ($data['completed_on'] ? date_format(date_create($data['completed_on']),'Y-m-d 00:00:00') : null);
+
+		$result = ($data['status'] !== '' ? $data['status'] : null);
+		$status = ($data['status'] != null ? 'completed' : 'pending');
+
+		$update = array(
+					'assigned_on' => date_format(date_create($data['assigned_on']),'Y-m-d 00:00:00'),
+					'completed_on' => $completed,
+					'result' => $result,
+					'status' => $status,
+					'user_id' => $data['assigned'],
+					'modified_on' => date('Y-m-d H:i:s'),
+					'modified_by' => $this->user_id
+					);
+
+		$this->db->where('assignment_id',$data['assignment_id']);
+		$this->db->update('swi_document_assignment',$update);
 	}
 
 	public function getDepartmentIds()
@@ -768,6 +792,52 @@ class Swi_model extends XPO_Model {
 		return $employee->row();
 	}
 
+	public function get_assignment($assignment_id)
+	{
+		$this->db->join('swi_documents','swi_documents.doc_id = swi_document_assignment.doc_id');
+		$this->db->join('employees','employees.user_id = swi_document_assignment.user_id','LEFT');
+		$this->db->where('assignment_id',$assignment_id);
+		$assignment = $this->db->get('swi_document_assignment')->row();
+		return $assignment;
+	}
+
+	public function getReported($id=null)
+	{
+		$this->setFromAndTo();
+
+		$this->db->select('*');
+		$this->db->select('swi_document_adjustments.status as status');
+		$this->db->select('CONCAT(auditor.e_fname," ",auditor.e_lname) as auditor');
+		$this->db->select('CONCAT(audited.e_fname," ",audited.e_lname) as audited');
+		$this->db->select('CONCAT(resolver.e_fname," ",resolver.e_lname) as resolver');
+		$this->db->join('swi_document_assignment','swi_document_assignment.assignment_id = swi_document_adjustments.assignment_id');
+		$this->db->join('swi_documents','swi_documents.doc_id = swi_document_assignment.doc_id');
+		$this->db->join('swi_process_assignment','swi_process_assignment.pa_id = swi_document_adjustments.pa_id');
+		$this->db->join('swi_processes','swi_processes.process_id = swi_process_assignment.process_id');
+		$this->db->join('employees as auditor','auditor.user_id = swi_document_assignment.user_id');
+		$this->db->join('employees as audited','audited.user_id = swi_document_assignment.user_id');
+		$this->db->join('employees as resolver','resolver.user_id = swi_document_adjustments.corrected_by','LEFT');
+		
+		$this->db->where('swi_document_adjustments.deleted',0);
+		$this->db->where('swi_document_assignment.assigned_on BETWEEN "'.$this->ffrom.'" AND "'.$this->fto.'"');
+		$reported = $this->db->get('swi_document_adjustments')->result();
+
+		return $reported;
+	}
+
+	public function saveResolution($data)
+	{
+		$update = array(
+					'correction_made' => $data['resolution'],
+					'status' => 'resolved',
+					'corrected_on' => date('Y-m-d H:i:s'),
+					'corrected_by' => $this->user_id
+					);
+
+		$this->db->where('adj_id',$data['adj_id']);
+		$this->db->update('swi_document_adjustments',$update);
+	}
+
 	private function get_status_icon($status)
 	{
 		switch($status){
@@ -783,8 +853,15 @@ class Swi_model extends XPO_Model {
 		}
 	}
 
-	private function insert_adjustment($data)
+	private function insert_adjustment($assignment_id,$pa_id)
 	{
+		$insert = array(
+					'assignment_id' => $assignment_id,
+					'pa_id' => $pa_id,
+					'status' => 'pending',
+					'added_on' => date('Y-m-d H:i:s')
+					);
 
+		$this->db->insert('swi_document_adjustments',$insert);
 	}
 }

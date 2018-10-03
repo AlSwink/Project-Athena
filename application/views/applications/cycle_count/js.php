@@ -498,7 +498,10 @@
 	});
 
 	$('#nike_cycle_count').click(function(){
-		url = '<?= site_url("cycle_count/insert_locations"); ?>/'+dataset;
+		count_type = $('select[name="count_type"]').val();
+		loc_type = $('select[name="loc_type"]').val();
+		dataset = $('select[name="dataset"]').val();
+		url = '<?= site_url("cycle_count/insert_locations"); ?>';
 		selected = [];
 		selected_locs = gltable.rows({selected:true}).data();
 		$(selected_locs).each(function(k,v){
@@ -509,7 +512,13 @@
 			type: 'POST',
 			url: url,
 			dataType: 'json',
-			data: { post : selected, type : 'nike' },
+			data: { 
+					post : selected, 
+					dataset : dataset, 
+					type : 'nike', 
+					count_type : count_type, 
+					loc_type : loc_type 
+			},
 			beforeSend: function(){
 				startSubmit('#nike_cycle_count');
 			},

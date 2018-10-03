@@ -70,6 +70,7 @@ $route['swi/input_worksheet'] = 'apps/swi/input_worksheet/';
 $route['swi/getEmployeeInfo/(:any)'] = 'apps/swi/getEmployeeInfo/$1';
 $route['swi/progress_board/(:any)'] = 'displays/swi/$1';
 $route['swi/assign_documents/(:any)'] = 'apps/swi/assign_documents/$1';
+$route['swi/getReported/(:any)'] = 'apps/swi/getReported/$1';
 //system_health_check routes
 $route['health_check'] = 'applications/system_health_check';
 $route['health_check/standalone'] = 'applications/system_health_check/1';
@@ -84,6 +85,8 @@ $route['access_verifier/standalone'] = 'applications/access_verifier/1';
 $route['referral/(:any)/(:any)'] = 'redirect/referral/$1/$2';
 //cycle_count routes
 $route['cycle_count'] = 'applications/cycle_count';
+$route['cycle_count/ds/knk'] = 'applications/cycle_count/KNK';
+$route['cycle_count/ds/knt'] = 'applications/cycle_count/KNT';
 $route['cycle_count/standalone'] = 'applications/cycle_count/1';
 $route['cycle_count/(:any)'] = 'apps/cycle_count/$1';
 $route['cycle_count/(:any)/(:any)'] = 'apps/cycle_count/$1/$2';

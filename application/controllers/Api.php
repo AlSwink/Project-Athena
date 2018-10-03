@@ -8,7 +8,6 @@ class Api extends CI_Controller {
         parent::__construct();
         $this->load->model('applications/swi_model');
         $this->load->model('applications/Cycle_count_model');
-        $this->load->model('Logger_model');
     }
 
     public function get_app($app)
@@ -35,7 +34,7 @@ class Api extends CI_Controller {
         echo json_encode($this->swi_model->summary_employee());
     }
 
-     public function swi_get_document($field=null,$doc_num=null)
+    public function swi_get_document($field=null,$doc_num=null)
     {
         if($doc_num)
             $docnum = $doc_num;
@@ -83,6 +82,11 @@ class Api extends CI_Controller {
         echo json_encode($page);
     }
 
+    public function get_swi_assignment($id)
+    {
+        echo json_encode($this->swi_model->get_assignment($id));
+    }
+
     public function getCycToday($dataset='KNK')
     {
         $this->Cycle_count_model->dataset = $dataset;
@@ -107,5 +111,11 @@ class Api extends CI_Controller {
         $this->Logger_model->table = $table;
         $logs = $this->Logger_model->get();
         echo json_encode($logs);
+    }
+
+    public function checkAccess($eroster_id)
+    {
+        $check = $this->XPO_model->getEmployees($eroster_id);
+        echo json_encode($check);
     }
 }

@@ -31,8 +31,21 @@ class Applications extends CI_Controller {
                     'totals'        => $this->model->summary_report(),
                     'departments'   => $this->model->getDepartmentIds(),
                     'dependencies' => array(
-                                        'css'   => array('jquery-ui.min','jquery.contextMenu.min'),
-                                        'js'    => array('jquery-ui.min','chart.min','jquery.contextMenu.min','jquery.ui.position.min','moment','hermes')
+                                        'css'   => array(
+                                                    'jquery-ui.min',
+                                                    'jquery.contextMenu.min',
+                                                    'daterangepicker'
+                                                ),
+                                        'js'    => array(
+                                                    'jquery-ui.min',
+                                                    'chart.min',
+                                                    'jquery.contextMenu.min',
+                                                    'jquery.ui.position.min',
+                                                    'moment',
+                                                    'hermes',
+                                                    'daterangepicker',
+                                                    'notify.min'
+                                                )
                                         )
                 );
 
@@ -52,11 +65,11 @@ class Applications extends CI_Controller {
         loadView($argus);
     }
 
-    public function cycle_count(){
+    public function cycle_count($dataset=null){
         check_session();
-
+        
         $cyc = array(
-                    'totals' => $this->model->getTotals('KNK'),
+                    'totals' => $this->model->getTotals($dataset),
                     'dependencies' => array(
                                         'css'   => array('daterangepicker','jquery.contextMenu.min'),
                                         'js'    => array('hermes','chart.min','jquery-barcode.min','daterangepicker','jquery.contextMenu.min','jquery.ui.position.min','notify.min')
