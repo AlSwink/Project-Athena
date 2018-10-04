@@ -1,5 +1,13 @@
 <script>
-	loadDependencies(<?= json_encode($dependencies);?>);
+	<?php if(!$this->standalone){ ?>
+		loadDependencies(<?= json_encode($dependencies);?>);
+	<?php } ?>
+	var swi = {
+				update: function(){
+					update_dashboard(true);
+				}
+			}
+
 	var totals = {
 					'completed' : <?= $totals['completed']; ?>,
 					'pending'	: <?= $totals['pending']; ?>,
@@ -456,7 +464,7 @@
 		        }
 	        ],
 			ajax: {
-				url: '<?= site_url("swi/getReported"); ?>',
+				url: '<?= site_url("api/getSWIReported"); ?>',
         		dataSrc: ''
 			},
 			columns : [
@@ -526,7 +534,6 @@
 		$('input[name="assign_doc_id"]').val(doc_id);
 	});
 
-
 	//functions
 	function form_submit(target,is_edit=false){
 		url = $(target).attr('action');
@@ -552,7 +559,7 @@
 		clear_validation();
 	}
 
-	function update_dashboard()
+	function update_dashboard(from_socket=false)
 	{
 		doc_report_url = '<?= site_url("api/get_document_report"); ?>/'+year_dataset+'/'+month_dataset;
 		rdtable.ajax.url(doc_report_url).load();
@@ -619,11 +626,14 @@
 				c_days_prog.update();
 				c_in_standard.update();
 				c_doc_prog.update();
-				rdtable.ajax.reload();
+				//rdtable.ajax.reload();
+				rrtable.ajax.reload();
 			}
 		});
-
-		rrtable.ajax.reload();
+		console.log(from_socket);
+		if(!from_socket){
+			socket.emit('command','/do-swi-update');
+		}
 	}
 
 	function getEmployeeTooltip()

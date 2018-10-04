@@ -16,7 +16,7 @@
 		        }
 	        ],
 			ajax: {
-				url: '<?= site_url("swi/getReported/pending"); ?>',
+				url: '<?= site_url("api/getSWIReported/pending"); ?>',
         		dataSrc: ''
 			},
 			columns : [
@@ -71,6 +71,7 @@
 					$('#info_card').addClass('d-none');
 				},complete:function(){
 					endSubmit('#resolution_submit');
+					socket.emit('command','/do-swi-update');
 				}
 			});
 		}else{

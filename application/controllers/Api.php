@@ -87,6 +87,14 @@ class Api extends CI_Controller {
         echo json_encode($this->swi_model->get_assignment($id));
     }
 
+    public function getSWIReported($status=null)
+    {
+        if($status)
+            $this->swi_model->db->where('swi_document_adjustments.status',$status);
+        $reported = $this->swi_model->getReported();
+        echo json_encode($reported);
+    }
+
     public function getCycToday($dataset='KNK')
     {
         $this->Cycle_count_model->dataset = $dataset;

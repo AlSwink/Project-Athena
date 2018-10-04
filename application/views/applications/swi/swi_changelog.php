@@ -1,8 +1,15 @@
 <div class="row" style="max-height: 80%; overflow: auto">
 	<div class="col-lg-12">
-		<div class="jumbotron">
-			<h2><i class="fas fa-code-branch"></i> Development has been put on-hold until further notice</h2>
-		</div>
+		<h3>As of 10/04/2018 <small>v0.5.4</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-success">New</span> Added Global count totals in progress board.</li>
+			<li><span class="badge bg-success">New</span> Added Countermeasures taken table progress board.</li>
+			<li><span class="badge bg-success">New</span> Added Realtime refresh on progress board after changes.</li>
+			<li><span class="badge bg-secondary">New</span> Added object handler for realtime events.</li>
+			<li><span class="badge bg-secondary">New</span> Added realtime update event after worksheet has been submitted.</li>
+			<li><span class="badge bg-secondary">Changed</span> Revised update dashboard calling from static to realtime.</li>
+		</ul>
 	</div>
 	<div class="col-lg-12">
 		<h3>As of 10/03/2018 <small>v0.5.3</small></h3>

@@ -171,14 +171,6 @@ class Swi extends CI_Controller {
         echo json_encode($log['action'].$log['for'].' - '.$log['reason']);
     }
 
-    public function getReported($status=null)
-    {
-        if($status)
-            $this->swi_model->db->where('swi_document_adjustments.status',$status);
-        $reported = $this->swi_model->getReported();
-        echo json_encode($reported);
-    }
-
     public function save_resolution()
     {
         parse_str($this->input->post('post'),$post);

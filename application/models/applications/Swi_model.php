@@ -859,7 +859,8 @@ class Swi_model extends XPO_Model {
 					'assignment_id' => $assignment_id,
 					'pa_id' => $pa_id,
 					'status' => 'pending',
-					'added_on' => date('Y-m-d H:i:s')
+					'added_on' => date('Y-m-d H:i:s'),
+					'deleted' => 0
 					);
 
 		$this->db->insert('swi_document_adjustments',$insert);

@@ -41,7 +41,6 @@ class Applications extends CI_Controller {
                                                     'chart.min',
                                                     'jquery.contextMenu.min',
                                                     'jquery.ui.position.min',
-                                                    'moment',
                                                     'hermes',
                                                     'daterangepicker',
                                                     'notify.min'

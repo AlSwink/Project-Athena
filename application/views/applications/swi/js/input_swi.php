@@ -125,6 +125,7 @@
 						$('#msg').removeClass('alert-danger');
 						$('#msg').addClass('alert-success');
 						$('#msg').html('Worksheet saved successfully');
+						socket.emit('command','/do-swi-update');
 					}
 				})
 			}
