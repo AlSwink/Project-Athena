@@ -6,7 +6,7 @@ class E_roster extends CI_Controller {
 	public function __construct()
     {
         parent::__construct();
-        check_session();
+        $this->load->model('applications/E_roster_model');
     }
 
     

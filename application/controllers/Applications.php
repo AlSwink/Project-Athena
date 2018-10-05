@@ -91,8 +91,8 @@ class Applications extends CI_Controller {
 	}
 	
 	public function e_roster(){
-		//$eroster = array();	
-		
+		$eroster = array();	
+		loadView();
 			
 		
 	}
