@@ -768,7 +768,6 @@ class Swi_model extends XPO_Model {
 				$this->db->insert_batch('swi_process_assignment',$insert_process);
 			}
 		}else{
-			var_dump($data);
 			$this->db->set('status','pending');
 			$this->db->set('result',NULL);
 			$this->db->set('assigned_on',date('Y-m-d H:i:s'));
