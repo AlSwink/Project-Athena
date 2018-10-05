@@ -13,7 +13,7 @@
         <input id="start_shipment_id" type="hidden" class="shipment_val"/>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-sm btn-secondary cancel" data-dismiss="modal">Cancel</button>
         <button id="start_shipment_btn" type="button" class="btn btn-sm btn-primary">Send to Verification</button>
       </div>
     </div>
@@ -34,7 +34,7 @@
         <input type="text" class="form-control form-control-lg"/>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-sm btn-secondary cancel" data-dismiss="modal">Cancel</button>
         <button type="button" class="start_loading_btn btn btn-sm btn-primary">Send to Loading</button>
       </div>
     </div>
@@ -55,7 +55,7 @@
         <input type="text" class="form-control form-control-lg"/>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-sm btn-secondary cancel" data-dismiss="modal">Cancel</button>
         <button type="button" class="start_loading_btn btn btn-sm btn-primary">Send to Loading</button>
       </div>
     </div>
@@ -92,7 +92,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-sm btn-secondary cancel" data-dismiss="modal">Cancel</button>
         <button type="button" class="start_release_btn btn btn-sm btn-primary">Release</button>
       </div>
     </div>
@@ -125,8 +125,27 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-sm btn-secondary cancel" data-dismiss="modal">Cancel</button>
         <button type="button" class="complete_btn btn btn-sm btn-primary">Ship complete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="details" tabindex="-1">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-truck"></i> Shipment Details</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Details go here
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-secondary cancel" data-dismiss="modal">Done</button>
       </div>
     </div>
   </div>

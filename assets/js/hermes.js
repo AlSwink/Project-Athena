@@ -2,7 +2,7 @@ var socket_port = 'http://'+window.location.hostname+':3000';
 var socket = io.connect(socket_port);
 
 $(document).on('click','.close_chat',function(){
-	socket.disconnect(socket_port);
+	//socket.disconnect(socket_port);
 	$('.chatbox_wrapper').addClass('d-none');
 });
 

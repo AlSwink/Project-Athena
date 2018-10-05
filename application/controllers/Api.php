@@ -126,4 +126,13 @@ class Api extends CI_Controller {
         $check = $this->XPO_model->getEmployees($eroster_id);
         echo json_encode($check);
     }
+
+    public function generateRandom()
+    {
+        for($x=0;$x<6;$x++){
+            $numbers[$x] = random_int(1,58);
+        }
+
+        var_dump($numbers);
+    }
 }

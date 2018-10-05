@@ -56,8 +56,8 @@ class Applications extends CI_Controller {
         
         $argus = array(
                     'dependencies' => array(
-                                        'css'   => array('jquery.signature','jquery-ui.min'),
-                                        'js'    => array('moment','hermes','jquery-ui.min','jquery.signature.min','jquery.ui.touch-punch.min')
+                                        'css'   => array('jquery.signature','jquery-ui.min','jquery.contextMenu.min'),
+                                        'js'    => array('moment','hermes','jquery-ui.min','jquery.signature.min','jquery.ui.touch-punch.min','jquery.contextMenu.min')
                                         )
                 );
 

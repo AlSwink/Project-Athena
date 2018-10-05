@@ -525,7 +525,8 @@
 	});
 
 	aetable.on('select',function(e,dt,type,indexes){
-		reassignto = aetable.rows(indexes).data().pluck('user_id')[0];
+		reassignto = aetable.rows(':visible',{selected:true}).data().pluck('user_id')[0];
+		console.log(reassignto);
 		$('input[name="reassign_to_emp_id"]').val(reassignto);
 	});
 

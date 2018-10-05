@@ -79,6 +79,7 @@ class XPO_Model extends CI_Model {
   public function getEmployees($emp_id=null)
   {
     $this->db->select('*');
+    $this->db->select('employees.user_id as user_id');
     $this->db->select('employees.e_fname,employees.e_lname');
     $this->db->select('CONCAT(super.e_fname," ",super.e_lname) as supervisor');
     $this->db->select('departments.department as department_name');

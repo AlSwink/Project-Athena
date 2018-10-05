@@ -6,8 +6,8 @@
 			<li><span class="badge bg-success">New</span> Added Global count totals in progress board.</li>
 			<li><span class="badge bg-success">New</span> Added Countermeasures taken table progress board.</li>
 			<li><span class="badge bg-success">New</span> Added Realtime refresh on progress board after changes.</li>
-			<li><span class="badge bg-secondary">New</span> Added object handler for realtime events.</li>
-			<li><span class="badge bg-secondary">New</span> Added realtime update event after worksheet has been submitted.</li>
+			<li><span class="badge bg-success">New</span> Added object handler for realtime events.</li>
+			<li><span class="badge bg-success">New</span> Added realtime update event after worksheet has been submitted.</li>
 			<li><span class="badge bg-secondary">Changed</span> Revised update dashboard calling from static to realtime.</li>
 		</ul>
 	</div>
