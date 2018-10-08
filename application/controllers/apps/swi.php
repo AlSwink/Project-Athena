@@ -156,6 +156,13 @@ class Swi extends CI_Controller {
         $this->load->view('page');
     }
 
+    public function worksheet()
+    {
+        $this->kiosk = true;
+        $this->page = $this->page_dir.'/swi_worksheet';
+        $this->load->view('page');
+    }
+
     public function override_assignment()
     {
         $post = $this->input->post();

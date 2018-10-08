@@ -883,6 +883,10 @@
 		rtable.ajax.reload();
 	});
 
+	$('a[href="#swi_logs]').click(function(){
+		log_table.ajax.reload();
+	});
+
 	$('.document_report_filters').change(function(){
 		var department = $('#department_filter option:selected').text();
 		var status = $('#status_filter').val();

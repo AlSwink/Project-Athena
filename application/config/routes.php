@@ -91,5 +91,7 @@ $route['cycle_count/standalone'] = 'applications/cycle_count/KNK';
 $route['cycle_count/(:any)'] = 'apps/cycle_count/$1';
 $route['cycle_count/(:any)/(:any)'] = 'apps/cycle_count/$1/$2';
 $route['cycle_count/(:any)/(:any)/(:any)'] = 'apps/cycle_count/$1/$2/$3';
-
+//random_audit routes
+$route['random_audit'] = 'applications/random_audit';
+$route['random_audit/standalone'] = 'applications/random_audit/1';
 //tool routes

@@ -233,7 +233,7 @@
 		    select: {
 		    	style : 'multi+shift'
 		    },
-		     "createdRow" : function(row,data,index){
+		    "createdRow" : function(row,data,index){
         		$(row).addClass('trmenu');
 		    }
 		});

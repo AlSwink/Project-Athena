@@ -1,5 +1,12 @@
 <div class="row" style="max-height: 80%; overflow: auto">
 	<div class="col-lg-12">
+		<h3>As of 10/08/2018 <small>v0.5.4a</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-secondary">Changed</span> Added Global count totals in progress board.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
 		<h3>As of 10/04/2018 <small>v0.5.4</small></h3>
 		Changes made:
 		<ul>

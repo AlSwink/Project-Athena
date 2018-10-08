@@ -97,4 +97,17 @@ class Applications extends CI_Controller {
 
         loadView();
     }
+
+    public function random_audit()
+    {
+        $ra = array(
+                    'employees' => $this->model->getEmployeesReport(),
+                    'dependencies' => array(
+                                        'css' => array('daterangepicker','jquery.contextMenu.min'),
+                                        'js'    => array('hermes','chart.min','notify.min','jquery.contextMenu.min','daterangepicker')
+                                        )
+                );
+
+        loadView($ra);
+    }
 }

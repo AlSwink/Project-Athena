@@ -8,6 +8,7 @@ class Api extends CI_Controller {
         parent::__construct();
         $this->load->model('applications/swi_model');
         $this->load->model('applications/Cycle_count_model');
+        $this->load->model('applications/Random_audit_model');
     }
 
     public function get_app($app)
@@ -127,12 +128,15 @@ class Api extends CI_Controller {
         echo json_encode($check);
     }
 
-    public function generateRandom()
+    public function getDatesReport()
     {
-        for($x=0;$x<6;$x++){
-            $numbers[$x] = random_int(1,58);
-        }
+        $data = $this->Random_audit_model->getDatesReport();
+        echo json_encode($data);
+    }
 
-        var_dump($numbers);
+    public function getLocationList()
+    {
+        $data = $this->Random_audit_model->getLocationList();
+        echo json_encode($data);
     }
 }
