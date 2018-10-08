@@ -91,8 +91,11 @@ class Applications extends CI_Controller {
 	}
 	
 	public function e_roster(){
-		$eroster = array();	
-		loadView();
+		$eroster = array(
+						'employees' => $this->model->get_my_employees(),
+						'positions' => $this->model->get_positions()
+		);	
+		loadView($eroster);
 			
 		
 	}

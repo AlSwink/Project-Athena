@@ -187,14 +187,14 @@ class e_roster_model extends XPO_Model {
         $er->join('tbl_xpo_agency','tbl_employees.temp_id = tbl_xpo_agency.temp_id');
         $er->order_by('emp_fname','ASC');
 
-        switch($this->session->userdata('user_info')->user_group){
+        /*switch($this->session->userdata('user_info')->user_group){
             case 'TEMPRAND':
                 $er->where('tbl_xpo_agency.temp_name','Randstad USA');
                 break;
             case 'TEMPPARA':
                 $er->where('tbl_xpo_agency.temp_name','Paramount Staffing');
                 break;
-        }
+        }*/
 
         $results = $er->get();
         return $results->result();
@@ -425,7 +425,7 @@ class e_roster_model extends XPO_Model {
         $forge->drop_column('tbl_employee_modules','mod_'.$id);
     }
 
-    function get_my_employees($name)
+    function get_my_employees()
     {
         $er = $this->load->database('xpo',TRUE);
         $er->select('tbl_employees.id,emp_id,kronos_id,emp_fname,emp_lname,shift,tbl_xpo_agency.temp_name,tbl_xpo_departments.dept_name,tbl_xpo_zones.zone,tbl_xpo_positions.position,supervisor');
@@ -437,18 +437,33 @@ class e_roster_model extends XPO_Model {
         $er->join('tbl_xpo_agency','tbl_employees.temp_id = tbl_xpo_agency.temp_id');
         $er->order_by('emp_fname','ASC');
 
-        switch($this->session->userdata('user_info')->user_group){
+        /*switch($this->session->userdata('user_info')->user_group){
             case 'TEMPRAND':
                 $er->where('tbl_xpo_agency.temp_name','Randstad USA');
                 break;
             case 'TEMPPARA':
                 $er->where('tbl_xpo_agency.temp_name','Paramount Staffing');
                 break;
-        }
+        }*/
         $results = $er->get();
         return $results->result();
     }
 
+	function get_positions(){
+		$employees = $this->get_all();
+		$tabs = array();
+		$tabs_count = array();
+		foreach($employees as $row){
+			if(array_search($row->position,$tabs) === false){
+				$tabs[] = $row->position;
+				$tabs_count[$row->position] = 1;
+			}else{
+				$tabs_count[$row->position] = $tabs_count[$row->position] + 1;
+			}
+		}
+		return $tabs_count;
+	}
+	
     function module_employee_list($id)
     {
         $er = $this->load->database('xpo',TRUE);        
