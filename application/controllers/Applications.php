@@ -31,8 +31,20 @@ class Applications extends CI_Controller {
                     'totals'        => $this->model->summary_report(),
                     'departments'   => $this->model->getDepartmentIds(),
                     'dependencies' => array(
-                                        'css'   => array('jquery-ui.min','jquery.contextMenu.min'),
-                                        'js'    => array('jquery-ui.min','chart.min','jquery.contextMenu.min','jquery.ui.position.min','moment','hermes')
+                                        'css'   => array(
+                                                    'jquery-ui.min',
+                                                    'jquery.contextMenu.min',
+                                                    'daterangepicker'
+                                                ),
+                                        'js'    => array(
+                                                    'jquery-ui.min',
+                                                    'chart.min',
+                                                    'jquery.contextMenu.min',
+                                                    'jquery.ui.position.min',
+                                                    'hermes',
+                                                    'daterangepicker',
+                                                    'notify.min'
+                                                )
                                         )
                 );
 
@@ -44,19 +56,22 @@ class Applications extends CI_Controller {
         
         $argus = array(
                     'dependencies' => array(
-                                        'css'   => array('jquery.signature','jquery-ui.min'),
-                                        'js'    => array('moment','hermes','jquery-ui.min','jquery.signature.min','jquery.ui.touch-punch.min')
+                                        'css'   => array('jquery.signature','jquery-ui.min','jquery.contextMenu.min'),
+                                        'js'    => array('moment','hermes','jquery-ui.min','jquery.signature.min','jquery.ui.touch-punch.min','jquery.contextMenu.min')
                                         )
                 );
 
         loadView($argus);
     }
 
-    public function cycle_count(){
-         $cyc = array(
-                    'totals' => $this->model->getTotals('KNK'),
+    public function cycle_count($dataset='KNK'){
+        check_session();
+        
+        $cyc = array(
+                    'totals' => $this->model->getTotals($dataset),
                     'dependencies' => array(
-                                        'js'    => array('hermes','chart.min','jquery-barcode.min')
+                                        'css'   => array('daterangepicker','jquery.contextMenu.min'),
+                                        'js'    => array('hermes','chart.min','jquery-barcode.min','daterangepicker','jquery.contextMenu.min','jquery.ui.position.min','notify.min')
                                         )
                 );
 
@@ -92,11 +107,31 @@ class Applications extends CI_Controller {
 	
 	public function e_roster(){
 		$eroster = array(
-						'employees' => $this->model->get_my_employees(),
+						'employees' => $this->model->get_all(),
 						'positions' => $this->model->get_positions()
 		);	
 		loadView($eroster);
 			
 		
 	}
+
+    public function access_verifier(){
+        $ac = array(
+                );
+
+        loadView();
+    }
+
+    public function random_audit()
+    {
+        $ra = array(
+                    'employees' => $this->model->getEmployeesReport(),
+                    'dependencies' => array(
+                                        'css' => array('daterangepicker','jquery.contextMenu.min'),
+                                        'js'    => array('hermes','chart.min','notify.min','jquery.contextMenu.min','daterangepicker')
+                                        )
+                );
+
+        loadView($ra);
+    }
 }

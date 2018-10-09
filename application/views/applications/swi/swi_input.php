@@ -1,6 +1,3 @@
-<?php if(isset($this->kiosk)){ ?>
-	<div id="assign_print" class="d-none d-print-block"></div>
-<?php } ?>
 <div class="container-fluid d-print-none">
 	<div class="row mt-3">
 		<div class="col-lg-3 col-sm-12">

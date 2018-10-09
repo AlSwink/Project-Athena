@@ -8,6 +8,7 @@ class Api extends CI_Controller {
         parent::__construct();
         $this->load->model('applications/swi_model');
         $this->load->model('applications/Cycle_count_model');
+        $this->load->model('applications/Random_audit_model');
     }
 
     public function get_app($app)
@@ -34,7 +35,7 @@ class Api extends CI_Controller {
         echo json_encode($this->swi_model->summary_employee());
     }
 
-     public function swi_get_document($field=null,$doc_num=null)
+    public function swi_get_document($field=null,$doc_num=null)
     {
         if($doc_num)
             $docnum = $doc_num;
@@ -82,11 +83,60 @@ class Api extends CI_Controller {
         echo json_encode($page);
     }
 
+    public function get_swi_assignment($id)
+    {
+        echo json_encode($this->swi_model->get_assignment($id));
+    }
+
+    public function getSWIReported($status=null)
+    {
+        if($status)
+            $this->swi_model->db->where('swi_document_adjustments.status',$status);
+        $reported = $this->swi_model->getReported();
+        echo json_encode($reported);
+    }
+
     public function getCycToday($dataset='KNK')
     {
         $this->Cycle_count_model->dataset = $dataset;
         $this->Cycle_count_model->setShift();
         $data = $this->Cycle_count_model->getCycToday();
+        echo json_encode($data);
+    }
+
+    public function getCycCustom($dataset='KNK',$start=null,$end=null)
+    {
+        $start = date_format(date_create($start),'Y-m-d 00:00:00');
+        $end = date_format(date_create($end),'Y-m-d 23:59:59');
+        $this->Cycle_count_model->start = $start;
+        $this->Cycle_count_model->end = $end;
+        $data = $this->Cycle_count_model->getTotals($dataset);
+
+        echo json_encode($data);
+    }
+
+    public function getLogs($table,$from=null,$to=null)
+    {
+        $this->Logger_model->table = $table;
+        $logs = $this->Logger_model->get();
+        echo json_encode($logs);
+    }
+
+    public function checkAccess($eroster_id)
+    {
+        $check = $this->XPO_model->getEmployees($eroster_id);
+        echo json_encode($check);
+    }
+
+    public function getDatesReport()
+    {
+        $data = $this->Random_audit_model->getDatesReport();
+        echo json_encode($data);
+    }
+
+    public function getLocationList()
+    {
+        $data = $this->Random_audit_model->getLocationList();
         echo json_encode($data);
     }
 }

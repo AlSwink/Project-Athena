@@ -1,11 +1,55 @@
 <div class="row" style="max-height: 80%; overflow: auto">
 	<div class="col-lg-12">
-		<div class="jumbotron">
-			<h2><i class="fas fa-code-branch"></i> Development has been put on-hold until further notice</h2>
-		</div>
+		<h3>As of 10/08/2018 <small>v0.5.4a</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-secondary">Changed</span> Added Global count totals in progress board.</li>
+		</ul>
 	</div>
 	<div class="col-lg-12">
-		<!-- not pushed -->
+		<h3>As of 10/04/2018 <small>v0.5.4</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-success">New</span> Added Global count totals in progress board.</li>
+			<li><span class="badge bg-success">New</span> Added Countermeasures taken table progress board.</li>
+			<li><span class="badge bg-success">New</span> Added Realtime refresh on progress board after changes.</li>
+			<li><span class="badge bg-success">New</span> Added object handler for realtime events.</li>
+			<li><span class="badge bg-success">New</span> Added realtime update event after worksheet has been submitted.</li>
+			<li><span class="badge bg-secondary">Changed</span> Revised update dashboard calling from static to realtime.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
+		<h3>As of 10/03/2018 <small>v0.5.3</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-success">New</span> Added cyc_logs table for handling logs.</li>
+			<li><span class="badge bg-success">New</span> Added logging mechanism to all functions.</li>
+			<li><span class="badge bg-success">New</span> Added Override assignment menu.</li>
+			<li><span class="badge bg-success">New</span> Added Override-able fields in the override modal.</li>
+			<li><span class="badge bg-success">New</span> Added Reason field (required) to justify the adjustment.</li>
+			<li><span class="badge bg-success">New</span> Added Reason field (required) to justify the adjustment.</li>
+			<li><span class="badge bg-success">New</span> Added Logs tab to access log tables.</li>
+			<li><span class="badge bg-success">New</span> Added SWI logs api for accessing logs.</li>
+			<li><span class="badge bg-success">New</span> Added Logs table to logs tab.</li>
+			<li><span class="badge bg-success">New</span> Added Excel download and print log buttons.</li>
+			<li><span class="badge bg-success">New</span> Added Reported document page for isolation.</li>
+			<li><span class="badge bg-success">New</span> Added Reported document api for accessing reported documents only.</li>
+			<li><span class="badge bg-success">New</span> Added Reported document table.</li>
+			<li><span class="badge bg-success">New</span> Added Document details card for reported document.</li>
+			<li><span class="badge bg-success">New</span> Added swi_document_adjustments table for handling reported documents.</li>
+			<li><span class="badge bg-success">New</span> Added insert intercept with reported document process during swi inputs.</li>
+			<li><span class="badge bg-success">New</span> Added logger for assigning monthly worksheet.</li>
+			<li><span class="badge bg-success">New</span> Added logger for reassigning documents.</li>
+			<li><span class="badge bg-success">New</span> Added logger for add/edit/delete documents.</li>
+			<li><span class="badge bg-success">New</span> Added logger for resolving reported documents.</li>
+			<li><span class="badge bg-success">New</span> Added standalone page for resolving reported documents. can be found here <a href="<?= site_url('swi/resolution'); ?>"><?= site_url('swi/resolution'); ?></a></li>
+			<li><span class="badge bg-success">New</span> Added Reporting button for reported vs resolved documents.</li>
+			<li><span class="badge bg-success">New</span> Added Totals for Reported/Resolved documents report.</li>
+			<li><span class="badge bg-success">New</span> Added Reported/Resolved documents.</li>
+			<li><span class="badge bg-secondary">Changed</span> moved document resolution from reporting tab to its own tab.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
 		<h3>As of 09/19/2018 <small>v0.5.0</small></h3>
 		Changes made:
 		<ul>

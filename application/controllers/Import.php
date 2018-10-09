@@ -7,7 +7,6 @@ class Import extends CI_Controller {
     private $in_wms;
     private $wms_users;
 
-
 	public function __construct()
     {
         parent::__construct();
@@ -147,6 +146,53 @@ class Import extends CI_Controller {
                 $this->db->where('supervisor_id',$super->supervisor_id);
                 $this->db->update('employees');
             }
+        }
+    }
+
+
+    //ignore
+    public function insert()
+    {
+        $template = "SELECT FIRST 1 * FROM pm_f WHERE sku LIKE 'PBB6%'";
+        $temp = $this->XPO_model->wms->query($template)->row_array();
+        
+        //[sku,pkg,upc]
+        $to_insert = array(
+                        ['PBB646-855','7','884500847392']
+                        );
+
+        foreach($to_insert as $insert){
+            $temp['sku'] = $insert[0];
+            $temp['pkg'] = $insert[1];
+            $temp['upc'] = $insert[2];
+            $insert_batch[] = $temp;
+        }
+        
+        $fields = array_keys($insert_batch[0]);
+        $fields = implode(',',$fields);
+        
+        foreach($insert_batch as $row){
+                $values = " ('".implode("','",$row)."')";
+                $query = 'INSERT INTO pm_f ('.$fields.') VALUES'.$values;
+                //echo $query;
+                $this->XPO_model->wms->query($query);
+        }
+    }
+
+    public function update(){
+        $array = array(
+                    ['503321','SB27774876'],
+                    ['582332','SB27774902'],
+                    ['600951','SB27774909']
+                );
+
+        foreach($array as $row){
+            $query = "UPDATE it_f SET ob_oid = '".$row[1]."' 
+                        WHERE from_loc = '".$row[0]."' 
+                        AND transact LIKE 'C%'";
+
+            $this->XPO_model->wms->query($query);
+            echo $query.'<br>';
         }
     }
 }

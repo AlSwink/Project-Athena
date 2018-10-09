@@ -7,17 +7,29 @@ class Cycle_count extends CI_Controller {
     {
         parent::__construct();
         $this->load->model('applications/Cycle_count_model');
+        $this->load->model('Logger_model');   
     }
 
-    public function insert_locations($dataset='KNK')
+    public function insert_locations()
     {
     	$selected = $this->input->post('post');
-    	$this->Cycle_count_model->dataset = $dataset;
+        $this->Cycle_count_model->type = $this->input->post('type');
+    	$this->Cycle_count_model->dataset = $this->input->post('dataset');
+        $this->Cycle_count_model->count_type = $this->input->post('count_type');
+        $this->Cycle_count_model->loc_type = $this->input->post('loc_type');
     	$this->Cycle_count_model->getTemplate();
     	$this->Cycle_count_model->applyTemplate($selected);
 
     	$this->Cycle_count_model->insert_master_pool($selected);
-    	echo json_encode('Location Inserted');
+    	
+        $log = array(
+                'for' => $this->input->post('dataset'),
+                'action' => "Insert Locations",
+                'reason' => "Cycle count ".count($selected)." locations"
+                );
+        $this->Logger_model->create('cyc_logs',$log);
+
+        $this->getTotals($this->input->post('dataset'));
     }
 
     public function generate_defaults($dataset='KNK',$count=5)
@@ -25,6 +37,9 @@ class Cycle_count extends CI_Controller {
     	if($this->input->post()){
     		parse_str($this->input->post('post'),$post);
     		$count = ($post['num_locs'] ? $post['num_locs'] : 5);
+            $dataset = $post['dataset'];
+            $this->Cycle_count_model->count_type = ($post['count_type'] ? $post['count_type'] : null);
+            $this->Cycle_count_model->loc_type = ($post['loc_type'] ? $post['loc_type'] : null);
     	}
 
     	$this->Cycle_count_model->dataset = $dataset;
@@ -34,6 +49,7 @@ class Cycle_count extends CI_Controller {
     	$counted = array_column($counted,'loc');
     	$generated = array_column($this->Cycle_count_model->cyc_locs,'loc');
     	$locations = array_diff($generated,$counted);
+
 		shuffle($locations);
 		$insert = array_slice($locations,0,$count);
     	
@@ -43,6 +59,12 @@ class Cycle_count extends CI_Controller {
     	}   	
     	
 		sort($insert_rows);
+        $log = array(
+                'for' => $dataset,
+                'action' => "Fetch Locations",
+                'reason' => "Creating ".$count." locations"
+                );
+        $this->Logger_model->create('cyc_logs',$log);
     	echo json_encode($insert_rows);
     }
 
@@ -61,6 +83,12 @@ class Cycle_count extends CI_Controller {
     	$this->Cycle_count_model->dataset = 'KNK';
     	$this->Cycle_count_model->crossCheck();
     	$this->getTotals($dataset);
+        $log = array(
+                'for' => $dataset,
+                'action' => "Check Progress",
+                'reason' => "Updating counts"
+                );
+        $this->Logger_model->create('cyc_logs',$log);
     }
 
     public function getTotals($dataset='KNK')
@@ -69,8 +97,43 @@ class Cycle_count extends CI_Controller {
     	echo json_encode($totals);
     }
 
-    public function resetLastChecktoRound1()
+    public function delete_locations()
     {
-
+        parse_str($this->input->post('post'),$post);
+        $ids = explode('-',$post['ids']);
+        $locations = explode(';',$post['locations']);
+        $dataset = $post['dataset'];
+        $this->Cycle_count_model->deleteLocations($ids);
+        $log = array(
+                'for' => implode(',',$locations),
+                'action' => "Remove Locations",
+                'reason' => $post['reason']
+                );
+        $this->Logger_model->create('cyc_logs',$log);
+        $this->getTotals($dataset);
     }
+
+    public function regenerate_cyc()
+    {
+        parse_str($this->input->post('post'),$post);
+        $ids = explode('-',$post['ids']);
+        $locs = explode(';',$post['locations']);
+        $dataset = $post['dataset'];
+        $this->Cycle_count_model->dataset = $dataset;
+
+        $this->Cycle_count_model->entry_id = $ids;
+        $locations = $this->Cycle_count_model->getMaster();
+        $this->Cycle_count_model->getTemplate();
+        $this->Cycle_count_model->applyTemplate($locations);
+        $this->Cycle_count_model->insert_cc_f();
+        $log = array(
+                'for' => implode(',',$locs),
+                'action' => "Regenerate Commands",
+                'reason' => $post['reason']
+                );
+        $this->Logger_model->create('cyc_logs',$log);
+        $this->getTotals($dataset);
+    }
+
+    
 }
