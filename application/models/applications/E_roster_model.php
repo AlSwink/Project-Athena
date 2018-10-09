@@ -2,8 +2,7 @@
 
 class e_roster_model extends XPO_Model {
 
-	function get($setting)
-    {
+	function get($setting){
         $er = $this->load->database('xpo',TRUE);
         $field = $setting;
         switch($setting){
@@ -24,15 +23,19 @@ class e_roster_model extends XPO_Model {
         return $results->result();
     }
 
-    function get_wms_usrgrp()
-    {
+    function get_wms_usrgrp(){
         $er = $this->load->database('wms',TRUE);
         $er->order_by('user_grp','ASC');
         $res = $er->get('ug_f');
         return $res->result();
     }
 
-    function insert_employee($data,$photo){
+    function get_temp_agencies(){
+		//$agencies = $this->xpo->query("SELECT tbl_employees.temp_id, count(*)  FROM xpo.tbl_employees, xpo.tbl_xpo_agency group by tbl_employees.temp_id")->result();
+		
+	}
+	
+	function insert_employee($data,$photo){
 		
 		$user = $this->session->userdata('user_id');
 		$ip = $this->input->ip_addres();
@@ -175,10 +178,9 @@ class e_roster_model extends XPO_Model {
 		}
 	}
 	
-    function get_all()
-    {
+    function get_all(){
         $er = $this->load->database('xpo',TRUE);
-        $er->select('emp_email,park_tag,tbl_employees.id,emp_id,emp_fname,emp_lname,shift,tbl_xpo_agency.temp_name,tbl_xpo_departments.dept_name,tbl_xpo_zones.zone,tbl_xpo_positions.position,supervisor');
+        $er->select('emp_email,park_tag,tbl_employees.id,emp_id,kronos_id, emp_fname,emp_lname,shift,tbl_xpo_agency.temp_name,tbl_xpo_departments.dept_name,tbl_xpo_zones.zone,tbl_xpo_positions.position,supervisor');
         $er->from('tbl_employees');
         $er->join('tbl_xpo_departments','tbl_employees.dept_id = tbl_xpo_departments.dept_id');
         $er->join('tbl_xpo_zones','tbl_employees.zone_id = tbl_xpo_zones.id');
@@ -199,9 +201,8 @@ class e_roster_model extends XPO_Model {
         $results = $er->get();
         return $results->result();
     }
-
-    function get_employee($id)
-    {
+	
+	function get_employee($id){
         $er = $this->load->database('xpo',TRUE);
         $er->select('emp_email,wms_usrgrp,ssn,audit,park_tag,tbl_employees.id,emp_id,emp_fname,emp_lname,emp_dob,wms,sb,tbl_employees.temp_id,tbl_employees.temp_start,tbl_employees.dept_id,tbl_employees.zone_id,tbl_employees.shift_id,primary,secondary,supervisor,photo,guser_id,audit_type');
         $er->from('tbl_employees');
@@ -215,8 +216,7 @@ class e_roster_model extends XPO_Model {
         return $results->row();
     }
 
-    function delete_employee($id)
-    {
+    function delete_employee($id){
         $er = $this->load->database('xpo',TRUE);
         $wms = $this->load->database('wms',TRUE);
 
@@ -234,8 +234,7 @@ class e_roster_model extends XPO_Model {
         }
     }
 
-    function update_employee($data,$photo)
-    {
+    function update_employee($data,$photo){
         $change = 0;
         $ins = array();
         $er = $this->load->database('xpo',TRUE);
@@ -351,82 +350,7 @@ class e_roster_model extends XPO_Model {
         }
     }
 
-    function add_module($data)
-    {
-        $er = $this->load->database('xpo',TRUE);
-        $forge = $this->load->dbforge($er,TRUE);
-        $pres = array();
-        $vids = array();
-
-        foreach($data['pdata'] as $row){
-            $pres[] = $row['file_name'];
-        }
-
-        foreach($data['vdata'] as $row){
-            $vids[] = $row['file_name'];
-        }
-
-        $p = ($pres ? implode(',',$pres) : null);
-        $v = ($vids ? implode(',',$vids) : null);
-
-        $insert = array(
-            'module_name' => trim($data['module_name']),
-            'module_description' => trim($data['module_description']),
-            'module_length' => trim($data['module_length']),
-            'type' => $data['m_type'],
-            'est_duration' => $data['est_duration'],
-            'cover' => (isset($data['cdata'][0]['file_name']) ? $data['cdata'][0]['file_name'] : null),
-            'presentations' => $p,
-            'videos' => $v
-            );
-
-        $er->insert('tbl_training_modules',$insert);
-        $ikey = $er->insert_id();
-        $field = array(
-            'mod_'.$ikey => array('type'=>'DATE')
-            );
-        $forge->add_column('tbl_employee_modules',$field);
-    }
-
-    function get_modules()
-    {
-        $er = $this->load->database('xpo',TRUE);
-        $er->join('tbl_training_types','tbl_training_types.type_id = tbl_training_modules.ttype');
-        $er->order_by('mod_id','ASC');
-        $results = $er->get('tbl_training_modules');
-        $final = $results->result();
-        for($x=0;$x<count($final);$x++){
-
-            $where = array(
-                'mod_'.$final[$x]->mod_id.' !=' => NULL
-                );
-            $er->join('tbl_employees','tbl_employees.id = tbl_employee_modules.emp_id');
-            $count = $er->get_where('tbl_employee_modules',$where);
-            if($count){
-                $final[$x]->completed = $count->num_rows();
-            }
-        }
-        return $final;
-    }
-
-    function get_module($id)
-    {
-        $er = $this->load->database('xpo',TRUE);
-        $results = $er->get_where('tbl_training_modules',array('mod_id'=>$id));
-        return $results->row();
-    }
-
-    function delete_module($id)
-    {
-        $er = $this->load->database('xpo',TRUE);
-        $forge = $this->load->dbforge($er,TRUE);
-        $er->where('mod_id',$id);
-        $er->delete('tbl_training_modules');
-        $forge->drop_column('tbl_employee_modules','mod_'.$id);
-    }
-
-    function get_my_employees()
-    {
+    /*function get_my_employees(){
         $er = $this->load->database('xpo',TRUE);
         $er->select('tbl_employees.id,emp_id,kronos_id,emp_fname,emp_lname,shift,tbl_xpo_agency.temp_name,tbl_xpo_departments.dept_name,tbl_xpo_zones.zone,tbl_xpo_positions.position,supervisor');
         $er->from('tbl_employees');
@@ -437,17 +361,17 @@ class e_roster_model extends XPO_Model {
         $er->join('tbl_xpo_agency','tbl_employees.temp_id = tbl_xpo_agency.temp_id');
         $er->order_by('emp_fname','ASC');
 
-        /*switch($this->session->userdata('user_info')->user_group){
+        switch($this->session->userdata('user_info')->user_group){
             case 'TEMPRAND':
                 $er->where('tbl_xpo_agency.temp_name','Randstad USA');
                 break;
             case 'TEMPPARA':
                 $er->where('tbl_xpo_agency.temp_name','Paramount Staffing');
                 break;
-        }*/
+        }
         $results = $er->get();
         return $results->result();
-    }
+    }*/
 
 	function get_positions(){
 		$employees = $this->get_all();
@@ -464,113 +388,7 @@ class e_roster_model extends XPO_Model {
 		return $tabs_count;
 	}
 	
-    function module_employee_list($id)
-    {
-        $er = $this->load->database('xpo',TRUE);        
-        $supervisor = trim($this->session->userdata('user_fullname'));
-        $er->select('tbl_employees.id,temp_start,emp_lname,emp_fname,mod_'.$id);
-        $er->from('tbl_employees');
-        $er->join('tbl_employee_modules','tbl_employees.id = tbl_employee_modules.emp_id');
-        /*switch($this->session->userdata('user_info')->user_group){
-            case 'TEMPRAND':
-                $er->where('tbl_xpo_agency.temp_name','Randstad USA');
-                break;
-            case 'TEMPPARA':
-                $er->where('tbl_xpo_agency.temp_name','Paramount Staffing');
-                break;
-        }*/
-        $er->order_by('emp_fname','ASC');
-        $results = $er->get();
-        return $results->result();
-    }
-
-    function module_summary($emp_id = null)
-    {
-        $er = $this->load->database('xpo',TRUE);
-        $supervisor = trim($this->session->userdata('user_fullname'));
-        $fields = $er->list_fields('tbl_employee_modules');
-        $er->select('tbl_employees.id,emp_fname,emp_lname');
-        for($x=2;$x<count($fields);$x++){
-            $er->select($fields[$x]);
-        }
-        $er->from('tbl_employees');
-        $er->join('tbl_employee_modules','tbl_employees.id = tbl_employee_modules.emp_id');
-        /*if(!in_array($this->session->userdata('user_info')->user_type,$this->config->item('access'))){
-            $er->where('tbl_employees.supervisor',$supervisor);
-        }*/
-        if($emp_id){
-            $er->where('tbl_employees.id',$emp_id);
-        }
-        $results = $er->get();
-        return $results->result();
-    }
-
-    function module_finish($col,$emp_id)
-    {
-        $er = $this->load->database('xpo',TRUE);
-        $update = array(
-            $col => date('Y-m-d')
-            );
-        $er->where('emp_id',$emp_id);
-        $er->update('tbl_employee_modules',$update);
-    }
-
-    function module_finish_from_date($data)
-    {
-        $er = $this->load->database('xpo',TRUE);
-        $col = 'mod_'.$data['module_id'];
-        $update = array(
-            $col => date_format(date_create($data['complete_date']),'Y-m-d')
-            );
-        $er->where('emp_id',$data['emp_id']);
-        $er->update('tbl_employee_modules',$update);
-    }
-
-    function module_date_multi($data)
-    {
-        $er = $this->load->database('xpo',TRUE);
-        $col = 'mod_'.$data['module_id'];
-        $update = array(
-            $col => date_format(date_create($data['complete_date']),'Y-m-d')
-            );
-        $er->where_in('emp_id',$data['ids']);
-        $er->update('tbl_employee_modules',$update);
-    }
-
-    function module_finish_multi($data)
-    {
-        $er = $this->load->database('xpo',TRUE);
-        $col = 'mod_'.$data['mod'];
-        $update = array(
-            $col => date('Y-m-d')
-            );
-        $er->where_in('emp_id',$data['ids']);
-        $er->update('tbl_employee_modules',$update);
-    }
-
-    function module_reset_multi($data)
-    {
-        $er = $this->load->database('xpo',TRUE);
-        $col = 'mod_'.$data['mod'];
-        $update = array(
-            $col => null
-            );
-        $er->where_in('emp_id',$data['ids']);
-        $er->update('tbl_employee_modules',$update);
-    }
-
-    function module_reset($col,$emp_id)
-    {
-        $er = $this->load->database('xpo',TRUE);
-        $update = array(
-            $col => null
-            );
-        $er->where('emp_id',$emp_id);
-        $er->update('tbl_employee_modules',$update);
-    }
-
-    function get_report_all()
-    {
+    function get_report_all(){
         $er = $this->load->database('xpo',TRUE);
         $fields = $er->list_fields('tbl_employee_modules');
         $er->select('tbl_employees.id');
@@ -602,8 +420,7 @@ class e_roster_model extends XPO_Model {
         return $final;
     }
 
-    function add_setting($data)
-    {
+    function add_setting($data){
         $er = $this->load->database('xpo',TRUE);
         switch($data['type']){
             case 'positions':
@@ -624,15 +441,13 @@ class e_roster_model extends XPO_Model {
         $er->insert('tbl_xpo_'.$data['type'],$insert);
     }
 
-    function check_duplicate_name($data)
-    {
+    function check_duplicate_name($data){
         $er = $this->load->database('xpo',TRUE);
         $result = $er->get_where($data['table'],array($data['field']=>$data['name']));
         return $result->num_rows();
     }
 
-    function get_needs_training($mod,$exp)
-    {
+    function get_needs_training($mod,$exp){
         $er = $this->load->database('xpo',TRUE);
         $er->select('tbl_employees.id,emp_fname,emp_lname');
         $er->select($mod);
@@ -643,16 +458,14 @@ class e_roster_model extends XPO_Model {
         return $results->result();
     }
 
-    function refresh_training_date($mod,$exp)
-    {
+    function refresh_training_date($mod,$exp){
         $er = $this->load->database('xpo',TRUE);
         $er->set($mod,null);
         $er->where($mod.'< DATE_SUB(NOW(),INTERVAL '.$exp.' YEAR)');
         $results = $er->update('tbl_employee_modules');
     }
 
-    function edit_multi($data)
-    {
+    function edit_multi($data){
         $er = $this->load->database('xpo',TRUE);
         $res = array();
         foreach($data as $row){
@@ -668,8 +481,7 @@ class e_roster_model extends XPO_Model {
         $er->update('tbl_employees',$res);
     }
 
-	function get_auditors($id = null)
-    {
+	function get_auditors($id = null){
         $er = $this->load->database('xpo',TRUE);
         $pos = array(21,59,34);
         $not = array(15,62);
@@ -692,8 +504,7 @@ class e_roster_model extends XPO_Model {
         return ($id ? $result->row() : $result->result());
     }
 
-    function get_auditor($id)
-    {
+    function get_auditor($id){
         $er = $this->load->database('xpo',TRUE);
 
         $result = $er->get_where('tbl_employees',array('guser_id'=>$id));
@@ -702,8 +513,7 @@ class e_roster_model extends XPO_Model {
         return $result;
     }
 
-    function get_auditors_notif($notif = null)
-    {
+    function get_auditors_notif($notif = null){
         $er = $this->load->database('xpo',TRUE);
         $now = date('Y-m-d H:i:s');
         $date = date('Y-m-d');
@@ -731,8 +541,7 @@ class e_roster_model extends XPO_Model {
 
     }
 
-    function get_employee_emails()
-    {
+    function get_employee_emails(){
         $er = $this->load->database('xpo',TRUE);
         $er->where('emp_email !=','');
         $er->order_by('emp_fname');
@@ -742,8 +551,7 @@ class e_roster_model extends XPO_Model {
         return $final;
     }
 
-    function get_rf_permissions()
-    {
+    function get_rf_permissions(){
         $er = $this->load->database('xpo',TRUE);
         $er->order_by('command');
         $result = $er->get('tbl_rf_permissions');
@@ -752,8 +560,7 @@ class e_roster_model extends XPO_Model {
 
     }
 
-    function get_user_rfp($wms)
-    {
+    function get_user_rfp($wms){
         $er = $this->load->database('wms',TRUE);
         $emp_rfs = array();
         $rfps = $this->get_rf_permissions();
@@ -791,8 +598,7 @@ class e_roster_model extends XPO_Model {
         return $emp_rfs;
     }
 
-    function send_badge_email()
-    {
+    function send_badge_email(){
         require_once 'C:/Users/wdyount/vendor/swiftmailer/swiftmailer/lib/swift_required.php';
         $xpo = $this->load->database('xpo',TRUE);
         $result = $xpo->get_where('tbl_badges',array('status'=>'pending'));
@@ -819,115 +625,7 @@ class e_roster_model extends XPO_Model {
         }
     }
 
-    function update_module($data)
-    {
-        $er = $this->load->database('xpo',TRUE);
-
-        $res = $er->get_where('tbl_training_modules',array('mod_id'=>$data['module_id']));
-        $res = $res->row();
-
-        $update = array(
-                    'module_name' => $data['module_name'],
-                    'module_description' => $data['module_description'],
-                    'module_length' => $data['module_length'],
-                    'type' => $data['m_type'],
-                    'est_duration' => $data['est_duration']
-                    );
-
-        if($data['cdata']){
-            $update['cover'] = $data['cdata']['file_name'];
-        }
-
-        if($data['pdata']){
-            foreach($data['pdata'] as $row){
-                $new[] = $row['orig_name'];
-            }
-
-            //$cur = explode(',',$res->presentations);
-            $cur = explode(',',$data['cur_pres']);
-            $pcheck = array_intersect($cur,$new);
-
-            foreach($pcheck as $row){
-                $ind = array_search($row,$new);
-                unset($new[$ind]);
-            }
-
-            foreach($new as $row){
-                $cur[] = $row;
-            }
-
-            $cur = array_filter($cur, function($value) { return $value !== ''; });
-            $cur = implode(',',$cur);
-
-            $update['presentations'] = $cur;
-
-        }else{
-            $update['presentations'] = ($data['cur_pres'] ? $data['cur_pres'] : NULL);
-        }        
-
-        if($data['vdata']){
-            foreach($data['vdata'] as $row){
-                $new2[] = $row['orig_name'];
-            }
-
-            //$cur = explode(',',$res->videos);
-            $cur = explode(',',$data['cur_vids']);
-            $pcheck = array_intersect($cur,$new2);
-
-            foreach($pcheck as $row){
-                $ind = array_search($row,$new2);
-                unset($new2[$ind]);
-            }
-
-            foreach($new2 as $row){
-                $cur[] = $row;
-            }
-
-            $cur = array_filter($cur, function($value) { return $value !== ''; });
-            $cur = implode(',',$cur);
-
-            $update['videos'] = $cur;
-        }else{
-            $update['videos'] = ($data['cur_vids'] ? $data['cur_vids'] : NULL);
-        }
-
-        if(isset($data['question'])){
-            $er->where('mod_id',$data['module_id']);
-            $er->delete('tbl_quiz_master');
-            
-            for($x=0;$x<count($data['question']['question']);$x++){
-                $cor_ind = 'opt'.($data['correct'][$x]);
-                $insert_batch[] = array(
-                                    'mod_id' => $data['module_id'],
-                                    'question' => $data['question']['question'][$x],
-                                    'img' => (isset($data['qdata'][$x]['orig_name']) ? $data['qdata'][$x]['orig_name'] : null),
-                                    'opt1' => $data['question']['opt0'][$x],
-                                    'opt2' => $data['question']['opt1'][$x],
-                                    'opt3' => $data['question']['opt2'][$x],
-                                    'opt4' => $data['question']['opt3'][$x],
-                                    'correct' => $data['question'][$cor_ind][$x]
-                                    );
-
-            }
-
-            $update['quiz_id'] = $data['module_id'];
-
-            $er->insert_batch('tbl_quiz_master',$insert_batch);   
-        }else{
-            $er->where('mod_id',$data['module_id']);
-            $er->delete('tbl_quiz_master');
-
-            $er->set('quiz_id',NULL);
-            $er->where('mod_id',$data['module_id']);
-            $er->update('xpo.tbl_training_modules');
-        }
-        
-        $er->where('mod_id',$data['module_id']);
-        $er->update('xpo.tbl_training_modules',$update);
-    }
-
-    function get_wms_user_group($opr)
-    {
+    function get_wms_user_group($opr){
         $wms = $this->load->database('wms',TRUE);
         
         $result = $wms->get_where('us_f',array('opr'=>trim($opr)));
@@ -936,8 +634,7 @@ class e_roster_model extends XPO_Model {
         return $result->user_grp;
     }
 
-    function recreate_wms($emp_id)
-    {
+    function recreate_wms($emp_id){
         $wms = $this->load->database('wms',TRUE);
 
         $employee = (array)$this->get_employee($emp_id);
