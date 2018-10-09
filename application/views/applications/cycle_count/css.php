@@ -1,4 +1,22 @@
 <style>
+  .text-input{
+    border: none !important;
+    border-bottom: 1px solid #dad9d9 !important;
+    border-radius: 0 !important;
+  }
+
+  .text-input:focus{
+    border: none !important;
+    box-shadow: none !important;
+    border-bottom: 1.5px solid #62d4e0 !important;
+  } 
+
+  .form-control::-webkit-input-placeholder{
+    color: #dddddd !important;
+    font-size: 15px !important;
+    font-style: oblique !important;
+  }
+  
   .progress-bar-vertical {
     width: 20px;
     min-height: 100px;
@@ -42,6 +60,10 @@
   .bbr-0{
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
+  }
+
+  .u_limit{
+    font-size: 35% !important;
   }
 
   th{

@@ -37,7 +37,7 @@
 			</tr>
 		</table>
 		<div class="btn-group w-100">
-			<button type="button" class="cancel_verification_btn btn btn-secondary w-50">Cancel</button>
+			<button type="button" class="cancel cancel_verification_btn btn btn-secondary w-50">Cancel</button>
 			<button id="ready_qa_btn" type="button" class="btn btn-success w-50">Ready for QA <i class="fas fa-check"></i></button>
 		</div>
 	</div>

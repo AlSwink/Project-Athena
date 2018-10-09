@@ -5,14 +5,14 @@
 				<h5 class="card-title">Progress Check</h5>
 				<h6 class="card-subtitle mb-2 text-muted">Click check progress to update progress</h6>
 				<div class="card-text">
-					Round 1 : <span class="r1_counted"><?= $totals['r1_today']['counted']; ?></span> / <span class="r1_assigned"><?= $totals['r1_today']['assigned']; ?></span>
+					Round 1 : <span class="r1_counted"><?= $totals['today']['r1']['counted']; ?></span> / <span class="r1_assigned"><?= $totals['today']['r1']['assigned']; ?></span>
 					<div class="progress">
-					  <div class="progress-bar r1_progress" role="progressbar" style="width: <?= $totals['r1_today']['progress']; ?>;"><?= $totals['r1_today']['progress']; ?></div>
+					  <div class="progress-bar r1_progress" role="progressbar" style="width: <?= $totals['today']['r1']['progress']; ?>;"><?= $totals['today']['r1']['progress']; ?></div>
 					</div>
 					<hr>
-					Round 2 : <span class="r2_counted"><?= $totals['r2_today']['counted']; ?></span> / <span class="r2_assigned"><?= $totals['r2_today']['assigned']; ?></span>
+					Round 2 : <span class="r2_counted"><?= $totals['today']['r2']['counted']; ?></span> / <span class="r2_assigned"><?= $totals['today']['r2']['assigned']; ?></span>
 					<div class="progress">
-					  <div class="progress-bar r2_progress" role="progressbar" style="width: <?= $totals['r2_today']['progress']; ?>;"><?= $totals['r2_today']['progress']; ?></div>
+					  <div class="progress-bar r2_progress" role="progressbar" style="width: <?= $totals['today']['r2']['progress']; ?>;"><?= $totals['today']['r2']['progress']; ?></div>
 					</div>
 				</div>
 				<br>

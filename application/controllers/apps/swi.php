@@ -16,6 +16,15 @@ class Swi extends CI_Controller {
         $post = $this->input->post();
         $this->swi_model->save_swi($post);
         echo create_autocomplete_source($this->swi_model->get_unique_process(),'principle_id','process');
+
+        $action = (isset($post['doc_id']) ? 'Added' : 'Edited');
+        $log = array(
+                'for' => $post['doc_num'].' - '.$post['doc_name'],
+                'action' => "Document ".$action,
+                'reason' => 'System Log'
+                );
+        
+        $this->Logger_model->create('swi_logs',$log);
     }
 
     public function get_document_process($doc_num=null)
@@ -36,6 +45,15 @@ class Swi extends CI_Controller {
             $docs = $this->input->post('docs');
         }
         $this->swi_model->delete_swi($docs);
+
+        $log = array(
+                'for' => 'DOCID : '.implode(',',$docs),
+                'action' => "Deleted documents",
+                'reason' => 'System Log'
+                );
+        
+        $this->Logger_model->create('swi_logs',$log);
+
         echo json_encode('DELETED');
     }
 
@@ -47,6 +65,15 @@ class Swi extends CI_Controller {
         }else{
             $this->swi_model->set_assignments($data);    
         }
+
+        $log = array(
+                'for' => date('Y-m'),
+                'action' => "Document Assignment generation",
+                'reason' => 'System Log'
+                );
+        
+        $this->Logger_model->create('swi_logs',$log);
+
         echo 'All documents has been successfully assigned this month';
     }
 
@@ -54,7 +81,16 @@ class Swi extends CI_Controller {
     {
         parse_str($this->input->post('post'),$post);
         $this->swi_model->assign($post,$post['assignment_type']);
-        echo json_encode('complete');
+
+        $log = array(
+                'for' => 'DOC ID : '.$post['assign_doc_id'].' to USER ID :'.$post['reassign_to_emp_id'],
+                'action' => "Assign document",
+                'reason' => 'System Log'
+                );
+        
+        $this->Logger_model->create('swi_logs',$log);
+
+        echo json_encode($post);
     }
 
     public function reset_assignment($id=null)
@@ -113,8 +149,47 @@ class Swi extends CI_Controller {
         $this->load->view('page');
     }
 
-    public function request_action()
+    public function resolution()
+    {
+        $this->kiosk = true;
+        $this->page = $this->page_dir.'/swi_resolution';
+        $this->load->view('page');
+    }
+
+    public function worksheet()
+    {
+        $this->kiosk = true;
+        $this->page = $this->page_dir.'/swi_worksheet';
+        $this->load->view('page');
+    }
+
+    public function override_assignment()
     {
         $post = $this->input->post();
+        $update = $this->swi_model->updateAssignment($post);
+
+        $log = array(
+                'for' => 'Assignment '.$post['assignment_id'],
+                'action' => "Override Assignment",
+                'reason' => $post['reason']
+                );
+        
+        $this->Logger_model->create('swi_logs',$log);
+        echo json_encode($log['action'].$log['for'].' - '.$log['reason']);
+    }
+
+    public function save_resolution()
+    {
+        parse_str($this->input->post('post'),$post);
+        $this->swi_model->saveResolution($post);
+
+        $log = array(
+                'for' => 'ADJID : '.$post['adj_id'],
+                'action' => "Submit resolution",
+                'reason' => 'System Log'
+                );
+        
+        $this->Logger_model->create('swi_logs',$log);
+        echo json_encode($log['action'].' '.$log['for']);
     }
 }

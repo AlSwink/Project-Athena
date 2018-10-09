@@ -198,7 +198,6 @@ $(document).on('click','.announcement_control',function(){
 		$('.ticker-wrap').fadeOut('slow');
 		$(this).html('<i class="far fa-eye"></i>');	
 	}
-	
 });
 
 $(document).on('click','.sub_menu_items',function(evt){

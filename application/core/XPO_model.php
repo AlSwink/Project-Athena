@@ -28,9 +28,10 @@ class XPO_Model extends CI_Model {
       $this->firstdayofmonth = date('Y-m-01 00:00:00');
       $this->lastdayofmonth = date('Y-m-t 23:59:59');
 
+      $this->xpo = $this->load->database('xpo',TRUE);
       $this->wms = $this->load->database('wms',TRUE);
       $this->wms_test = $this->load->database('wms_test',TRUE);
-	  $this->xpo=$this->load->database('xpo',TRUE);
+	  
   }
 
   public function getSetting($key)
@@ -68,7 +69,7 @@ class XPO_Model extends CI_Model {
 
   public function setEmployeeStaffing($staffingid)
   {
-    $this->db->where_in('staffing',$staffingid);
+    $this->db->where_in('employees.staffing',$staffingid);
   }
 
   public function setEmployeeDepartment($deptid)
@@ -76,10 +77,21 @@ class XPO_Model extends CI_Model {
     $this->db->where_in('department',$deptid);
   }
 
-  public function getEmployees()
+  public function getEmployees($emp_id=null)
   {
-    $this->db->where('deleted',0);
-    $this->db->order_by('e_fname','ASC');
+    $this->db->select('*');
+    $this->db->select('employees.user_id as user_id');
+    $this->db->select('employees.e_fname,employees.e_lname');
+    $this->db->select('CONCAT(super.e_fname," ",super.e_lname) as supervisor');
+    $this->db->select('departments.department as department_name');
+    if($emp_id){
+      $this->db->where('employees.emp_id',$emp_id);
+    }
+    $this->db->join('site_staffing','site_staffing.staffing_id = employees.staffing','LEFT');
+    $this->db->join('departments','departments.department_id = employees.department');
+    $this->db->join('employees as super','super.user_id = employees.supervisor_id','LEFT');
+    $this->db->where('employees.deleted',0);
+    $this->db->order_by('employees.e_fname','ASC');
     $employees = $this->db->get('employees')->result();
     $this->db->flush_cache();
     return $employees;

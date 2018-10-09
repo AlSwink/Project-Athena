@@ -22,7 +22,7 @@
 						<td class="display-4"><span id="rd_pending"><?= $totals['pending']; ?></span><span class="u_limit"> /<?= $totals['documents'] ?></span></td>
 						<td class="display-4"><span id="rd_standard"><?= $totals['standard_met']; ?></span><span class="u_limit"> /<?= $totals['documents'] ?></span></td>
 						<td class="display-4"><span id="rd_deprecation"><?= $totals['deprecation']; ?></span><span class="u_limit"> /<?= $totals['documents'] ?></span></td>
-						<td class="display-4"><span id="rd_reported"><?= $totals['reported']; ?></span><span class="u_limit"> /<?= $totals['documents'] ?></span></td>
+						<td class="display-4"><span class="rd_reported"><?= $totals['reported']; ?></span><span class="u_limit"> /<?= $totals['documents'] ?></span></td>
 					</tr>
 				</tbody>
 			</table>
