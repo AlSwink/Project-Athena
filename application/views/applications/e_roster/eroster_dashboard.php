@@ -12,15 +12,12 @@
 					<h4 class="display-4 mb-0 employees_all"><?= count($employees); ?></h4>
 					<span class="sub-header">Total Employees</span>
 				</div>
-				
+				<?php foreach($agencies as $agency){ ?>
 				<div class="col border-right">
-					<h4 class="display-4 mb-0 employees_randstad"><?= "n/a"; ?></h4>
-					<span class="sub-header">Randstad Employees</span>
+					<h4 class="display-4 mb-0"><?=$agency->cnt;?></h4>
+					<span class="sub-header"><?=$agency->temp_name;?></span>
 				</div>
-				<div class="col">
-					<h4 class="display-4 mb-0 employees_paramount"><?= "n/a"; ?></h4>
-					<span class="sub-header">Paramount Employees</span>
-				</div>
+				<?php } ?>
 			</div>
 			<div class="row mt-3 ml-2 text-center border-bottom pb-3">
 				<div class="col">

@@ -31,7 +31,16 @@ class e_roster_model extends XPO_Model {
     }
 
     function get_temp_agencies(){
-		//$agencies = $this->xpo->query("SELECT tbl_employees.temp_id, count(*)  FROM xpo.tbl_employees, xpo.tbl_xpo_agency group by tbl_employees.temp_id")->result();
+		
+		$this->xpo->select('count(*) as cnt, tbl_xpo_agency.temp_name');
+        $this->xpo->from('tbl_employees');
+        $this->xpo->join('tbl_xpo_departments','tbl_employees.dept_id = tbl_xpo_departments.dept_id');
+        $this->xpo->join('tbl_xpo_zones','tbl_employees.zone_id = tbl_xpo_zones.id');
+        $this->xpo->join('tbl_xpo_shifts','tbl_employees.shift_id = tbl_xpo_shifts.id');
+        $this->xpo->join('tbl_xpo_positions','tbl_employees.primary = tbl_xpo_positions.id');
+        $this->xpo->join('tbl_xpo_agency','tbl_employees.temp_id = tbl_xpo_agency.temp_id');
+        $this->xpo->group_by('tbl_xpo_agency.temp_name');
+		return $this->xpo->get()->result();
 		
 	}
 	
