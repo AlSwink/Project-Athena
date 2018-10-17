@@ -9,6 +9,7 @@ class Api extends CI_Controller {
         $this->load->model('applications/swi_model');
         $this->load->model('applications/Cycle_count_model');
         $this->load->model('applications/Random_audit_model');
+        $this->load->model('applications/Argus_model');
     }
 
     public function get_app($app)
@@ -139,4 +140,17 @@ class Api extends CI_Controller {
         $data = $this->Random_audit_model->getLocationList();
         echo json_encode($data);
     }
+
+    public function argus_update_shipments()
+    {
+        $this->Argus_model->updateShipments();
+        $this->Argus_model->check805();
+    }
+
+    public function argus_shipments()
+    {
+        $this->Argus_model->getShipments();
+        echo json_encode($this->Argus_model->shipments);
+    }
+
 }

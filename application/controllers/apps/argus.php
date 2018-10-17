@@ -7,7 +7,13 @@ class Argus extends CI_Controller {
     {
         parent::__construct();
         check_session();
+        $this->load->model('applications/argus_model');
+        $this->page_dir = 'applications/argus';
     }
 
-    
+    public function display()
+    {
+    	$this->page = $this->page_dir.'/argus_display';
+        $this->load->view('page');
+    }
 }

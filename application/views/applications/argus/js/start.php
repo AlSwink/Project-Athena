@@ -8,6 +8,11 @@
 	}
 
 	$('#start_shipment_btn').click(function(){
+		data = {
+				'shipment' : shipment,
+				'stage' : 2
+			}
+		updateShipment(data);
 		socket.emit('command','/do-argus-started-'+shipment);
 		$('.modal').modal('hide');
 		socket.emit('command','/do-argus-unlock-'+shipment);

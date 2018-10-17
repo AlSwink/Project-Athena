@@ -1,4 +1,5 @@
 <script>
+	var filter = [];
 	var argus = {
 			started: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
@@ -67,10 +68,14 @@
 			prioritize: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
 				$(card).find('.card').addClass('bg-primary');
+				$(card).addClass('priority');
+				updateFilter();
 			},
 			normalize: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
 				$(card).find('.card').removeClass('bg-primary');
+				$(card).removeClass('priority');
+				updateFilter();
 			},
 			reset: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
@@ -82,6 +87,9 @@
 				$(card).attr('data-stage','waiting');
 				$(card).find('.card-subtitle').html('Not Started').removeClass('^=text').css('color','white');
 				updateCounts();
+			},
+			changelog: function(){
+				$('a[href="#change_log"]').click();
 			}
 	};
 
@@ -169,6 +177,41 @@
 		socket.emit('command','/do-argus-unlock-'+shipment);
 	});
 
+	$('#return_to_argus').click(function(){
+		$('a[href="#shipment_list"').click();
+	});
+
+	$('.filter').click(function(){
+		filter = [];
+		state = $(this).hasClass('on');
+		
+		$('.sment').removeClass('d-none');
+
+		if(!state){
+			$(this).removeClass('off').addClass('on');
+			$(this).addClass('btn-success');
+		}else{
+			$(this).removeClass('on').addClass('off');
+			$(this).removeClass('btn-success');
+
+		}
+
+		$('.filter.on').each(function(k,v){
+			filter.push($(v).attr('data-filter'));			
+		});
+
+		updateFilter();
+	});
+
+	function updateFilter()
+	{
+		if($(filter).length){
+			$('.sment').addClass('d-none');
+			classes = filter.join('.');
+			$('.'+classes).removeClass('d-none');
+		}
+	}
+
 	function updateCounts()
 	{
 		var stages = {
@@ -193,5 +236,10 @@
 			stage = $(v).attr('data-stage');
 			$(v).html(stages[stage]);
 		});		
+	}
+
+	function updateShipment(data)
+	{
+		url = '<?= site_url(); ?>';
 	}
 </script>

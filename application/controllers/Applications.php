@@ -51,13 +51,28 @@ class Applications extends CI_Controller {
         loadView($swi);
     }
 
-    public function argus(){
+    public function argus($stage='waiting'){
         check_session();
-        
+        $this->model->stage = $stage;
+        $this->model->getShipments();
+
         $argus = array(
+                    'stage' => $stage,
+                    'shipments' =>  $this->model->shipments,
                     'dependencies' => array(
-                                        'css'   => array('jquery.signature','jquery-ui.min','jquery.contextMenu.min'),
-                                        'js'    => array('moment','hermes','jquery-ui.min','jquery.signature.min','jquery.ui.touch-punch.min','jquery.contextMenu.min')
+                                        'css'   => array(
+                                                    'jquery.signature',
+                                                    'jquery-ui.min',
+                                                    'jquery.contextMenu.min'
+                                                ),
+                                        'js'    => array(
+                                                    'moment',
+                                                    'hermes',
+                                                    'jquery-ui.min',
+                                                    'jquery.signature.min',
+                                                    'jquery.ui.touch-punch.min',
+                                                    'jquery.contextMenu.min'
+                                                )
                                         )
                 );
 
@@ -70,8 +85,19 @@ class Applications extends CI_Controller {
         $cyc = array(
                     'totals' => $this->model->getTotals($dataset),
                     'dependencies' => array(
-                                        'css'   => array('daterangepicker','jquery.contextMenu.min'),
-                                        'js'    => array('hermes','chart.min','jquery-barcode.min','daterangepicker','jquery.contextMenu.min','jquery.ui.position.min','notify.min')
+                                        'css'   => array(
+                                                    'daterangepicker',
+                                                    'jquery.contextMenu.min'
+                                                ),
+                                        'js'    => array(
+                                                    'hermes',
+                                                    'chart.min',
+                                                    'jquery-barcode.min',
+                                                    'daterangepicker',
+                                                    'jquery.contextMenu.min',
+                                                    'jquery.ui.position.min',
+                                                    'notify.min'
+                                                )
                                         )
                 );
 
@@ -103,8 +129,17 @@ class Applications extends CI_Controller {
         $ra = array(
                     'employees' => $this->model->getEmployeesReport(),
                     'dependencies' => array(
-                                        'css' => array('daterangepicker','jquery.contextMenu.min'),
-                                        'js'    => array('hermes','chart.min','notify.min','jquery.contextMenu.min','daterangepicker')
+                                        'css'   => array(
+                                                    'daterangepicker',
+                                                    'jquery.contextMenu.min'
+                                                ),
+                                        'js'    => array(
+                                                    'hermes',
+                                                    'chart.min',
+                                                    'notify.min',
+                                                    'jquery.contextMenu.min',
+                                                    'daterangepicker'
+                                                )
                                         )
                 );
 

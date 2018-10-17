@@ -77,7 +77,9 @@ $route['health_check/standalone'] = 'applications/system_health_check/1';
 $route['health_check/(:any)'] = 'apps/system_health_check/$1';
 //argus routes
 $route['argus'] = 'applications/argus';
-$route['argus/standalone'] = 'applications/argus/1';
+$route['argus/display'] = 'apps/argus/display';
+$route['argus/(:any)'] = 'applications/argus/$1';
+
 //access_verifier routes
 $route['access_verifier'] = 'applications/access_verifier';
 $route['access_verifier/standalone'] = 'applications/access_verifier/1';
