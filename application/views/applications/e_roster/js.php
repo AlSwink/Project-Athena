@@ -1,4 +1,6 @@
 <script>
+	var last_emp = '';
+
 	var emp_table = $('.emp_table').DataTable({
 			dom : '<"row"<"col"t>><"row"<"col"iBp>>',
 			pagingType : 'numbers',
@@ -23,6 +25,7 @@
 			},
 			columns : [
 				{data: "id" },
+				{data: "emp_id" },
 				{data: "name",
 					render: function(data,type,row,meta){
 		        		return row.emp_fname+' '+row.emp_lname;
@@ -47,6 +50,85 @@
 		    }
 		});
 	
+	var dept_rep_table = $('#report_dept_table').DataTable({
+		dom : '<"row"<"col"t>><"row"<"col"iBp>>',
+			info : true,
+			colReorder: true,
+			buttons: [
+		        {
+		            text: 'Excel',
+		            extend: 'excel',
+		            className: 'rdexcel d-none'
+		        },
+		        {
+		            text: 'Print',
+		            extend: 'print',
+		            className: 'rdprint d-none'
+		        }
+	        ],
+			ajax: {
+				url: '<?= site_url("api/getDeptReport"); ?>',
+				dataSrc: ''
+			},
+			columns : [ 
+				{ data: "dept_name"},
+				{ data: "cnt"}
+			],
+			order : [0,'desc'],
+		    scrollY: '55vh',
+		    scroller: {
+		    	loadingIndicator : true
+		    },
+		    select: {
+		    	style : 'multi+shift'
+		    }
+		});
+	var wms_rep_table = $('#report_wms_table').DataTable({
+		dom : '<"row"<"col"t>><"row"<"col"iBp>>',
+			info : true,
+			colReorder: true,
+			buttons: [
+		        {
+		            text: 'Excel',
+		            extend: 'excel',
+		            className: 'rdexcel d-none'
+		        },
+		        {
+		            text: 'Print',
+		            extend: 'print',
+		            className: 'rdprint d-none'
+		        }
+	        ],
+			ajax: {
+				url: '<?= site_url("api/getWmsMissingReport"); ?>',
+				dataSrc: ''
+			},
+			columns : [
+				{data: "id" },
+				{data: "name",
+					render: function(data,type,row,meta){
+		        		return row.emp_fname+' '+row.emp_lname;
+		        	}
+				},
+				{data: "temp_name"},
+				{data: "department_zone",
+					render: function(data,type,row,meta){
+						return row.dept_name+' - '+row.zone;
+					}
+				},
+				{data: "position"},
+				{data: "shift"},
+				{data: "supervisor"}
+			],
+			order : [0,'desc'],
+		    scrollY: '55vh',
+		    scroller: {
+		    	loadingIndicator : true
+		    },
+		    select: {
+		    	style : 'multi+shift'
+		    }
+		});
 	var logtable = $('#log_table').DataTable({
 			dom : '<"row"<"col"t>><"row"<"col"iBp>>',
 			pagingType : 'numbers',
@@ -94,7 +176,121 @@
 		    }
 		});
 	
+	emp_table.on('select deselect',function(e,dt,type,indexes){
+		if(emp_table.rows({selected:true}).data().length){
+			$('#delete,#edit').prop('disabled',false);
+		}else{
+			$('#delete,#edit').prop('disabled',true);
+		}
+		if(emp_table.rows({selected:true}).data().length > 1){
+			$('#edit').prop('disabled',true);	
+		}
+	});
+
+	emp_table.on('deselect',function(e,dt,type,indexes){	
+		last_emp = emp_table.rows(indexes).data();
+	});
+	
+	emp_table.column(0).visible(false);
+	
+	//events
+	
 	$('a[href="#eroster_logs]').click(function(){
 		log_table.ajax.reload();
 	});
+	$('a[data-toggle="tab"],a[data-toggle="pill"]').on('shown.bs.tab', function(){
+        $.fn.dataTable.tables({visible: true, api: true}).columns.adjust();
+    });
+	
+	$('.employee_submit').click(function(){
+		clear_validation();
+		
+		submit_ready = true;
+		//is_edit = false;
+		form = $(this).parent().siblings('.modal-body').find('form');
+		form_id = '#'+$(form)[0].id;
+		
+		//check duplicate wms id (add later)
+		if(submit_ready){
+			employee_submit(form_id);
+		}
+		
+	});
+	
+	$(document).on('dblclick','#emp_table table tbody td',function(){
+		if(emp_table.rows({selected:true}).data().length < 2){
+			$('#edit').prop('disabled',false);
+			$('#edit').click();
+			$('#edit').prop('disabled',true);	
+		}
+	})
+	
+	$('#edit').click(function(){
+		form = '#edit_existing_employee';
+		employee = ($(emp_table.rows({selected:true}).data()[0]).length ? emp_table.rows({selected:true}).data()[0] : last_emp[0]);
+		id = employee.id;
+		$(form+' input[name="tbl_id"]').val(employee.id);
+		$(form+' input[name="emp_id"]').val(employee.emp_id);
+		$(form+' select[name="temp_agency"] options[value="'+employee.temp_name+'"]').attr('selected','selected');
+		
+		if(id){
+			$.ajax({
+				type : 'GET',
+				url  : '<?= site_url('e_roster/get_employee/'); ?>/'+id,
+				dataType : 'json',
+				asyc : false,
+				success : function(res){
+					$(form+' input[name="emp_email"]').val(res.emp_email);
+					$(form+' select[name="wms_usrgrp"] options[value="'+res.wms_usrgrp+'"]').attr('selected','selected');
+					$(form+' input[name="park_tag"]').val(res.park_tag);
+					$(form+' input[name="emp_fname"]').val(res.emp_fname);
+					$(form+' input[name="emp_lname"]').val(res.emp_lname);
+					$(form+' input[name="emp_dob"]').val(res.emp_dob);
+					$(form+' input[name="wms"]').val(res.wms);
+					$(form+' input[name="sb"]').val(res.sb);
+					$(form+' input[name="ssn"]').val(res.ssn);
+					$(form+' input[name="temp_start"]').val(res.temp_start);
+					$(form+' select[name="department"] options[value="'+res.dept_id+'"]').attr('selected','selected');
+					$(form+' select[name="zone"] options[value="'+res.zone_id+'"]').attr('selected','selected');
+					$(form+' select[name="shift"] options[value="'+res.shift_id+'"]').attr('selected','selected');
+					$(form+' select[name="pri_rol"] options[value="'+res.primary+'"]').attr('selected','selected');
+					$(form+' select[name="sec_rol"] options[value="'+res.secondary+'"]').attr('selected','selected');
+					$(form+' select[name="supervisor"] options[value="'+res.supervisor+'"]').attr('selected','selected');
+					console.log(res);
+				}
+			});
+		}
+		
+	});
+	
+	//functions
+	
+	function employee_submit(target){
+		url = $(target).attr('action');
+		post = $(target).serialize();
+		console.log(post);
+		$.ajax({
+			type : 'POST',
+			url : url,
+			dataType : 'json',
+			data : post,
+			beforeSend : function(){
+				
+				startSubmit('.employee_submit');
+			},
+			error: function(jqXHR, textStatus){
+				endSubmit('.employee_submit');
+				alert('Failed from '+textStatus);  
+			},
+			success : function(res){
+				endSubmit('.employee_submit');
+				$('.emp_table').DataTable().ajax.reload();
+				console.log(res);
+			},
+			timeout: 6000
+		});
+		
+		clear_validation();
+	}
+		
 </script>

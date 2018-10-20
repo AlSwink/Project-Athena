@@ -146,4 +146,16 @@ class Api extends CI_Controller {
 		$employees = $this->E_roster_model->get_all();
 		echo json_encode($employees);
 	}
+	
+	public function getDeptReport()
+	{
+		$report = $this->E_roster_model->get_department_employees();
+		echo json_encode($report);
+	}
+	
+	public function getWmsMissingReport()
+	{
+		$report = $this->E_roster_model->get_not_in_wms();
+		echo json_encode($report);
+	}
 }

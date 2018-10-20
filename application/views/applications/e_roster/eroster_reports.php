@@ -17,4 +17,14 @@
 			</ul>
 		</div>
 	</div>
+	<div class="col-lg-9 col-sm-12">
+		<div class="tab-content">
+			<div class="tab-pane" id="wms_report">
+				<?php loadSubTemplate('eroster_reports_wms');?>
+			</div>
+			<div class="tab-pane show active" id="dept_report">
+				<?php loadSubTemplate('eroster_reports_dept');?>
+			</div>
+		</div>
+	</div>
 </div>

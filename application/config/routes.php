@@ -99,6 +99,9 @@ $route['it_5s/(:any)/(:any)'] = 'apps/it_5s/$1/$2';
 //e_roster routes
 $route['e_roster'] = 'applications/e_roster';
 $route['e_roster/standalone'] = 'applications/e_roster/1';
+$route['e_roster/(:any)'] = 'apps/e_roster/$1';
+$route['e_roster/get_employee/(:any)'] = 'apps/e_roster/get_employee/$1';
+$route['e_roster/get_wms_employee/(:any)'] = 'apps/e_roster/get_wms_employee/$1';
 
 //random_audit routes
 $route['random_audit'] = 'applications/random_audit';
