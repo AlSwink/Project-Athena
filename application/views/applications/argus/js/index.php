@@ -4,6 +4,7 @@
 	var notif_announce = new Audio('<?= base_url('assets/audio/argus-notify-announcement.mp3'); ?>');
 	var filter = [];
 	var filter2 = [];
+	
 	var argus = {
 			started: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
@@ -130,6 +131,10 @@
 				setTimeout(function(){
 					$('#announcement').fadeOut('slower');
 				},10000);
+			},
+			notify: function(msg){
+				notif.play();
+				$.notify(msg);
 			}
 	};
 
@@ -341,7 +346,7 @@
 					'loading' : 0,
 					'signed' : 0,
 					'ship_complete' : 0
-			};
+				};
 
 		shipments = $('.sment');
 		counters = $('.counters');
@@ -394,15 +399,13 @@
 
 	function notifyAll(shipment,stage)
 	{
-		notif.play();
-		$.notify('Shipment '+shipment+' has been '+stage+' by '+curr_user.fname+' '+curr_user.lname);
+		var msg = 'Shipment '+shipment+' has been '+stage+' by '+curr_user.fname+' '+curr_user.lname;
+		socket.emit('command','/do-argus-notify-'+msg);
 	}
 
 	function announce(msg)
 	{
 		notif_announce.play();
-		startSubmit('.send_announcement');
 		socket.emit('command','/do-argus-announce-'+msg);
-		endSubmit('.send_announcement');
 	}
 </script>

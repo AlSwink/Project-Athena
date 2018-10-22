@@ -15,6 +15,7 @@
 			<li><span class="badge bg-success">New</span> Added Announcement bar at the bottom the screen for important announcement.</li>
 			<li><span class="badge bg-success">New</span> Added Announce button to create an announcment.</li>
 			<li><span class="badge bg-success">New</span> Added Announcement audio for announcments.</li>
+			<li><span class="badge bg-success">New</span> v0.0.7 has been pushed to production server new link is : http://10.89.96.128/athena/argus/standalone</li>
 			<li><span class="badge bg-secondary">Changed</span> Notification cards statement have been revised to identify source of notification.</li>
 		</ul>
 	</div>
