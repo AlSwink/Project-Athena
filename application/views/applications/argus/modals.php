@@ -141,11 +141,32 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
-        Details go here
+      <div id="ship_details" class="modal-body">
+        
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-sm btn-secondary cancel" data-dismiss="modal">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="announcement_modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-bullhorn"></i> Send an announcement</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-warning">Only send announcements with the highest importance. Please use responsibly</div>
+        <textarea class="form-control" name="announcement_text" rows=5></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="send_announcement btn btn-sm btn-primary">Announce</button>
       </div>
     </div>
   </div>

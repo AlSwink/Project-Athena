@@ -1,12 +1,12 @@
 <table class="table table-sm text-center table-bordered mb-0">
 	<tr>
-		<td><i class="far fa-clock fa-2x text-info" title="Waiting"></i></td>
-		<td><i class="fas fa-clipboard-list fa-2x text-info" title="Started"></i></td>
-		<td><i class="fas fa-boxes fa-2x text-info" title="Verifiying"></i></td>
-		<td><i class="fas fa-pallet fa-2x text-info" title="Verified"></i></td>
-		<td><i class="fas fa-truck-loading fa-2x text-info" title="Loaded"></i></td>
-		<td><i class="fas fa-clipboard-check fa-2x text-info" title="Signed"></i></td>
-		<td><i class="fas fa-truck fa-2x text-info" title="Released"></i></td>
+		<td><i class="filter on fas fa-clock fa-lg text-success" title="Waiting" data-filter="waiting"></i></td>
+		<td><i class="filter on fas fa-clipboard-list fa-lg text-success" title="Started" data-filter="verification"></i></td>
+		<td><i class="filter on fas fa-boxes fa-lg text-success" title="Verifiying" data-filter="verification_pass2"></i></td>
+		<td><i class="filter on fas fa-pallet fa-lg text-success" title="Verified" data-filter="verified"></i></td>
+		<td><i class="filter on fas fa-truck-loading fa-lg text-success" title="Loaded" data-filter="loading"></i></td>
+		<td><i class="filter on fas fa-clipboard-check fa-lg text-success" title="Signed" data-filter="signed"></i></td>
+		<td><i class="filter on fas fa-truck fa-lg text-success" title="Released" data-filter="ship_complete"></i></td>
 	</tr>
 	<tr>
 		<td class="counters" data-stage="waiting">0</td>

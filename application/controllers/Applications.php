@@ -71,7 +71,9 @@ class Applications extends CI_Controller {
                                                     'jquery-ui.min',
                                                     'jquery.signature.min',
                                                     'jquery.ui.touch-punch.min',
-                                                    'jquery.contextMenu.min'
+                                                    'jquery.contextMenu.min',
+                                                    'jquery.quicksearch.min',
+                                                    'notify.min'
                                                 )
                                         )
                 );

@@ -14,3 +14,8 @@ AND packlist IS NOT NULL
 AND (om.attention LIKE '1%%PKG' OR om.attention LIKE '1%%LTL' OR om.attention LIKE '2%%PKG' OR om.attention LIKE '2%%LTL' OR om.attention LIKE '3%%PKG' OR om.attention LIKE '3%%LTL')
 GROUP BY shipment,attention,carrier,ship_name,ord_qty
 ORDER BY attention ASC
+
+WR Shipment Criteria
+
+from_email != ''
+shipment LIKE 'WR%'

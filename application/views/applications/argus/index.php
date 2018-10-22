@@ -21,7 +21,13 @@
 	  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#verification2_sheet" >QA</a></li>
 	  <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#change_log" >QA</a></li>
 	</ul>
+	<div id="announcement" class="row">
+		<div class="col">
+			<span id="announce">Sample Announcment goes here</span>
+		</div>
+	</div>
 </div>
+
 <?php
 	loadSubTemplate([
 				'css',

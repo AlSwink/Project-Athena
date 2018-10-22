@@ -1,49 +1,66 @@
 <script>
+	var	curr_user = <?= json_encode($this->session->userdata('user_info')); ?>;
+	var notif = new Audio('<?= base_url('assets/audio/argus-notify-default.mp3'); ?>');
+	var notif_announce = new Audio('<?= base_url('assets/audio/argus-notify-announcement.mp3'); ?>');
 	var filter = [];
+	var filter2 = [];
 	var argus = {
 			started: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
+				$(card).addClass('verification');
 				$(card).find('.fa-clipboard-list').removeClass('text-muted');
 				$(card).find('.fa-clipboard-list').addClass('text-success');
 				$(card).attr('data-stage','verification');
-				$(card).find('.card-subtitle').html('Under Verification').removeClass('text-light').css('color','#19e0ff');
+				$(card).find('.card-subtitle').html('Under Verification');
+				notifyAll(shipment,'started');
 			},
 			ready_qa: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
+				$(card).addClass('verification_pass2');
 				$(card).find('.fa-boxes').removeClass('text-muted');
 				$(card).find('.fa-boxes').addClass('text-success');
 				$(card).attr('data-stage','verification_pass2');
-				$(card).find('.card-subtitle').html('Waiting for QA').css('color','').addClass('text-warning');
+				$(card).find('.card-subtitle').html('Waiting for QA');
+				notifyAll(shipment,'verified by the loader');
 			},
 			verified: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
+				$(card).addClass('verified');
 				$(card).find('.fa-pallet').removeClass('text-muted');
 				$(card).find('.fa-pallet').addClass('text-success');
 				$(card).attr('data-stage','verified');
-				$(card).find('.card-subtitle').html('Waiting for Door/Pickup number').css('color','').addClass('text-warning');
+				$(card).find('.card-subtitle').html('Waiting for Door/Pickup number');
+				notifyAll(shipment,'verified by the QA');
 			},
 			loading: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
+				$(card).addClass('loading');
 				$(card).find('.fa-truck-loading').removeClass('text-muted');
 				$(card).find('.fa-truck-loading').addClass('text-success');
 				$(card).attr('data-stage','loading');
-				$(card).find('.card-subtitle').html('Waiting for BOL signature').css('color','').addClass('text-warning');
+				$(card).find('.card-subtitle').html('Waiting for BOL signature');
+				notifyAll(shipment,'sent for loading');
 			},
 			loaded: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
+				$(card).addClass('signed');
 				$(card).find('.fa-clipboard-check').removeClass('text-muted');
 				$(card).find('.fa-clipboard-check').addClass('text-success');
-				$(card).find('.card-subtitle').html('Signed and being released').css('color','').removeClass().addClass('card-subtitle text-success');
+				$(card).find('.card-subtitle').html('Signed and being released');
 				$(card).attr('data-stage','signed');
+				notifyAll(shipment,'signed for release');
 			},
 			release: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
+				$(card).addClass('ship_complete');
 				$(card).find('.fa-truck').removeClass('text-muted');
 				$(card).find('.fa-truck').addClass('text-success');
-				$(card).find('.card-subtitle').html('Released').css('color','').addClass('text-success');
+				$(card).find('.card-subtitle').html('Released');
 				$(card).attr('data-stage','ship_complete');
+				notifyAll(shipment,'released by security');
 			},
 			ship_complete: function(shipment){
+				notifyAll(shipment,'805d');
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
 				$(card).remove();
 				updateCounts();
@@ -63,6 +80,7 @@
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
 				$(card).find('.card').removeClass('bg-secondary');
 				$(card).addClass('shipment_item');
+				$('.cancel[data-shipment="'+shipment+'"]:visible').click();
 				updateCounts();
 			},
 			prioritize: function(shipment){
@@ -79,27 +97,53 @@
 			},
 			reset: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
+				$(card).removeClass('.verification,.verification_pass2,.verified,.loading,.signed,.ship_complete');
 				$(card).find('.fa-clipboard-list').removeClass('^=text').addClass('text-muted');
 				$(card).find('.fa-pallet').removeClass('^=text').addClass('text-muted');
 				$(card).find('.fa-truck-loading').removeClass('^=text').addClass('text-muted');
 				$(card).find('.fa-clipboard-check').removeClass('^=text').addClass('text-muted');
 				$(card).find('.fa-truck').removeClass('^=text').addClass('text-muted');
 				$(card).attr('data-stage','waiting');
-				$(card).find('.card-subtitle').html('Not Started').removeClass('^=text').css('color','white');
+				$(card).find('.card-subtitle').html('Not Started');
+				data = {
+						'shipment' : shipment,
+						'stage' : 1,
+						'button_id' : this.id,
+						'type' : 'start'
+					}
+
+				updateShipment(data);
+				notifyAll(shipment,'reset');
 				updateCounts();
+			},
+			user_reset: function(user_id){
+				if(app_user == user_id){
+					window.location.reload();
+				}
 			},
 			changelog: function(){
 				$('a[href="#change_log"]').click();
+			},
+			announce: function(msg){
+				$('#announce').html(msg);
+				$('#announcement').fadeIn('slower');
+				setTimeout(function(){
+					$('#announcement').fadeOut('slower');
+				},10000);
 			}
 	};
 
 	$(document).ready(function(){
 		app_name = '<?= $method = $this->router->fetch_method(); ?>';
+		app_user = '<?= $this->session->userdata('user_id'); ?>';
+
+		$('.sync').click();
 
 		$.contextMenu({
         	selector: '.sment',
         	build: function($triggerElement,e){
    				shipment = $($triggerElement[0]).data('shipment');
+
         		return {
         			callback: function(key, options,e){
 		                switch(key){
@@ -119,7 +163,7 @@
 		                		socket.emit('command','/do-argus-unlock-'+shipment);
 		                		break;
 		                	case 'details':
-		                		$('#details').modal('show');
+		                		showShipmentDetails(shipment);
 		                		break;
 		                }		
 
@@ -138,6 +182,31 @@
         	}
         });
 
+		$.notify.addStyle('globalnotif', {
+		  html: 
+		    "<div>" +
+		      "<div class='clearfix alert alert-info shadow mb-0'>" +
+		        "<h6 class='mb-0' data-notify-text/>" +
+		        "<center><small><i>Argus Alert</i></small></center>"+
+		      "</div>" +
+		    "</div>"
+		});
+
+		$.notify.addStyle('globalerror', {
+		  html: 
+		    "<div>" +
+		      "<div class='clearfix alert alert-danger shadow mb-0'>" +
+		        "<span class='w-100' data-notify-text/>" +
+		      "</div>" +
+		    "</div>"
+		});
+
+		$.notify.defaults({
+			autoHideDelay: 5000,
+			globalPosition: 'top left',
+			style: 'globalnotif'
+		});
+
 		updateCounts();
 	});
 
@@ -147,6 +216,7 @@
 		shipment_type = shipment.substr(0,2);
 		$('.shipment').html(shipment);
 		$('.shipment_val').val(shipment);
+		$('.cancel').attr('data-shipment',shipment);
 
 		switch(stage){
 			case 'waiting':
@@ -177,34 +247,83 @@
 		socket.emit('command','/do-argus-unlock-'+shipment);
 	});
 
-	$('#return_to_argus').click(function(){
-		$('a[href="#shipment_list"').click();
-	});
-
-	$('.filter').click(function(){
+	$(document).on('click','.filter',function(){
 		filter = [];
+		filter2 = [];
 		state = $(this).hasClass('on');
-		
+		e_class = ($(this).is('button') ? 'btn-success' : 'text-success');
+
 		$('.sment').removeClass('d-none');
 
 		if(!state){
 			$(this).removeClass('off').addClass('on');
-			$(this).addClass('btn-success');
+			$(this).addClass(e_class);
 		}else{
 			$(this).removeClass('on').addClass('off');
-			$(this).removeClass('btn-success');
-
+			$(this).removeClass(e_class);
 		}
 
 		$('.filter.on').each(function(k,v){
-			filter.push($(v).attr('data-filter'));			
+			is_button = $(v).is('button');
+			console.log(is_button);
+			if(is_button){
+				filter.push($(v).attr('data-filter'));
+			}else{
+				filter2.push($(v).attr('data-filter'));	
+			}
 		});
-
-		updateFilter();
+		
+		updateFilter($(this).is('button'));
 	});
 
-	function updateFilter()
+	$(document).on('click','#search_shipment',function(){
+		$(this).quicksearch('div.shipment_cards div[data-shipment]');
+	});
+
+	$('#return_to_argus').click(function(){
+		$('a[href="#shipment_list"').click();
+	});
+
+	$('.sync').click(function(){
+		templater('syncShipments','.shipment_cards',null,true,true);
+		setTimeout(function(){
+			updateCounts();
+		},1500);
+	});
+
+	$('.refresh').click(function(){
+		announce('Argus is refreshing. Please wait');
+		socket.emit('command','/refresh-argus');
+	});
+
+	$('.changelog').click(function(){
+		$('a[href="#change_log"]').click();
+	});
+
+	$('.send_announcement').click(function(){
+		announcement = $('textarea[name="announcement_text"]').val();
+
+		if(announcement.length){
+			announce(announcement);
+		}else{
+			$('textarea[name="announcement_text"]').notify('Required',{style:'globalerror'});
+		}
+	});
+
+	function updateFilter(multi=false)
 	{
+		if($(filter2).length){
+			$('.sment').addClass('d-none');
+
+			if(filter2.length > 1){
+				$(filter2).each(function(a,b){
+					$('.sment.'+b).removeClass('d-none');
+				});
+			}else{
+				$('.sment.'+filter2[0]).removeClass('d-none');
+			}
+		}
+
 		if($(filter).length){
 			$('.sment').addClass('d-none');
 			classes = filter.join('.');
@@ -226,6 +345,9 @@
 
 		shipments = $('.sment');
 		counters = $('.counters');
+		//shipments = document.getElementByClassName("sment");
+		//counters = document.getElementByClassName("counters");
+		//counters = $('.counters');
 
 		$(shipments).each(function(k,v){
 			stage = $(v).attr('data-stage');
@@ -240,6 +362,47 @@
 
 	function updateShipment(data)
 	{
-		url = '<?= site_url(); ?>';
+		url = '<?= site_url('argus/updateShipment'); ?>';
+		shipment = data.shipment;
+		stage = data.stage;
+		type = data.type;
+		button_id = '#'+data.button_id;
+		
+		$.ajax({
+			type : 'POST',
+			url : url,
+			dataType : 'json',
+			data : { shipment : shipment, stage : stage, type : type },
+			beforeSend : function(){
+				startSubmit(button_id);
+			},
+			success : function(res){
+				console.log(res);
+			},
+			complete : function(){
+				endSubmit(button_id);	
+			}
+		});
+		
+	}
+
+	function showShipmentDetails(shipment,stage)
+	{
+		templater('getDetails','#ship_details',shipment,true,true);
+		$('#details').modal('show');
+	}
+
+	function notifyAll(shipment,stage)
+	{
+		notif.play();
+		$.notify('Shipment '+shipment+' has been '+stage+' by '+curr_user.fname+' '+curr_user.lname);
+	}
+
+	function announce(msg)
+	{
+		notif_announce.play();
+		startSubmit('.send_announcement');
+		socket.emit('command','/do-argus-announce-'+msg);
+		endSubmit('.send_announcement');
 	}
 </script>
