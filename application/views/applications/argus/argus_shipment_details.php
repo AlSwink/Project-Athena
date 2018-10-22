@@ -52,7 +52,7 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col">
+	<div class="col" style="max-height: 30%;overflow: auto">
 		<table class="table table-sm table-bordered table-hover shipment_details_table">
 			<thead>
 				<tr class="thead-dark">

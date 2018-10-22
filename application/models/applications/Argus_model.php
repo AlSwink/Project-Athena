@@ -175,6 +175,7 @@ class Argus_model extends XPO_Model {
 		$this->db->join('argus_shipments','argus_shipments.shipment_id = argus_transactions.shipment_id');
 		$this->db->join('argus_stages','argus_stages.stage_id = argus_transactions.stage_id');
 		$this->db->join('employees','employees.user_id = argus_transactions.user_id');
+		$this->db->order_by('transaction_id','DESC');
 		$transactions = $this->db->get('argus_transactions')->result_array();
 		$this->shipment['transactions'] = $transactions;
 	}
