@@ -121,6 +121,7 @@
 			announce: function(msg){
 				$('#announce').html(msg);
 				notif_announce.play();
+				responsiveVoice.speak(msg);
 				$('#announcement').fadeIn('slower');
 				setTimeout(function(){
 					$('#announcement').fadeOut('slower');
@@ -437,6 +438,7 @@
 
 	function announce(msg)
 	{
+
 		socket.emit('command','/do-argus-announce-'+msg);
 	}
 </script>

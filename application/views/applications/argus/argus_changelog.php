@@ -10,6 +10,7 @@
 		Changes made:
 		<ul>
 			<li><span class="badge bg-success">New</span> Locking and Unlocking now updates on Argus' database to stay locked/unlocked after refresh.</li>
+			<li><span class="badge bg-success">New</span> Added voice text to speech announcement.</li>
 			<li><span class="badge bg-warning">Fixed</span> a bug that is not removing shipments that are already 805'd.</li>
 			<li><span class="badge bg-warning">Fixed</span> a miscalculation on carton count and shipment weight.</li>
 			<li><span class="badge bg-warning">Fixed</span> duplicating notification when resetting.</li>

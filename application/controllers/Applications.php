@@ -73,7 +73,8 @@ class Applications extends CI_Controller {
                                                     'jquery.ui.touch-punch.min',
                                                     'jquery.contextMenu.min',
                                                     'jquery.quicksearch.min',
-                                                    'notify.min'
+                                                    'notify.min',
+                                                    'responsivevoice'
                                                 )
                                         )
                 );
