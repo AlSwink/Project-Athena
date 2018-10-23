@@ -73,6 +73,7 @@
 			},
 			lock: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
+				console.log(card);
 				$(card).find('.card').addClass('bg-secondary');
 				$(card).removeClass('shipment_item');
 				updateCounts();
@@ -141,6 +142,7 @@
         			callback: function(key, options,e){
 		                switch(key){
 		                	case 'prioritize':
+		                		console.log('test');
 		                		socket.emit('command','/do-argus-prioritize-'+shipment);
 		                		break;
 		                	case 'normalize':
@@ -150,7 +152,6 @@
 			                	data = {
 										'shipment' : shipment,
 										'stage' : 1,
-										'button_id' : this.id,
 										'type' : 'start'
 									}
 								notifyAll(shipment,'reset');

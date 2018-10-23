@@ -51,12 +51,13 @@ class Argus_model extends XPO_Model {
 						GROUP BY shipment,attention,carrier,ship_name,cartons
 						ORDER BY attention ASC";
 
-		$wr_query = "SELECT om_f.attention, om_f.carrier, Max(om_f.ship_name) AS ship_name, Sum(shipunit_f.wgt) AS wgt, (Count(DISTINCT(ct_f.ucc128))) AS cartons
+		$wr_query = "SELECT TRIM(om_f.attention) as attention, om_f.carrier, Max(om_f.ship_name) AS ship_name, Sum(shipunit_f.wgt) AS wgt, (Count(DISTINCT(ct_f.ucc128))) AS cartons
 						FROM om_f INNER JOIN (shipunit_f INNER JOIN ct_f ON shipunit_f.shipunit_rid = ct_f.shipunit_rid) ON om_f.shipment = shipunit_f.shipment
 						WHERE from_email != ''
 						AND packlist != ''
 						AND om_f.carrier NOT IN ('WCL','STOP','EXPT')
-						GROUP BY attention,carrier";
+						GROUP BY attention,carrier
+						ORDER BY attention ASC";
 
 		
 		$shipments['work_request'] = $this->wms->query($wr_query)->result_array();	
@@ -228,14 +229,14 @@ class Argus_model extends XPO_Model {
 		foreach($shipments as $id){
 			$insert[] = array(
 					'shipment_id' => $id,
-					'stage' => 8,
+					'stage_id' => 8,
 					'end' => date('Y-m-d H:i:s'),
 					'user_id' => $this->user_id,
 					'created' => date('Y-m-d H:i:s'),
 				);
 		}
 		if(isset($insert)){
-			$this->db->insert_batch('argus_transactions',$insert);
+			//$this->db->insert_batch('argus_transactions',$insert);
 		}
 		$this->db->reset_query();
 	}
