@@ -4,7 +4,7 @@
 	var notif_announce = new Audio('<?= base_url('assets/audio/argus-notify-announcement.mp3'); ?>');
 	var filter = [];
 	var filter2 = [];
-	
+
 	var argus = {
 			started: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
@@ -13,7 +13,6 @@
 				$(card).find('.fa-clipboard-list').addClass('text-success');
 				$(card).attr('data-stage','verification');
 				$(card).find('.card-subtitle').html('Under Verification');
-				notifyAll(shipment,'started');
 			},
 			ready_qa: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
@@ -106,15 +105,6 @@
 				$(card).find('.fa-truck').removeClass('^=text').addClass('text-muted');
 				$(card).attr('data-stage','waiting');
 				$(card).find('.card-subtitle').html('Not Started');
-				data = {
-						'shipment' : shipment,
-						'stage' : 1,
-						'button_id' : this.id,
-						'type' : 'start'
-					}
-
-				updateShipment(data);
-				notifyAll(shipment,'reset');
 				updateCounts();
 			},
 			user_reset: function(user_id){
@@ -127,14 +117,11 @@
 			},
 			announce: function(msg){
 				$('#announce').html(msg);
+				notif_announce.play();
 				$('#announcement').fadeIn('slower');
 				setTimeout(function(){
 					$('#announcement').fadeOut('slower');
 				},10000);
-			},
-			notify: function(msg){
-				notif.play();
-				$.notify(msg);
 			}
 	};
 
@@ -159,6 +146,14 @@
 		                		socket.emit('command','/do-argus-normalize-'+shipment);
 		                		break;
 		                	case 'reset':
+			                	data = {
+										'shipment' : shipment,
+										'stage' : 1,
+										'button_id' : this.id,
+										'type' : 'start'
+									}
+								notifyAll(shipment,'reset');
+								updateShipment(data);
 		                		socket.emit('command','/do-argus-reset-'+shipment);
 		                		break;
 		                	case 'lock':
@@ -293,7 +288,7 @@
 		templater('syncShipments','.shipment_cards',null,true,true);
 		setTimeout(function(){
 			updateCounts();
-		},1500);
+		},3000);
 	});
 
 	$('.refresh').click(function(){
@@ -312,6 +307,13 @@
 			announce(announcement);
 		}else{
 			$('textarea[name="announcement_text"]').notify('Required',{style:'globalerror'});
+		}
+	});
+
+	socket.on('notify',function(app,msg){
+		if(app == app_name){
+			notif.play();
+			$.notify(msg);
 		}
 	});
 
@@ -400,12 +402,11 @@
 	function notifyAll(shipment,stage)
 	{
 		var msg = 'Shipment '+shipment+' has been '+stage+' by '+curr_user.fname+' '+curr_user.lname;
-		socket.emit('command','/do-argus-notify-'+msg);
+		socket.emit('notify','argus-'+msg);
 	}
 
 	function announce(msg)
 	{
-		notif_announce.play();
 		socket.emit('command','/do-argus-announce-'+msg);
 	}
 </script>

@@ -20,5 +20,6 @@
 		socket.emit('command','/do-argus-started-'+shipment);
 		$('.modal').modal('hide');
 		socket.emit('command','/do-argus-unlock-'+shipment);
+		notifyAll(shipment,'started');
 	});
 </script>

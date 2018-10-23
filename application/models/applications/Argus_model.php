@@ -135,6 +135,8 @@ class Argus_model extends XPO_Model {
 
 	public function check805($shipment=null)
 	{
+		$ship_completed = array();
+		
 		if($shipment){
 			$query = "SELECT * FROM om_f WHERE shipment = '".$shipment."'";
 			$result = $this->wms->query($query)->num_rows();
@@ -144,23 +146,19 @@ class Argus_model extends XPO_Model {
 			$this->db->where('stage <',8);
 			$shipments = $this->db->get('argus_shipments')->result_array();
 
-			$argus_shipments = array_column($shipments,'shipment');
-			$in_shipments = implode("','",$argus_shipments);
-
-			$field = ($shipments[0]['type'] == 'regular' ? 'shipment' : 'attention');
-
-			$query = "SELECT DISTINCT(TRIM(".$field.")) as ".$field." FROM om_f WHERE ".$field." IN ('".$in_shipments."')";
-			
-			$wms_shipments = $this->wms->query($query)->result_array();
-			
-			$wms_shipments = array_column($wms_shipments,$field);
-			$ship_completed = array_diff($wms_shipments,$argus_shipments);
-
-			$this->db->set('stage',8);
-			$this->db->set('modified_on',date('Y-m-d H:i:s'));
-			$this->db->where_in('shipment',$ship_completed);
+			foreach($shipments as $shipment){
+				$type = ($shipment['type'] == 'work_request' ? 'attention' : 'shipment');
+				$query = "SELECT ob_oid FROM om_f WHERE ".$type." = '".$shipment['shipment']."'";
+				$in_om = $this->wms->query($query)->num_rows();
+				if(!$in_om){
+					$ship_completed[] = $shipment['shipment_id'];
+				}
+			}
 			
 			if(count($ship_completed)){
+				$this->db->set('stage',8);
+				$this->db->set('modified_on',date('Y-m-d H:i:s'));
+				$this->db->where_in('shipment_id',$ship_completed);
 				$this->db->update('argus_shipments');
 				$this->override805($ship_completed);
 			}
@@ -228,27 +226,16 @@ class Argus_model extends XPO_Model {
 
 	private function override805($shipments)
 	{
-		$update = array(
-					'stage' => 8,
-					'end' => date('Y-m-d H:i:s'),
-					'modified_by' => $this->user_id,
-					'modified_on' => date('Y-m-d H:i:s'),
-				);
-
-		$this->db->where_in('shipment',$shipments);
-		$ships = $this->db->get('argus_shipments')->result_array();
-		$shipment_ids = array_column($ships,'shipment_id');
-
-		foreach($shipment_ids as $id){
+		foreach($shipments as $id){
 			$insert[] = array(
 					'shipment_id' => $id,
 					'stage' => 8,
 					'end' => date('Y-m-d H:i:s'),
-					'modified_by' => $this->user_id,
-					'modified_on' => date('Y-m-d H:i:s'),
+					'user_id' => $this->user_id,
+					'created' => date('Y-m-d H:i:s'),
 				);
 		}
-		if($insert){
+		if(isset($insert)){
 			$this->db->insert_batch('argus_transactions',$insert);
 		}
 		$this->db->reset_query();
