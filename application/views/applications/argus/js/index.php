@@ -1,4 +1,5 @@
 <script>
+	var sCheck;
 	var	curr_user = <?= json_encode($this->session->userdata('user_info')); ?>;
 	var notif = new Audio('<?= base_url('assets/audio/argus-notify-default.mp3'); ?>');
 	var notif_announce = new Audio('<?= base_url('assets/audio/argus-notify-announcement.mp3'); ?>');
@@ -286,9 +287,7 @@
 
 	$('.sync').click(function(){
 		templater('syncShipments','.shipment_cards',null,true,true);
-		setTimeout(function(){
-			updateCounts();
-		},3000);
+		sCheck = setInterval(shipmentCheck,1000);
 	});
 
 	$('.refresh').click(function(){
@@ -305,6 +304,7 @@
 
 		if(announcement.length){
 			announce(announcement);
+			$('#announcement_modal').modal('hide');
 		}else{
 			$('textarea[name="announcement_text"]').notify('Required',{style:'globalerror'});
 		}
@@ -316,6 +316,16 @@
 			$.notify(msg);
 		}
 	});
+
+	function shipmentCheck()
+	{
+		var shipment = $('.shipment_cards').find('.sment');
+
+		if(shipment.length){
+			updateCounts();
+			clearInterval(sCheck);
+		};
+	}
 
 	function updateFilter(multi=false)
 	{

@@ -6,6 +6,18 @@
 <hr>
 <div class="row" style="max-height: 80%; overflow: auto">
 	<div class="col-lg-12">
+		<h3>As of 10/23/2018 (Phase 1 Continued) <small>v0.0.8</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-warning">Fixed</span> a bug that is not removing shipments that are already 805'd.</li>
+			<li><span class="badge bg-warning">Fixed</span> a miscalculation on carton count and shipment weight.</li>
+			<li><span class="badge bg-warning">Fixed</span> duplicating notification when resetting.</li>
+			<li><span class="badge bg-warning">Fixed</span> notifications to reflect the user who triggered the action instead of the current user.</li>
+			<li><span class="badge bg-warning">Fixed</span> stages count not updating properly.</li>
+			<li><span class="badge bg-secondary">Changed</span> WR shipments query for better performance and accuracy.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
 		<h3>As of 10/22/2018 (Phase 1 Continued) <small>v0.0.7</small></h3>
 		Changes made:
 		<ul>
