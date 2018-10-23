@@ -14,19 +14,18 @@ class Argus_model extends XPO_Model {
 	{
 		$this->getShipment($shipment);
 
-		$reg_query = "SELECT TRIM(om.shipment) as shipment,TRIM(om.attention) as attention,om.carrier,om.ship_name,SUM(num_crtn) as cartons,SUM(wgt) as wgt,ship_addr1,ship_addr2,ship_city,ship_state,ship_zip,pay_acct,num_unit,om.wave,total_wgt,sched_date,om.probill,fr_terms,route_cmt1,route_cmt2,route_cmt3,num_line
+		$reg_query = "SELECT TRIM(om.shipment) as shipment,TRIM(om.attention) as attention,om.carrier,om.ship_name,SUM(num_crtn) as cartons,SUM(s.wgt) as wgt,ship_addr1,ship_addr2,ship_city,ship_state,ship_zip,pay_acct,num_unit,om.wave,total_wgt,sched_date,om.probill,fr_terms,route_cmt1,route_cmt2,route_cmt3,num_line
 						FROM shipunit_f AS s
 						INNER JOIN om_f AS om ON s.shipment = om.shipment
 						AND om.shipment = '".$shipment."'
 						GROUP BY shipment,attention,carrier,ship_name,ship_addr1,ship_addr2,ship_city,ship_state,ship_zip,pay_acct,num_unit,om.wave,total_wgt,sched_date,om.probill,fr_terms,route_cmt1,route_cmt2,route_cmt3,num_line
 						ORDER BY attention ASC";
 
-		$wr_query = "SELECT TRIM(om.attention) as shipment,TRIM(om.attention) as attention,om.carrier,om.ship_name,SUM(num_crtn) as cartons,SUM(wgt) as wgt,ship_addr1,ship_addr2,ship_city,ship_state,ship_zip,pay_acct,num_unit,om.wave,total_wgt,sched_date,om.probill,fr_terms,route_cmt1,route_cmt2,route_cmt3,num_line
-						FROM shipunit_f AS s
-						INNER JOIN om_f AS om ON s.shipment = om.shipment
-						AND om.attention = '".$shipment."'
-						GROUP BY shipment,attention,carrier,ship_name,ship_addr1,ship_addr2,ship_city,ship_state,ship_zip,pay_acct,num_unit,om.wave,total_wgt,sched_date,om.probill,fr_terms,route_cmt1,route_cmt2,route_cmt3,num_line
-						ORDER BY shipment ASC";
+		$wr_query = "SELECT TRIM(om_f.attention) as shipment,TRIM(om_f.attention) as attention, om_f.carrier,Max(om_f.wave) as wave, Max(om_f.ship_name) AS ship_name, Sum(shipunit_f.wgt) AS wgt, (Count(DISTINCT(ct_f.ucc128))) AS cartons,MAX(from_email) as sched_date,MAX(om_f.probill) as probill,MAX(ship_addr1) as ship_addr1,MAX(ship_addr2) as ship_addr2,MAX(fr_terms) as fr_terms,MAX(pay_acct) as pay_acct,MAX(ship_city) as ship_city,MAX(ship_state) as ship_state,MAX(ship_zip) as ship_zip,MAX(route_cmt1) as route_cmt1,MAX(route_cmt2) as route_cmt2,MAX(route_cmt3) as route_cmt3
+						FROM om_f INNER JOIN (shipunit_f INNER JOIN ct_f ON shipunit_f.shipunit_rid = ct_f.shipunit_rid) ON om_f.shipment = shipunit_f.shipment
+						WHERE attention = '".$shipment."'
+						GROUP BY attention,carrier
+						ORDER BY attention ASC";
 		
 		$query = ($this->shipment['type'] == 'regular' ? $reg_query : $wr_query);
 		$details['wms'] = $this->wms->query($query)->row_array();
@@ -222,6 +221,12 @@ class Argus_model extends XPO_Model {
 				);
 
 		$this->db->insert('argus_transactions',$data);
+	}
+
+	public function save()
+	{
+		$this->db->where('shipment_id',$this->shipment['shipment_id']);
+		$this->db->update('argus_shipments');
 	}
 
 	private function override805($shipments)

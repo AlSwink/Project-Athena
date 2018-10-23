@@ -9,12 +9,16 @@
 		<h3>As of 10/23/2018 (Phase 1 Continued) <small>v0.0.8</small></h3>
 		Changes made:
 		<ul>
+			<li><span class="badge bg-success">New</span> Locking and Unlocking now updates on Argus' database to stay locked/unlocked after refresh.</li>
 			<li><span class="badge bg-warning">Fixed</span> a bug that is not removing shipments that are already 805'd.</li>
 			<li><span class="badge bg-warning">Fixed</span> a miscalculation on carton count and shipment weight.</li>
 			<li><span class="badge bg-warning">Fixed</span> duplicating notification when resetting.</li>
 			<li><span class="badge bg-warning">Fixed</span> notifications to reflect the user who triggered the action instead of the current user.</li>
 			<li><span class="badge bg-warning">Fixed</span> stages count not updating properly.</li>
+			<li><span class="badge bg-warning">Fixed</span> shipment details weight and carton numbers.</li>
 			<li><span class="badge bg-secondary">Changed</span> WR shipments query for better performance and accuracy.</li>
+			<li><span class="badge bg-secondary">Changed</span> Announcement has been moved to the top.</li>
+			<li><span class="badge bg-secondary">Changed</span> Announcement font size has been slightly increased.</li>
 		</ul>
 	</div>
 	<div class="col-lg-12">

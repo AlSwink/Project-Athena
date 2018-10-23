@@ -70,10 +70,10 @@
 				params = carrier.split('%');
 				card = $('#shipment_list').find("div[data-shipment="+params[0]+"]");
 				$(card).find('td.carrier').html(params[1]);
+				notifyAll(shipment,'changed carrier to');
 			},
 			lock: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
-				console.log(card);
 				$(card).find('.card').addClass('bg-secondary');
 				$(card).removeClass('shipment_item');
 				updateCounts();
@@ -90,6 +90,7 @@
 				$(card).find('.card').addClass('bg-primary');
 				$(card).addClass('priority');
 				updateFilter();
+				notifyAll(shipment,'prioritized');
 			},
 			normalize: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
@@ -131,7 +132,7 @@
 		app_name = '<?= $method = $this->router->fetch_method(); ?>';
 		app_user = '<?= $this->session->userdata('user_id'); ?>';
 
-		$('.sync').click();
+		//$('.sync').click();
 
 		$.contextMenu({
         	selector: '.sment',
@@ -142,7 +143,6 @@
         			callback: function(key, options,e){
 		                switch(key){
 		                	case 'prioritize':
-		                		console.log('test');
 		                		socket.emit('command','/do-argus-prioritize-'+shipment);
 		                		break;
 		                	case 'normalize':
@@ -159,9 +159,11 @@
 		                		socket.emit('command','/do-argus-reset-'+shipment);
 		                		break;
 		                	case 'lock':
+		                		shipLock(shipment,1);
 		                		socket.emit('command','/do-argus-lock-'+shipment);
 		                		break;
 		                	case 'unlock':
+		                		shipLock(shipment,0);
 		                		socket.emit('command','/do-argus-unlock-'+shipment);
 		                		break;
 		                	case 'details':
@@ -247,6 +249,7 @@
 
 	$(document).on('click','.cancel',function(){
 		socket.emit('command','/do-argus-unlock-'+shipment);
+		shipLock(shipment,0);
 	});
 
 	$(document).on('click','.filter',function(){
@@ -267,7 +270,6 @@
 
 		$('.filter.on').each(function(k,v){
 			is_button = $(v).is('button');
-			console.log(is_button);
 			if(is_button){
 				filter.push($(v).attr('data-filter'));
 			}else{
@@ -395,13 +397,30 @@
 				startSubmit(button_id);
 			},
 			success : function(res){
-				console.log(res);
+				//console.log(res);
 			},
 			complete : function(){
 				endSubmit(button_id);	
+			},
+			error: function(){
+				endSubmit(button_id);	
 			}
 		});
+	}
+
+	function shipLock(shipment,lock)
+	{
+		url = '<?= site_url('argus/updateShipmentLock'); ?>';
 		
+		$.ajax({
+			type : 'POST',
+			url : url,
+			dataType : 'json',
+			data : { shipment : shipment, lock : lock},
+			success : function(res){
+				//console.log(res);
+			}
+		});
 	}
 
 	function showShipmentDetails(shipment,stage)

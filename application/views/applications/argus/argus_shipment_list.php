@@ -13,5 +13,10 @@
 	<?php loadSubTemplate('argus_shipment_list_control'); ?>
 </div>
 <div class="row shipment_cards mb-5">
-
+	<?php
+		foreach($shipments as $shipment){
+    		$data['shipment'] = $shipment;
+    		loadSubTemplate('argus_shipment_card',$data);
+    	}
+	?>
 </div>

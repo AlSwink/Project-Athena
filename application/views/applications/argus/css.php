@@ -30,10 +30,10 @@
 #announcement{
 	display: none;
 	position: fixed;
-	bottom: 0;
+	top: 0;
 	width: 100%;
 	background-color: #242424e8;
-	font-size: 35px;
+	font-size: 45px;
 	color: white;
 }
 

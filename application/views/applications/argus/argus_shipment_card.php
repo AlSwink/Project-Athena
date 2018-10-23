@@ -5,8 +5,13 @@
 			);
 
 ?>
-<div class="col-6 mb-1 px-1 sment shipment_item <?= $shipment['type']; ?> <?= $shipment['stage']; ?> unlocked" data-shipment="<?= $shipment['shipment']; ?>" data-stage="<?= $shipment['stage']; ?>">
-	<div class="card text-white shadow" style="background-color: <?= $color[$shipment['type']]; ?>">
+<div class="col-6 mb-1 px-1 sment 
+			<?= (!$shipment['locked'] ? 'shipment_item unlocked' : 'locked'); ?> 
+			<?= $shipment['type']; ?> 
+			<?= $shipment['stage']; ?> " 
+		data-shipment="<?= $shipment['shipment']; ?>" 
+		data-stage="<?= $shipment['stage']; ?>">
+	<div class="card text-white shadow <?= ($shipment['locked'] ? 'bg-secondary' : null); ?>" style="background-color: <?= $color[$shipment['type']]; ?>">
 	  <div class="card-body p-2">
 	  	<?php $data['stage'] = $shipment['stage_id']; ?>
 	    <h5 class="card-title">

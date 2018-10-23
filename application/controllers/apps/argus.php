@@ -65,6 +65,14 @@ class Argus extends CI_Controller {
     	//echo json_encode($post);
     }
 
+    public function updateShipmentLock()
+    {
+    	$post = $this->input->post();
+    	$this->argus_model->getShipment($post['shipment']);
+    	$this->db->set('locked',$post['lock']);
+    	$this->argus_model->save();
+    }
+
     public function clearTables()
     {
     	$this->db->truncate('argus_shipments');

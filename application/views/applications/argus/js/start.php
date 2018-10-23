@@ -3,6 +3,7 @@
 
 	function start_shipment()
 	{
+		shipLock(shipment,1);
 		socket.emit('command','/do-argus-lock-'+shipment);
 		$('#start_shipment').modal({backdrop:'static',keyboard:false});
 		$('#start_shipment').modal('show');
