@@ -51,13 +51,12 @@ class Argus_model extends XPO_Model {
 						GROUP BY shipment,attention,carrier,ship_name,cartons
 						ORDER BY attention ASC";
 
-		$wr_query = "SELECT TRIM(om.attention) as attention,om.carrier,MAX(om.ship_name) as ship_name,(SELECT COUNT(DISTINCT(ucc128)) FROM ct_f WHERE ct_f.shipment = om.shipment) as cartons,SUM(wgt) as wgt
-					FROM om_f AS om
-					JOIN shipunit_f ON shipunit_f.shipment = om.shipment
-					WHERE om.carrier NOT IN ('WCL','STOP','EXPT')
-					AND om.from_email != ''
-					GROUP BY attention,carrier,cartons
-					ORDER BY attention ASC";
+		$wr_query = "SELECT om_f.attention, om_f.carrier, Max(om_f.ship_name) AS ship_name, Sum(shipunit_f.wgt) AS wgt, (Count(DISTINCT(ct_f.ucc128))) AS cartons
+						FROM om_f INNER JOIN (shipunit_f INNER JOIN ct_f ON shipunit_f.shipunit_rid = ct_f.shipunit_rid) ON om_f.shipment = shipunit_f.shipment
+						WHERE from_email != ''
+						AND packlist != ''
+						AND om_f.carrier NOT IN ('WCL','STOP','EXPT')
+						GROUP BY attention,carrier";
 
 		
 		$shipments['work_request'] = $this->wms->query($wr_query)->result_array();	
@@ -136,7 +135,7 @@ class Argus_model extends XPO_Model {
 	public function check805($shipment=null)
 	{
 		$ship_completed = array();
-		
+
 		if($shipment){
 			$query = "SELECT * FROM om_f WHERE shipment = '".$shipment."'";
 			$result = $this->wms->query($query)->num_rows();
