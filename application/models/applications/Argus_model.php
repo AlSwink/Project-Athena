@@ -12,6 +12,8 @@ class Argus_model extends XPO_Model {
 
 	public function getShipmentDetails($shipment)
 	{
+		$pallet_info = array();
+		$nested = array();
 		$this->getShipment($shipment);
 
 		$reg_query = "SELECT TRIM(om.shipment) as shipment,TRIM(om.attention) as attention,om.carrier,om.ship_name,SUM(num_crtn) as cartons,SUM(s.wgt) as wgt,ship_addr1,ship_addr2,ship_city,ship_state,ship_zip,pay_acct,num_unit,om.wave,total_wgt,sched_date,om.probill,fr_terms,route_cmt1,route_cmt2,route_cmt3,num_line
@@ -28,10 +30,24 @@ class Argus_model extends XPO_Model {
 						ORDER BY attention ASC";
 		
 		$query = ($this->shipment['type'] == 'regular' ? $reg_query : $wr_query);
+		
 		$details['wms'] = $this->wms->query($query)->row_array();
 		$details['argus'] = $this->shipment;
+		$pallets = $this->getPallets();
+
+		foreach($pallets as $pallet){
+			$pallet_info[$pallet] = $this->getContainers($pallet);
+			$nested = array_merge($nested,$pallet_info[$pallet]);
+		}
+
+		$cartons = $this->getCartons();
+
+		$details['nested'] = $nested;
+		$details['unnested'] = array_diff($cartons,$nested);
+		$details['pallet_info'] = $pallet_info;
 
 		$this->shipment = $details;
+
 	}
 
 	public function getWMSShipments($type=null)
@@ -53,7 +69,6 @@ class Argus_model extends XPO_Model {
 		$wr_query = "SELECT TRIM(om_f.attention) as attention, om_f.carrier, Max(om_f.ship_name) AS ship_name, Sum(shipunit_f.wgt) AS wgt, (Count(DISTINCT(ct_f.ucc128))) AS cartons
 						FROM om_f INNER JOIN (shipunit_f INNER JOIN ct_f ON shipunit_f.shipunit_rid = ct_f.shipunit_rid) ON om_f.shipment = shipunit_f.shipment
 						WHERE from_email != ''
-						AND packlist != ''
 						AND om_f.carrier NOT IN ('WCL','STOP','EXPT')
 						GROUP BY attention,carrier
 						ORDER BY attention ASC";
@@ -139,9 +154,12 @@ class Argus_model extends XPO_Model {
 		if($shipment){
 			$query = "SELECT * FROM om_f WHERE shipment = '".$shipment."'";
 			$result = $this->wms->query($query)->num_rows();
-			return $result;
+			if(!$result){
+				$this->getShipment($shipment);
+			}
+
+			$ship_completed[] = $this->shipment['shipment_id'];
 		}else{
-			
 			$this->db->where('stage <',8);
 			$shipments = $this->db->get('argus_shipments')->result_array();
 
@@ -152,16 +170,17 @@ class Argus_model extends XPO_Model {
 				if(!$in_om){
 					$ship_completed[] = $shipment['shipment_id'];
 				}
-			}
-			
-			if(count($ship_completed)){
-				$this->db->set('stage',8);
-				$this->db->set('modified_on',date('Y-m-d H:i:s'));
-				$this->db->where_in('shipment_id',$ship_completed);
-				$this->db->update('argus_shipments');
-				$this->override805($ship_completed);
-			}
+			}			
 		}
+
+		if(count($ship_completed)){
+			$this->db->set('stage',8);
+			$this->db->set('modified_on',date('Y-m-d H:i:s'));
+			$this->db->where_in('shipment_id',$ship_completed);
+			$this->db->update('argus_shipments');
+			$this->override805($ship_completed);
+		}
+
 		$this->db->reset_query();
 	}
 
@@ -229,6 +248,52 @@ class Argus_model extends XPO_Model {
 		$this->db->update('argus_shipments');
 	}
 
+	public function getPallets()
+	{
+		$field = ($this->shipment['type'] == 'regular' ? 'shipment' : 'attention');
+
+		$query = "SELECT DISTINCT(TRIM(cn_f.in_cont)) as cont
+					FROM cn_f
+					JOIN shipunit_f ON shipunit_f.cont = cn_f.cont
+					JOIN om_f ON om_f.shipment = shipunit_f.shipment
+					WHERE om_f.'".$field."' = '".$this->shipment['shipment']."'
+					AND in_cont != ''";
+		
+		$pallets = $this->wms->query($query)->result_array();
+		$pallets = array_column($pallets,'cont');
+		return $pallets;
+	}
+
+	public function getContainers($pallet)
+	{
+		$conts = array();
+		$query = "SELECT cont
+					FROM cn_f
+					WHERE in_cont = '".$pallet."'";
+		
+		if($pallet){
+			$conts = $this->wms->query($query)->result_array();
+			$conts = array_column($conts,'cont');
+		}
+		return $conts;
+	}
+
+	public function getCartons()
+	{
+		$cartons = array();
+		$field = ($this->shipment['type'] == 'regular' ? 'shipment' : 'attention');
+
+		$query = "SELECT DISTINCT(cont)
+					FROM ct_f
+					JOIN om_f ON om_f.shipment = ct_f.shipment
+					WHERE om_f.".$field." = '".$this->shipment['shipment']."'";
+		
+		$cartons = $this->wms->query($query)->result_array();
+		$cartons = array_column($cartons,'cont');
+
+		return $cartons;
+	}
+
 	private function override805($shipments)
 	{
 		foreach($shipments as $id){
@@ -241,7 +306,7 @@ class Argus_model extends XPO_Model {
 				);
 		}
 		if(isset($insert)){
-			//$this->db->insert_batch('argus_transactions',$insert);
+			$this->db->insert_batch('argus_transactions',$insert);
 		}
 		$this->db->reset_query();
 	}

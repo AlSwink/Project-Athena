@@ -80,6 +80,7 @@ $route['argus'] = 'applications/argus';
 $route['argus/display'] = 'apps/argus/display';
 $route['argus/standalone'] = 'applications/argus';
 $route['argus/(:any)'] = 'apps/argus/$1';
+$route['argus/(:any)/(:any)'] = 'apps/argus/$1/$2';
 
 //access_verifier routes
 $route['access_verifier'] = 'applications/access_verifier';

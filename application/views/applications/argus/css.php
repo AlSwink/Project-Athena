@@ -27,6 +27,20 @@
 	font-size: 70%;
 }
 
+.nav-tabs .nav-link:not(.active){
+	border: 1px solid #e9ecef !important;
+	color: #495057;
+}
+
+.nav-tabs .active{
+	color: red !important;
+}
+
+.containers{
+	font-size: 11px;
+	font-family: monospace;
+}
+
 #announcement{
 	display: none;
 	position: fixed;

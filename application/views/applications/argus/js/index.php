@@ -295,7 +295,7 @@
 	});
 
 	$('.refresh').click(function(){
-		announce('Argus is refreshing. Please wait');
+		//announce('Argus is refreshing. Please wait');
 		socket.emit('command','/refresh-argus');
 	});
 
@@ -424,10 +424,31 @@
 		});
 	}
 
-	function showShipmentDetails(shipment,stage)
+	function showShipmentDetails(shipment)
 	{
-		templater('getDetails','#ship_details',shipment,true,true);
-		$('#details').modal('show');
+		url = '<?= site_url('argus/getDetails'); ?>';
+		post = shipment;
+
+		$.ajax({
+			type : 'POST',
+			url : url,
+			dataType : 'json',
+			data : { post : post },
+			beforeSend : function(){
+				$('#ship_details').html(loading);
+			},
+			success : function(view){
+				if(view == false){
+					$('#ship_details').html('Shipment have been 805');
+					force805(shipment);
+				}else{
+					$('#ship_details').html(view);
+				}
+			},
+			complete : function(){
+				$('#details').modal('show');		
+			}
+		})
 	}
 
 	function notifyAll(shipment,stage)
@@ -440,5 +461,18 @@
 	{
 
 		socket.emit('command','/do-argus-announce-'+msg);
+	}
+
+	function force805(shipment)
+	{
+		url = '<?= site_url('argus/check805/'); ?>'+shipment;
+
+		$.ajax({
+			type : 'GET',
+			url : url,
+			complete : function(){
+				socket.emit('command','/do-argus-ship_complete-'+shipment);
+			}
+		});
 	}
 </script>

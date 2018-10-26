@@ -8,6 +8,10 @@
 	<div class="col-lg-6 col-sm-12">
 		<table class="table table-sm table-bordered mb-1">
 			<tr>
+				<th>Shipment</th>
+				<th>FDXG</th>
+			</tr>
+			<tr>
 				<th>Carrier</th>
 				<th>FDXG</th>
 			</tr>

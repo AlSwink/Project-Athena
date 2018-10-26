@@ -17,9 +17,9 @@ class Argus extends CI_Controller {
         $this->load->view('page');
     }
 
-    public function check805()
+    public function check805($shipment=null)
     {
-    	$this->argus_model->check805();
+    	$this->argus_model->check805($shipment);
     }
 
     public function syncShipments()
@@ -39,15 +39,22 @@ class Argus extends CI_Controller {
     	echo json_encode($page);
     }
 
-    public function getDetails()
+    public function getDetails($shipment=null)
     {
-    	$shipment = $this->input->post('post');
+    	if(!$shipment){
+    		$shipment = $this->input->post('post');
+    	}
+    	
     	$this->argus_model->getShipmentDetails($shipment);
     	$data['shipment'] = $this->argus_model->shipment;
     	$page = $this->page_dir.'/argus_shipment_details';
     	$view = $this->load->view($page,$data,TRUE);
-
-    	echo json_encode($view);
+    	if($data['shipment']['wms']){
+    		echo json_encode($view);	
+    	}else{
+    		echo json_encode(false);
+    	}
+    	
     	//echo json_encode($data['shipment']);
     }
 

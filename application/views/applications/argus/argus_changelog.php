@@ -6,6 +6,22 @@
 <hr>
 <div class="row" style="max-height: 80%; overflow: auto">
 	<div class="col-lg-12">
+		<h3>As of 10/24/2018 (Phase 2 Start) <small>v0.0.9</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-success">New</span> Added General details tab.</li>
+			<li><span class="badge bg-success">New</span> Added Pallet details tab.</li>
+			<li><span class="badge bg-success">New</span> Added Transaction details tab.</li>
+			<li><span class="badge bg-success">New</span> Added Auto-805 when checking details on an 805'd shipment.</li>
+			<li><span class="badge bg-success">New</span> Added Nested tab under pallet information.</li>
+			<li><span class="badge bg-success">New</span> Added Un-nested tab under pallet information.</li>
+			<li><span class="badge bg-secondary">Changed</span> Added pallet information and nested containers.</li>
+			<li><span class="badge bg-secondary">Changed</span> Added tabs for shipment details for information separation.</li>
+			<li><span class="badge bg-secondary">Changed</span> Moved general details in general details tab.</li>
+			<li><span class="badge bg-secondary">Changed</span> Moved transaction table to transaction tab.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
 		<h3>As of 10/23/2018 (Phase 1 Continued) <small>v0.0.8</small></h3>
 		Changes made:
 		<ul>
