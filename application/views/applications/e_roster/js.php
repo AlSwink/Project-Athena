@@ -129,6 +129,91 @@
 		    	style : 'multi+shift'
 		    }
 		});
+
+	var pos_table = $('#pos_table').DataTable({
+		dom : '<"row"<"col"t>><"row"<"col"iBp>>',
+			info : true,
+			colReorder: true,
+			ajax: {
+				url: '<?= site_url("api/getSetting/positions"); ?>',
+				dataSrc: ''
+			},
+			columns : [
+				{ data: 'position' }
+			],
+			order : [0,'asc'],
+		    scrollY: '55vh',
+		    scroller: {
+		    	loadingIndicator : true
+		    },
+		    select: {
+		    	style : 'multi+shift'
+		    }
+		});
+	
+	var zone_table = $('#zone_table').DataTable({
+		dom : '<"row"<"col"t>><"row"<"col"iBp>>',
+			info : true,
+			colReorder: true,
+			ajax: {
+				url: '<?= site_url("api/getSetting/zones"); ?>',
+				dataSrc: ''
+			},
+			columns : [
+				{ data: 'zone' }
+			],
+			order : [0,'asc'],
+		    scrollY: '55vh',
+		    scroller: {
+		    	loadingIndicator : true
+		    },
+		    select: {
+		    	style : 'multi+shift'
+		    }
+		});
+		
+	var dept_table = $('#dept_table').DataTable({
+		dom : '<"row"<"col"t>><"row"<"col"iBp>>',
+			info : true,
+			colReorder: true,
+			ajax: {
+				url: '<?= site_url("api/getSetting/departments"); ?>',
+				dataSrc: ''
+			},
+			columns : [
+				{ data: 'dept_name' }
+			],
+			order : [0,'asc'],
+		    scrollY: '55vh',
+		    scroller: {
+		    	loadingIndicator : true
+		    },
+		    select: {
+		    	style : 'multi+shift'
+		    }
+		});
+		
+	var shift_table = $('#shift_table').DataTable({
+		dom : '<"row"<"col"t>><"row"<"col"iBp>>',
+		info : true,
+		colReorder: true,
+		ajax: {
+			url: '<?= site_url("api/getSetting/shifts")?>',
+			dataSrc: ''
+		},
+		columns : [
+			{ data: 'shift' }
+		],
+		order : [0, 'asc'],
+		scrollY: '55vh',
+		scroller: {
+			loadingIndicator : true
+		},
+		select: {
+			style : 'multi+shift'
+		}
+	});
+		
 	var logtable = $('#log_table').DataTable({
 			dom : '<"row"<"col"t>><"row"<"col"iBp>>',
 			pagingType : 'numbers',
@@ -194,6 +279,13 @@
 	emp_table.column(0).visible(false);
 	
 	//events
+	$('#dl_excel').click(function(){
+		$('.dl_excel').click();
+	})
+
+	$('#print').click(function(){
+		$('.tprint').click();
+	})
 	
 	$('a[href="#eroster_logs]').click(function(){
 		log_table.ajax.reload();
@@ -201,6 +293,15 @@
 	$('a[data-toggle="tab"],a[data-toggle="pill"]').on('shown.bs.tab', function(){
         $.fn.dataTable.tables({visible: true, api: true}).columns.adjust();
     });
+	
+	$('.setting_submit').click(function(){
+		clear_validation();
+		
+		form = $(this).parent().find('form');
+		form_id = '#'+$(form)[0].id;
+		
+		setting_submit(form_id);
+	});
 	
 	$('.employee_submit').click(function(){
 		clear_validation();
@@ -217,12 +318,32 @@
 		
 	});
 	
-	$(document).on('dblclick','#emp_table table tbody td',function(){
+	$(document).on('dblclick','.emp_table table tbody td',function(){
+		console.log('Doubleclick stage 1');
 		if(emp_table.rows({selected:true}).data().length < 2){
 			$('#edit').prop('disabled',false);
+			console.log('Doubleclick stage 2');
 			$('#edit').click();
 			$('#edit').prop('disabled',true);	
 		}
+	})
+	
+	$('#delete_emps').click(function(){
+		to_delete = [];
+		$(emp_table.rows({selected:true}).data()).each(function(k,v,){
+			to_delete.push(v.id);
+		});
+		console.log(to_delete);
+		$.ajax({
+			type : 'POST',
+			url : '<?= site_url('e_roster/delete_employees'); ?>',
+			dataType : 'json',
+			data : {emps : to_delete},
+			success : function(res){
+				console.log(res);
+				$('.emp_table').DataTable().ajax.reload();
+			}
+		}) 
 	})
 	
 	$('#edit').click(function(){
@@ -265,10 +386,34 @@
 	
 	//functions
 	
+	function setting_submit(target){
+		url = $(target).attr('action');
+		post = $(target).serialize();
+		
+		$.ajax({
+			type : 'POST',
+			url : url,
+			dataType : 'json',
+			data : post,
+			beforeSend : function(){
+				startSubmit('.setting_submit');
+			},
+			error: function(jqXHR, textStatus){
+				endSubmit('.setting_submit');
+				alert('Failed from '+textStatus);  
+			},
+			success : function(res){
+				endSubmit('.setting_submit');
+				$('.settings_table').DataTable().ajax.reload();
+				
+			}
+		});
+	}
+	
 	function employee_submit(target){
 		url = $(target).attr('action');
 		post = $(target).serialize();
-		console.log(post);
+		
 		$.ajax({
 			type : 'POST',
 			url : url,
@@ -285,7 +430,7 @@
 			success : function(res){
 				endSubmit('.employee_submit');
 				$('.emp_table').DataTable().ajax.reload();
-				console.log(res);
+				
 			},
 			timeout: 6000
 		});

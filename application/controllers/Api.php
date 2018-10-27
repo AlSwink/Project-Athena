@@ -158,4 +158,10 @@ class Api extends CI_Controller {
 		$report = $this->E_roster_model->get_not_in_wms();
 		echo json_encode($report);
 	}
+	
+	public function getSetting($setting)
+	{
+		$data = $this->E_roster_model->get($setting);
+		echo json_encode($data);
+	}
 }

@@ -114,7 +114,8 @@ class Applications extends CI_Controller {
 						'departments' => $this->model->get('departments'),
 						'zones' => $this->model->get('zones'),
 						'shifts' => $this->model->get('shifts'),
-						'supervisors' => $this->model->get_supervisors()
+						'supervisors' => $this->model->get_supervisors(),
+						'birthdays' => $this->model->get_birthdays()
 		);	
 		loadView($eroster);
 			

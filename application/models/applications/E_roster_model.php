@@ -4,30 +4,11 @@ class e_roster_model extends XPO_Model {
 
 	function get($setting){
         $er = $this->load->database('xpo',TRUE);
-        $field = $setting;
-        switch($setting){
-            case 'departments':
-                $field = 'dept_name';
-                break;
-            case 'agency':
-                $field = 'temp_name';
-                break;
-            default:
-                $field = rtrim($field,'s');
-                break;
-        }
-        
-        //$er->order_by($field,'ASC');
-
         $results = $er->get('tbl_xpo_'.$setting);
         return $results->result();
     }
 
     function get_wms_usrgrp(){
-       /*  $er = $this->load->database('wms',TRUE);
-        $er->order_by('user_grp','ASC');
-        $res = $er->get('ug_f');
-        return $res->result(); */
 		$query = "SELECT user_grp FROM mlknt.ug_f";
 		return $this->wms->query($query)->result();
     }
@@ -65,6 +46,18 @@ class e_roster_model extends XPO_Model {
         $this->xpo->join('tbl_xpo_positions','tbl_employees.primary = tbl_xpo_positions.id');
         $this->xpo->join('tbl_xpo_agency','tbl_employees.temp_id = tbl_xpo_agency.temp_id');
         $this->xpo->order_by('emp_fname','ASC');
+		return $this->xpo->get()->result();
+	}
+	
+	function get_birthdays(){
+		$first = new DateTime('first day of this month');
+		$last = new DateTime('last day of this month');
+		$first = $first->format('Y-m-d 00:00:00');
+		$last = $last->format('Y-m-d 00:00:00');
+		$this->xpo->select('emp_fname,emp_lname,emp_dob');
+		$this->xpo->from('tbl_employees');
+		$this->xpo->where("emp_dob > '$first'");
+		$this->xpo->where("emp_dob < '$last'");
 		return $this->xpo->get()->result();
 	}
 	
@@ -240,8 +233,7 @@ class e_roster_model extends XPO_Model {
         $er->delete('tbl_employee_training');
 
         if($emp != '' && $emp != NULL){
-            $wms->where('opr',$emp);
-            $wms->delete('us_f');
+			$wms->query("DELETE FROM us_f WHERE opr = '$emp'");
         }
     }
 
@@ -423,10 +415,13 @@ class e_roster_model extends XPO_Model {
             case 'zones':
                 $field = 'zone';
                 break;
+			case 'shifts':
+				$field = 'shift';
+				break;
         }
         
         $insert = array(
-            $field => trim($data['name'])
+            $field => trim($data['setting'])
             );
 
         $er->insert('tbl_xpo_'.$data['type'],$insert);
@@ -438,25 +433,7 @@ class e_roster_model extends XPO_Model {
         return $result->num_rows();
     }
 
-    function get_needs_training($mod,$exp){
-        $er = $this->load->database('xpo',TRUE);
-        $er->select('tbl_employees.id,emp_fname,emp_lname');
-        $er->select($mod);
-        $er->where($mod.' < DATE_SUB(NOW(),INTERVAL '.$exp.' MONTH)');
-        $er->from('tbl_employees');
-        $er->join('tbl_employee_modules','tbl_employees.id = tbl_employee_modules.emp_id');
-        $results = $er->get();
-        return $results->result();
-    }
-
-    function refresh_training_date($mod,$exp){
-        $er = $this->load->database('xpo',TRUE);
-        $er->set($mod,null);
-        $er->where($mod.'< DATE_SUB(NOW(),INTERVAL '.$exp.' YEAR)');
-        $results = $er->update('tbl_employee_modules');
-    }
-
-    function edit_multi($data){
+     function edit_multi($data){
         $er = $this->load->database('xpo',TRUE);
         $res = array();
         foreach($data as $row){
@@ -670,27 +647,5 @@ class e_roster_model extends XPO_Model {
         $wms->query($query);
     }
 
-	/*function get_my_employees(){
-        $er = $this->load->database('xpo',TRUE);
-        $er->select('tbl_employees.id,emp_id,kronos_id,emp_fname,emp_lname,shift,tbl_xpo_agency.temp_name,tbl_xpo_departments.dept_name,tbl_xpo_zones.zone,tbl_xpo_positions.position,supervisor');
-        $er->from('tbl_employees');
-        $er->join('tbl_xpo_departments','tbl_employees.dept_id = tbl_xpo_departments.dept_id');
-        $er->join('tbl_xpo_zones','tbl_employees.zone_id = tbl_xpo_zones.id');
-        $er->join('tbl_xpo_shifts','tbl_employees.shift_id = tbl_xpo_shifts.id');
-        $er->join('tbl_xpo_positions','tbl_employees.primary = tbl_xpo_positions.id');
-        $er->join('tbl_xpo_agency','tbl_employees.temp_id = tbl_xpo_agency.temp_id');
-        $er->order_by('emp_fname','ASC');
-
-        switch($this->session->userdata('user_info')->user_group){
-            case 'TEMPRAND':
-                $er->where('tbl_xpo_agency.temp_name','Randstad USA');
-                break;
-            case 'TEMPPARA':
-                $er->where('tbl_xpo_agency.temp_name','Paramount Staffing');
-                break;
-        }
-        $results = $er->get();
-        return $results->result();
-    }*/
 }
 ?>

@@ -6,6 +6,7 @@
 		<div class="btn-group">
 			<button type="button" class="btn btn-info" data-toggle="modal" data-target="#add_employee"><i class="fas fa-plus-square"></i></button>
 			<button id="edit" type="button" class="btn btn-info" data-toggle="modal" data-target="#edit_employee"><i class="fas fa-edit"></i></button>
+			<button id="delete" type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete_employee"><i class="fas fa-trash"></i></button>
 			<button id="dl_excel" type="button" class="btn btn-success"><i class="fas fa-file-excel"></i></button>
 			<button id="print" type="button" class="btn btn-secondary"><i class="fas fa-print"></i></button>
 		</div>

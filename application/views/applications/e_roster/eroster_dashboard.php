@@ -20,9 +20,13 @@
 				<?php } ?>
 			</div>
 			<div class="row mt-3 ml-2 text-center border-bottom pb-3">
-				<div class="col">
-					Birthdays go here
+				birthdays go here
+				<?php /*foreach($birthdays as $birthday){ ?>
+				<div class="col border-right">
+					<div><?=$birthday->emp_fname.' '.$birthday->emp_lname;?></div>
+					<span class="sub-header"><?=$birthday->emp_dob;?></span>
 				</div>
+				<?php } */?>
 			</div>
 			<div class="row text-center mt-3">
 				<div class="col border-right">

@@ -43,6 +43,39 @@ class E_roster extends CI_Controller {
 		
 	}
 	
+	public function delete_employees($emps=null){
+		if(!$emps){
+			$emps = $this->input->post('emps');
+		}
+		$test = array();
+		foreach($emps as $emp){
+			$test[] = $emp;
+			$this->E_roster_model->delete_employee($emp);
+		}
+		
+		$log = array(
+				'for' => 'Employee ID : '.implode(',',$emps),
+				'action' => "Deleted employees",
+				'reason' => 'System Log'
+				);
+		$this->Logger_model->create('eroster_logs',$log);
+		
+		echo json_encode($test);		
+		
+	}
+	
+	public function add_setting(){
+		$post = $this->input->post();
+		$this->E_roster_model->add_setting($post);
+		$log = array(
+				'for' => $post['setting'],
+				'action' => $post['type']." added",
+				'reason' => 'System log'
+				);
+		$this->Logger_model->create('eroster_logs',$log);
+		echo json_encode("Added setting");
+	}
+	
 	//public function get_wms_employee($wms){
 		
 }
