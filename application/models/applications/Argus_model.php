@@ -9,11 +9,16 @@ class Argus_model extends XPO_Model {
 	public $shipments;
 	public $shipment_name;
 	public $shipment_id;
+	public $nested;
+	public $unnested;
+	public $pallets;
+	public $cartons;
 
 	public function getShipmentDetails($shipment)
 	{
 		$pallet_info = array();
 		$nested = array();
+
 		$this->getShipment($shipment);
 
 		$reg_query = "SELECT TRIM(om.shipment) as shipment,TRIM(om.attention) as attention,om.carrier,om.ship_name,SUM(num_crtn) as cartons,SUM(s.wgt) as wgt,ship_addr1,ship_addr2,ship_city,ship_state,ship_zip,pay_acct,num_unit,om.wave,total_wgt,sched_date,om.probill,fr_terms,route_cmt1,route_cmt2,route_cmt3,num_line
@@ -33,21 +38,41 @@ class Argus_model extends XPO_Model {
 		
 		$details['wms'] = $this->wms->query($query)->row_array();
 		$details['argus'] = $this->shipment;
-		$pallets = $this->getPallets();
+		
+		$this->getPallets();
+		$this->getCartons();
 
-		foreach($pallets as $pallet){
+		foreach($this->pallets as $pallet){
 			$pallet_info[$pallet] = $this->getContainers($pallet);
 			$nested = array_merge($nested,$pallet_info[$pallet]);
 		}
 
-		$cartons = $this->getCartons();
-
 		$details['nested'] = $nested;
-		$details['unnested'] = array_diff($cartons,$nested);
+		$details['unnested'] = array_diff($this->cartons,$nested);
 		$details['pallet_info'] = $pallet_info;
 
 		$this->shipment = $details;
+	}
 
+	public function getNested()
+	{
+		$this->getPallets();
+		$nested = array();
+
+		foreach($this->pallets as $pallet){
+			$nested = array_merge($nested,$this->getContainers($pallet));
+		}
+
+		$this->nested = $nested;
+	}
+
+	public function getUnnested()
+	{
+		$this->getCartons();
+		$this->getNested();
+
+		$unnested = array_diff($this->cartons,$this->nested);
+		$this->unnested = $unnested;
 	}
 
 	public function getWMSShipments($type=null)
@@ -261,13 +286,13 @@ class Argus_model extends XPO_Model {
 		
 		$pallets = $this->wms->query($query)->result_array();
 		$pallets = array_column($pallets,'cont');
-		return $pallets;
+		$this->pallets = $pallets;
 	}
 
 	public function getContainers($pallet)
 	{
 		$conts = array();
-		$query = "SELECT cont
+		$query = "SELECT TRIM(cont) as cont
 					FROM cn_f
 					WHERE in_cont = '".$pallet."'";
 		
@@ -280,10 +305,9 @@ class Argus_model extends XPO_Model {
 
 	public function getCartons()
 	{
-		$cartons = array();
 		$field = ($this->shipment['type'] == 'regular' ? 'shipment' : 'attention');
 
-		$query = "SELECT DISTINCT(cont)
+		$query = "SELECT DISTINCT(TRIM(cont)) as cont
 					FROM ct_f
 					JOIN om_f ON om_f.shipment = ct_f.shipment
 					WHERE om_f.".$field." = '".$this->shipment['shipment']."'";
@@ -291,7 +315,7 @@ class Argus_model extends XPO_Model {
 		$cartons = $this->wms->query($query)->result_array();
 		$cartons = array_column($cartons,'cont');
 
-		return $cartons;
+		$this->cartons = $cartons;
 	}
 
 	private function override805($shipments)

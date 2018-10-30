@@ -54,8 +54,16 @@ class Argus extends CI_Controller {
     	}else{
     		echo json_encode(false);
     	}
+    }
+
+    public function getShipment($shipment=null)
+    {
+    	if(!$shipment){
+    		$shipment = $this->input->post('post');
+    	}
     	
-    	//echo json_encode($data['shipment']);
+    	$this->argus_model->getShipmentDetails($shipment);
+    	echo json_encode($this->argus_model->shipment);
     }
 
     public function updateShipment()
@@ -68,8 +76,6 @@ class Argus extends CI_Controller {
     	$this->argus_model->stage = $post['stage'];
     	$this->argus_model->shipment_name = $post['shipment'];
     	$this->argus_model->updateShipment();
-
-    	//echo json_encode($post);
     }
 
     public function updateShipmentLock()
@@ -84,5 +90,21 @@ class Argus extends CI_Controller {
     {
     	$this->db->truncate('argus_shipments');
     	$this->db->truncate('argus_transactions');
+    }
+
+    public function verifyNesting($shipment=null)
+    {
+    	if(!$shipment){
+    		$shipment = $this->input->post('shipment');
+    	}
+
+    	$this->argus_model->getShipment($shipment);
+    	$this->argus_model->getUnnested();
+    	$this->argus_model->unnested = array_values($this->argus_model->unnested);
+    	if(count($this->argus_model->unnested)){
+    		echo json_encode($this->argus_model->unnested);
+    	}else{
+    		echo json_encode(false);
+    	}
     }
 }

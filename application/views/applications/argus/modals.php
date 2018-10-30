@@ -9,8 +9,18 @@
       </div>
       <div class="modal-body">
         <p>Are you sure you want to start <b><span class="shipment"></span></b>?<br>
-        Starting this shipment will send it for verification.</p>
         <input id="start_shipment_id" type="hidden" class="shipment_val"/>
+        <div id="unnestalert" class="col d-none">
+          <div class="row">
+            <div class="alert alert-danger mb-2 pb-0 col">
+              <p>The below <b>[<span id="unnest_count"></span>]</b> container(s) have <b>not been nested</b>. 
+              <br>Are you sure you want to proceed? <a href="#" class="details">See details</a></p>
+            </div>
+          </div>
+          <div id="unnested_container_alert" class="row" style="max-height: 30%;overflow: auto">
+            
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-sm btn-secondary cancel" data-dismiss="modal">Cancel</button>

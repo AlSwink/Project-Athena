@@ -6,6 +6,27 @@
 <hr>
 <div class="row" style="max-height: 80%; overflow: auto">
 	<div class="col-lg-12">
+		<h3>As of 10/29/2018 (Phase 2 Continued) <small>v0.1.0</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-success">New</span> Added independent get pallet information function.</li>
+			<li><span class="badge bg-success">New</span> Added Nesting check function.</li>
+			<li><span class="badge bg-success">New</span> Added Nest check on start shipment modal to show unnested containers if any before starting a shipment.</li>
+			<li><span class="badge bg-success">New</span> Added Unnested container count on start nest check alert.</li>
+			<li><span class="badge bg-success">New</span> Added See details link on nest check alert.</li>
+			<li><span class="badge bg-success">New</span> Added Number spinner for carton input.</li>
+			<li><span class="badge bg-success">New</span> Added Dynamic total updates for pallets.</li>
+			<li><span class="badge bg-success">New</span> Added Dynamic total updates for cartons.</li>
+			<li><span class="badge bg-success">New</span> Added New row button to add new line.</li>
+			<li><span class="badge bg-success">New</span> Added Delete row button to remove line.</li>
+			<li><span class="badge bg-success">New</span> Added Subtraction limit for 0 value.</li>
+			<li><span class="badge bg-secondary">Changed</span> Removed trailer number on verification sheet.</li>
+			<li><span class="badge bg-secondary">Changed</span> Removed door number on verification sheet.</li>
+			<li><span class="badge bg-secondary">Changed</span> Removed WR number on verification sheet.</li>
+			<li><span class="badge bg-secondary">Changed</span> Removed Ship ID on verification sheet.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
 		<h3>As of 10/24/2018 (Phase 2 Start) <small>v0.0.9</small></h3>
 		Changes made:
 		<ul>

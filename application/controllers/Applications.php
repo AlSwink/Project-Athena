@@ -74,7 +74,7 @@ class Applications extends CI_Controller {
                                                     'jquery.contextMenu.min',
                                                     'jquery.quicksearch.min',
                                                     'notify.min',
-                                                    'responsivevoice'
+                                                    'responsivevoice',
                                                 )
                                         )
                 );

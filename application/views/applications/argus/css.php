@@ -41,6 +41,11 @@
 	font-family: monospace;
 }
 
+.sheet_totals{
+	font-size: 55px;
+	font-family: sans-serif;
+}
+
 #announcement{
 	display: none;
 	position: fixed;

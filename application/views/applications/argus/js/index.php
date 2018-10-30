@@ -132,9 +132,7 @@
 	$(document).ready(function(){
 		app_name = '<?= $method = $this->router->fetch_method(); ?>';
 		app_user = '<?= $this->session->userdata('user_id'); ?>';
-
-		//$('.sync').click();
-
+		
 		$.contextMenu({
         	selector: '.sment',
         	build: function($triggerElement,e){
@@ -314,6 +312,12 @@
 		}
 	});
 
+	$('.details').click(function(){
+		shipment = $('.shipment:visible').html();
+		$('.modal').modal('hide');
+		showShipmentDetails(shipment);
+	});
+
 	socket.on('notify',function(app,msg){
 		if(app == app_name){
 			notif.play();
@@ -387,7 +391,7 @@
 		shipment = data.shipment;
 		stage = data.stage;
 		type = data.type;
-		button_id = '#'+data.button_id;
+		button_id = (data.button_id ? '#'+data.button_id : null);
 		
 		$.ajax({
 			type : 'POST',
