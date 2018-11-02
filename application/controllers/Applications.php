@@ -51,13 +51,13 @@ class Applications extends CI_Controller {
         loadView($swi);
     }
 
-    public function argus($stage='waiting'){
+    public function argus($stage='master'){
         check_session();
         $this->model->stage = $stage;
         $this->model->getShipments();
+        $this->stage = $stage;
 
         $argus = array(
-                    'stage' => $stage,
                     'shipments' =>  $this->model->shipments,
                     'dependencies' => array(
                                         'css'   => array(

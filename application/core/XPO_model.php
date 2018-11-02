@@ -73,7 +73,7 @@ class XPO_Model extends CI_Model {
 
   public function setEmployeeDepartment($deptid)
   {
-    $this->db->where_in('department',$deptid);
+    $this->db->where_in('employees.department',$deptid);
   }
 
   public function getEmployees($emp_id=null)

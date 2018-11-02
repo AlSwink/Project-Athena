@@ -29,7 +29,7 @@ class Argus_model extends XPO_Model {
 						ORDER BY attention ASC";
 
 		$wr_query = "SELECT TRIM(om_f.attention) as shipment,TRIM(om_f.attention) as attention, om_f.carrier,Max(om_f.wave) as wave, Max(om_f.ship_name) AS ship_name, Sum(shipunit_f.wgt) AS wgt, (Count(DISTINCT(ct_f.ucc128))) AS cartons,MAX(from_email) as sched_date,MAX(om_f.probill) as probill,MAX(ship_addr1) as ship_addr1,MAX(ship_addr2) as ship_addr2,MAX(fr_terms) as fr_terms,MAX(pay_acct) as pay_acct,MAX(ship_city) as ship_city,MAX(ship_state) as ship_state,MAX(ship_zip) as ship_zip,MAX(route_cmt1) as route_cmt1,MAX(route_cmt2) as route_cmt2,MAX(route_cmt3) as route_cmt3
-						FROM om_f INNER JOIN (shipunit_f INNER JOIN ct_f ON shipunit_f.shipunit_rid = ct_f.shipunit_rid) ON om_f.shipment = shipunit_f.shipment
+						FROM om_f LEFT JOIN (shipunit_f INNER JOIN ct_f ON shipunit_f.shipunit_rid = ct_f.shipunit_rid) ON om_f.shipment = shipunit_f.shipment
 						WHERE attention = '".$shipment."'
 						GROUP BY attention,carrier
 						ORDER BY attention ASC";
@@ -88,6 +88,7 @@ class Argus_model extends XPO_Model {
 						AND (om.attention LIKE '1%%PKG' OR om.attention LIKE '1%%LTL' OR om.attention LIKE '2%%PKG' OR om.attention LIKE '2%%LTL' OR om.attention LIKE '3%%PKG' OR om.attention LIKE '3%%LTL')
 						AND om.carrier NOT LIKE 'F%' 
 						AND om.carrier NOT LIKE 'U%'
+						OR om.carrier IN ('FXFE','FXNL','UPGF')
 						GROUP BY shipment,attention,carrier,ship_name,cartons
 						ORDER BY attention ASC";
 
@@ -95,6 +96,9 @@ class Argus_model extends XPO_Model {
 						FROM om_f INNER JOIN (shipunit_f INNER JOIN ct_f ON shipunit_f.shipunit_rid = ct_f.shipunit_rid) ON om_f.shipment = shipunit_f.shipment
 						WHERE from_email != ''
 						AND om_f.carrier NOT IN ('WCL','STOP','EXPT')
+						AND om_f.carrier NOT LIKE 'U%'
+						AND om_f.carrier NOT LIKE 'F%'
+						OR om_f.carrier IN ('FXFE','FXNL','UPGF')
 						GROUP BY attention,carrier
 						ORDER BY attention ASC";
 
@@ -151,11 +155,14 @@ class Argus_model extends XPO_Model {
 		}
 	}
 
-	public function getShipments()
+	public function getShipments($stage=null)
 	{
 		$this->db->select('*');
 		$this->db->select('argus_stages.stage as stage');
 		$this->db->where('argus_stages.stage !=','completed');
+		if($stage){
+			$this->db->where('argus_shipments.stage',$stage);
+		}
 		$this->db->join('argus_stages','argus_stages.stage_id = argus_shipments.stage');
 		$this->shipments = $this->db->get('argus_shipments')->result_array();
 		
@@ -177,8 +184,10 @@ class Argus_model extends XPO_Model {
 		$ship_completed = array();
 
 		if($shipment){
-			$query = "SELECT * FROM om_f WHERE shipment = '".$shipment."'";
+			$field = (substr($shipment,2) ? 'attention' : 'shipment');
+			$query = "SELECT * FROM om_f WHERE "+$field+" = '".$shipment."'";
 			$result = $this->wms->query($query)->num_rows();
+
 			if(!$result){
 				$this->getShipment($shipment);
 			}
@@ -316,6 +325,40 @@ class Argus_model extends XPO_Model {
 		$cartons = array_column($cartons,'cont');
 
 		$this->cartons = $cartons;
+	}
+
+	public function insertVerification($data)
+	{
+		$this->getShipment($data['shipment']);
+
+		$verify_master = array(
+							'shipment_id' => $this->shipment['shipment_id'],
+							'total_pallets' => array_sum($data['pallets']),
+							'total_cartons' => array_sum($data['cartons']),
+							'verified_by' => $this->user_id,
+							'verified_on' => date('Y-m-d H:i:s'),
+							'created_on' => date('Y-m-d H:i:s')
+						);
+
+		$this->db->insert('argus_verifications',$verify_master);
+		$verify_id = $this->db->insert_id();
+
+		for($x=0;$x<count($data['pallets']);$x++){
+			$verify_detail[] = array(
+							'verification_id' => $verify_id,
+							'pallet' => $data['pallets'][$x],
+							'cartons' => $data['cartons'][$x],
+							'status' => 'verify'
+							);
+		}
+
+		$this->db->insert_batch('argus_verification_details',$verify_detail);
+	}
+
+	public function getStage($field,$value)
+	{
+		$this->db->where($field,$value);
+		return $this->db->get('argus_stages')->row_array();
 	}
 
 	private function override805($shipments)

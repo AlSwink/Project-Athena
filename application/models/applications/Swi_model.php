@@ -478,7 +478,7 @@ class Swi_model extends XPO_Model {
 			$this->db->where($column,$value);
 		}
 
-		if(!$y){
+		if(!$y && !isset($wheres['assignment_id'])){
 			$this->db->where('assigned_on BETWEEN "'.$from.'" AND "'.$to.'"');
 		}
 

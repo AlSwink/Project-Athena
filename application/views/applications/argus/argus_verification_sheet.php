@@ -5,7 +5,7 @@
 	</div>
 </div>
 <div class="row mb-1">
-	<div class="col-lg-6 col-sm-12">
+	<div class="col-lg-6 col-sm-12 mb-2">
 		<table class="table table-sm table-bordered mb-1">
 			<tr>
 				<th>Shipment</th>
@@ -24,15 +24,11 @@
 				<td><span class="timestamps"></span></td>
 			</tr>
 		</table>
-		<div class="btn-group w-100">
-			<button type="button" class="cancel cancel_verification_btn btn btn-secondary w-50">Cancel</button>
-			<button id="ready_qa_btn" type="button" class="btn btn-success w-50">Ready for QA <i class="fas fa-check"></i></button>
-		</div>
 	</div>
 	<div class="col-lg-6 col-sm-12">
 		<table class="table table-sm table-bordered text-center">
 			<thead>
-				<tr class="thead-info">
+				<tr class="bg-primary text-light">
 					<th class="w-50">Total Pallets</th>
 					<th class="w-50">Total Cartons</th>
 				</tr>
@@ -50,7 +46,7 @@
 		</table>
 	</div>
 </div>
-<div class="row mb-5">
+<div class="row mb-1">
 	<div class="col">
 		<table class="table table-bordered table-sm text-center">
 			<thead>
@@ -66,11 +62,13 @@
 					<td class="carton_control">
 						<div class="input-group input-group-lg">
 							<div class="input-group-prepend">
+								<button class="btn btn-warning reset check" type="button"><i class="fas fa-undo fa-lg"></i></button>
 								<button class="btn btn-secondary minus check" type="button"><i class="fas fa-minus fa-lg"></i></button>
 							</div>
 							<input type="number" class="form-control carton_count text-center" value="0" min="0" max="1000" step="1" readonly="" />
 							<div class="input-group-append">
-								<button class="btn btn-dark add check" type="button"><i class="fas fa-plus fa-lg"></i></button>
+								<button class="btn btn-secondary add check" type="button"><i class="fas fa-plus fa-lg"></i></button>
+								<button class="btn btn-dark add_ten check" type="button">10</button>
 							</div>
 						</div>
 					</td>					
@@ -78,5 +76,13 @@
 			</tbody>
 		</table>
 		<button type="button" class="add_pallet_row btn btn-md btn-info w-100 check">Add New Pallet <i class="fas fa-plus-circle"></i>
+	</div>
+</div>
+<hr>
+<div class="row mb-5">
+	<div class="btn-group w-100 col">
+		<button type="button" class="cancel cancel_verification_btn btn btn-secondary w-50">Cancel</button>
+		<button type="button" class="reset_sheet btn btn-warning w-50">Reset Sheet <i class="fas fa-undo"></i></button>
+		<button id="ready_qa_btn" type="button" class="btn btn-success w-50">Ready for QA <i class="fas fa-check"></i></button>
 	</div>
 </div>

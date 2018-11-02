@@ -181,3 +181,23 @@
     </div>
   </div>
 </div>
+
+<div class="modal" id="confirm_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-question-circle"></i> Confirm Action</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to <span class="confirm_action font-weight-bold">action</span>?</p>
+      </div>
+      <div class="modal-footer">
+        <a href="#" id="confirm_url" class="btn btn-sm btn-secondary">Yes</a>
+        <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,8 +1,12 @@
 <script>
+	var site_url = '<?= site_url('argus'); ?>';
+	var mode = $('input[name="mode"]').val();
 	var sCheck;
 	var	curr_user = <?= json_encode($this->session->userdata('user_info')); ?>;
+	var user = curr_user.fname+' '+curr_user.lname;
 	var notif = new Audio('<?= base_url('assets/audio/argus-notify-default.mp3'); ?>');
 	var notif_announce = new Audio('<?= base_url('assets/audio/argus-notify-announcement.mp3'); ?>');
+	var error = new Audio('<?= base_url('assets/audio/argus-notify-error.wav'); ?>');
 	var filter = [];
 	var filter2 = [];
 
@@ -22,7 +26,6 @@
 				$(card).find('.fa-boxes').addClass('text-success');
 				$(card).attr('data-stage','verification_pass2');
 				$(card).find('.card-subtitle').html('Waiting for QA');
-				notifyAll(shipment,'verified by the loader');
 			},
 			verified: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
@@ -61,7 +64,6 @@
 				notifyAll(shipment,'released by security');
 			},
 			ship_complete: function(shipment){
-				notifyAll(shipment,'805d');
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
 				$(card).remove();
 				updateCounts();
@@ -102,6 +104,7 @@
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
 				$(card).removeClass('.verification,.verification_pass2,.verified,.loading,.signed,.ship_complete');
 				$(card).find('.fa-clipboard-list').removeClass('^=text').addClass('text-muted');
+				$(card).find('.fa-boxes').removeClass('^=text').addClass('text-muted');
 				$(card).find('.fa-pallet').removeClass('^=text').addClass('text-muted');
 				$(card).find('.fa-truck-loading').removeClass('^=text').addClass('text-muted');
 				$(card).find('.fa-clipboard-check').removeClass('^=text').addClass('text-muted');
@@ -132,7 +135,7 @@
 	$(document).ready(function(){
 		app_name = '<?= $method = $this->router->fetch_method(); ?>';
 		app_user = '<?= $this->session->userdata('user_id'); ?>';
-		
+
 		$.contextMenu({
         	selector: '.sment',
         	build: function($triggerElement,e){
@@ -197,7 +200,7 @@
 
 		$.notify.addStyle('globalerror', {
 		  html: 
-		    "<div>" +
+		    "<div class='w-100'>" +
 		      "<div class='clearfix alert alert-danger shadow mb-0'>" +
 		        "<span class='w-100' data-notify-text/>" +
 		      "</div>" +
@@ -211,6 +214,11 @@
 		});
 
 		updateCounts();
+
+		if(mode != 'master'){
+			$('.mode').trigger('click');
+			$('.mode[data-filter="'+mode+'"').trigger('click');
+		}
 	});
 
 	$(document).on('click','.shipment_item',function(){
@@ -288,8 +296,23 @@
 	});
 
 	$('.sync').click(function(){
-		templater('syncShipments','.shipment_cards',null,true,true);
-		sCheck = setInterval(shipmentCheck,1000);
+		
+		$.ajax({
+				type: 'GET',
+				url: '<?= site_url("argus/syncShipments"); ?>',
+				dataType: 'json',
+				beforeSend: function(){
+					$('body').append(<?= getFullLoading('Syncing Shipments.<br>Please wait'); ?>);
+				},
+				success: function(res){
+					$('.shipment_cards').html(res);
+				},
+				complete: function(){
+					$('#full-loader').remove();
+					shipmentCheck();
+				}
+			})
+		
 	});
 
 	$('.refresh').click(function(){
@@ -318,6 +341,18 @@
 		showShipmentDetails(shipment);
 	});
 
+	$('#argus_logout').click(function(){
+		$('.confirm_action').html('LOGOUT');
+		$('#confirm_url').attr('href','<?= site_url("auth/logout"); ?>');
+		$('#confirm_modal').modal('show');
+	});
+
+	$('#confirm_url').click(function(){
+		action = $('.confirm_action').html();
+		msg = user+' has '+action;
+		socket.emit('notify','argus-'+msg);
+	})
+
 	socket.on('notify',function(app,msg){
 		if(app == app_name){
 			notif.play();
@@ -331,7 +366,7 @@
 
 		if(shipment.length){
 			updateCounts();
-			clearInterval(sCheck);
+			updateFilter();
 		};
 	}
 
@@ -387,7 +422,7 @@
 
 	function updateShipment(data)
 	{
-		url = '<?= site_url('argus/updateShipment'); ?>';
+		url = site_url+'/updateShipment';
 		shipment = data.shipment;
 		stage = data.stage;
 		type = data.type;
@@ -415,8 +450,7 @@
 
 	function shipLock(shipment,lock)
 	{
-		url = '<?= site_url('argus/updateShipmentLock'); ?>';
-		
+		url = site_url+'/updateShipmentLock';
 		$.ajax({
 			type : 'POST',
 			url : url,
@@ -457,7 +491,7 @@
 
 	function notifyAll(shipment,stage)
 	{
-		var msg = 'Shipment '+shipment+' has been '+stage+' by '+curr_user.fname+' '+curr_user.lname;
+		var msg = 'Shipment '+shipment+' has been '+stage+' by '+user;
 		socket.emit('notify','argus-'+msg);
 	}
 
@@ -469,13 +503,13 @@
 
 	function force805(shipment)
 	{
-		url = '<?= site_url('argus/check805/'); ?>'+shipment;
-
+		url = site_url+'/check805';
 		$.ajax({
 			type : 'GET',
 			url : url,
 			complete : function(){
 				socket.emit('command','/do-argus-ship_complete-'+shipment);
+				notifyAll(shipment,'805d');
 			}
 		});
 	}

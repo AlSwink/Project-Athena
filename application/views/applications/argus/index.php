@@ -1,6 +1,6 @@
 <div class="container-fluid">
 	<?= loadInclude('app_container_control',$this->app_info); ?>
-	<input type="hidden" name="mode" value="<?= $stage; ?>"/>
+	<input type="hidden" name="mode" value="<?= $this->stage; ?>"/>
 	<div class="tab-content">
 		<div id="shipment_list" class="tab-pane active">
 			<?php loadSubTemplate('argus_shipment_list'); ?>

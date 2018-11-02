@@ -298,4 +298,13 @@
 	    return $shift[$type];
   	}
 
+  	function getConfirmation($msg,$options)
+  	{
+  		$ci =&get_instance();
+  		$data['msg'] = $msg;
+  		$data['to_url'] = (isset($options['yes_action']) ? $options['yes_action'] : '#');
+
+		$ci->load->view('includes/confirm',$data);
+  	}
+
 ?>

@@ -6,6 +6,31 @@
 <hr>
 <div class="row" style="max-height: 80%; overflow: auto">
 	<div class="col-lg-12">
+		<h3>As of 11/01/2018 (Phase 2 Continued) <small>v0.1.2</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-success">New</span> Added logout button at the bottom of shipment list.</li>
+			<li><span class="badge bg-warning">Fixed</span> revised fetch query to include FXFE FXNL UPGF.</li>
+			<li><span class="badge bg-warning">Fixed</span> sync button will not work properly on verification mode.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
+		<h3>As of 10/30/2018 (Phase 2 Continued) <small>v0.1.1</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-success">New</span> Added +10 carton count control.</li>
+			<li><span class="badge bg-success">New</span> Added reset carton count control.</li>
+			<li><span class="badge bg-success">New</span> Added sheet reset.</li>
+			<li><span class="badge bg-success">New</span> Added error notification sound.</li>
+			<li><span class="badge bg-success">New</span> Added error checking before verification submit.</li>
+			<li><span class="badge bg-success">New</span> Added argus_verifications table for master sheet.</li>
+			<li><span class="badge bg-success">New</span> Added argus_verification_details table for detail sheet.</li>
+			<li><span class="badge bg-success">New</span> Added verification transact update.</li>
+			<li><span class="badge bg-success">New</span> Added verification global notification.</li>
+			<li><span class="badge bg-success">New</span> Added URL isolation for each stage use this format /athena/argus/mode/{data-stage}.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
 		<h3>As of 10/29/2018 (Phase 2 Continued) <small>v0.1.0</small></h3>
 		Changes made:
 		<ul>

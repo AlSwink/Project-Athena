@@ -107,4 +107,12 @@ class Argus extends CI_Controller {
     		echo json_encode(false);
     	}
     }
+
+    public function submitVerification()
+    {
+    	$post = $this->input->post();
+    	$this->argus_model->insertVerification($post);
+    	echo json_encode($post);
+    }
+
 }

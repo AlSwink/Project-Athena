@@ -35,7 +35,7 @@ class Auth extends CI_Controller {
     public function logout()
     {
         session_destroy();
-        redirect(site_url());
+        redirect($this->session->userdata('referral_url'));
     }
 
     public function unlock_user($key=NULL,$user_id)
