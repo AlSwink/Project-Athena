@@ -45,8 +45,6 @@
 								
 							</div>
 							<div class="col-lg-7">
-								<input id="qspos" type="text" class="form-control input-sm" placeholder="Quicksearch">
-								<hr>
 								<div style="max-height:55%; overflow: auto">
 									<table id="pos_table" class="table table-condensed table-bordered table-hover settings_table">
 										<thead>
@@ -72,8 +70,6 @@
 								<button type="button" class="btn btn-sm btn-success setting_submit">Add</button>
 							</div>
 							<div class="col-lg-7">
-								<input id="qspos" type="text" class="form-control input-sm" placeholder="Quicksearch">
-								<hr>
 								<div style="max-height:55%; overflow: auto">
 									<table id="zone_table" class="table table-condensed table-bordered table-hover settings_table">
 										<thead>
@@ -99,8 +95,6 @@
 								<button type="button" class="btn btn-sm btn-success setting_submit">Add</button>
 							</div>
 							<div class="col-lg-7">
-								<input id="qspos" type="text" class="form-control input-sm" placeholder="Quicksearch">
-								<hr>
 								<div style="max-height:55%; overflow: auto">
 									<table id="dept_table" class="table table-condensed table-bordered table-hover settings_table">
 										<thead>
@@ -126,8 +120,6 @@
 								<button type="button" class="btn btn-sm btn-success setting_submit">Add</button>
 							</div>
 							<div class="col-lg-7">
-								<input id="qspos" type="text" class="form-control input-sm" placeholder="Quicksearch">
-								<hr>
 								<div style="max-height:55%; overflow: auto">
 									<table id="shift_table" class="table table-condensed table-bordered table-hover settings_table">
 										<thead>
@@ -143,12 +135,26 @@
 					<div class="tab-pane" id="staffing_tab">
 						<div class="row">
 							<div class="col-lg-5">
-								<h5>Staffing</h5>
+								<h5>New Staffing Agency</h5>
 								<hr>
-								<!--<input type="text" class="form-control input-sm">
+								<form id="add_agency" action="<?= site_url('e_roster/add_setting'); ?>" method="POST">
+								<input name="type" type="hidden" value="temp_name">
+								<input name="setting" type="text" class="form-control input-sm">
+								</form>
 								<br>
 								<button type="button" class="btn btn-sm btn-success">Add</button>
-							--></div>
+							</div>
+							<div class="col-lg-7">
+								<div style="max-height:55%; overflow: auto">
+									<table id="staffing_table" class="table table-condensed table-bordered table-hover settings_table">
+										<thead>
+											<tr class="info">
+												<th>Agency</th>
+											</tr>
+										</thead>
+									</table>
+								</div>
+							</div>
 						</div>
 					</div>
 					

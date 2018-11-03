@@ -108,14 +108,19 @@ class Applications extends CI_Controller {
 	public function e_roster(){
 		$eroster = array(
 						'employees' => $this->model->get_all(),
+						'wms_missing' => $this->model->get_not_in_wms(),
 						'positions' => $this->model->get('positions'),
+						'position_data' => $this->model->get_position_numbers(),
 						'agencies' => $this->model->get_temp_agencies(),
 						'user_groups' => $this->model->get_wms_usrgrp(),
 						'departments' => $this->model->get('departments'),
 						'zones' => $this->model->get('zones'),
 						'shifts' => $this->model->get('shifts'),
 						'supervisors' => $this->model->get_supervisors(),
-						'birthdays' => $this->model->get_birthdays()
+						'birthdays' => $this->model->get_birthdays(FALSE),
+						'dependencies' => array(
+											'js'    => array('hermes','chart.min','notify.min','jquery.contextMenu.min')
+											)
 		);	
 		loadView($eroster);
 			

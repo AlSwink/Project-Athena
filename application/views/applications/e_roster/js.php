@@ -1,5 +1,32 @@
 <script>
 	var last_emp = '';
+	
+	var position_data = <?php echo json_encode($position_data); ?>;
+	
+	var pstn_bar = $('#pstn_bar');
+	
+	var position_chart = new Chart(pstn_bar,{
+		type : 'bar',
+		data : {
+			labels : Object.keys(position_data),
+			datasets : [{
+				data : Object.values(position_data)
+			}]
+		},
+		options : {
+			title : {
+				display : true,
+				text : 'Employees in positions'
+			},
+			legend:{
+				position: 'bottom',
+				labels:{
+					boxWidth:11
+				}
+			}
+		}
+	});
+		
 
 	var emp_table = $('.emp_table').DataTable({
 			dom : '<"row"<"col"t>><"row"<"col"iBp>>',
@@ -129,6 +156,48 @@
 		    	style : 'multi+shift'
 		    }
 		});
+		
+	var bday_rep_table = $('#report_bday_table').DataTable({
+		dom : '<"row"<"col"t>><"row"<"col"iBp>>',
+			info : true,
+			colReorder: true,
+			buttons: [
+		        {
+		            text: 'Excel',
+		            extend: 'excel',
+		            className: 'rdexcel d-none'
+		        },
+		        {
+		            text: 'Print',
+		            extend: 'print',
+		            className: 'rdprint d-none'
+		        }
+	        ],
+			ajax: {
+				url: '<?= site_url("api/getBirthdayReport"); ?>',
+				dataSrc: ''
+			},
+			columns : [
+				{data: "name",
+					render: function(data,type,row,meta){
+		        		return row.emp_fname+' '+row.emp_lname;
+		        	}
+				},
+				{data: "emp_dob",
+					render: function(data,type,row,meta){
+						return row.emp_dob.slice(5,10);
+					}				
+				}
+			],
+			order : [0,'desc'],
+		    scrollY: '55vh',
+		    scroller: {
+		    	loadingIndicator : true
+		    },
+		    select: {
+		    	style : 'multi+shift'
+		    }
+		});
 
 	var pos_table = $('#pos_table').DataTable({
 		dom : '<"row"<"col"t>><"row"<"col"iBp>>',
@@ -203,6 +272,27 @@
 		},
 		columns : [
 			{ data: 'shift' }
+		],
+		order : [0, 'asc'],
+		scrollY: '55vh',
+		scroller: {
+			loadingIndicator : true
+		},
+		select: {
+			style : 'multi+shift'
+		}
+	});
+	
+	var staffing_table = $('#staffing_table').DataTable({
+		dom : '<"row"<"col"t>><"row"<"col"iBp>>',
+		info : true,
+		colReorder: true,
+		ajax: {
+			url: '<?= site_url("api/getSetting/agency")?>',
+			dataSrc: ''
+		},
+		columns : [
+			{ data: 'temp_name' }
 		],
 		order : [0, 'asc'],
 		scrollY: '55vh',

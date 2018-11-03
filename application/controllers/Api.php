@@ -164,4 +164,10 @@ class Api extends CI_Controller {
 		$data = $this->E_roster_model->get($setting);
 		echo json_encode($data);
 	}
+	
+	public function getBirthdayReport()
+	{
+		$report = $this->E_roster_model->get_birthdays(TRUE);
+		echo json_encode($report);
+	}
 }

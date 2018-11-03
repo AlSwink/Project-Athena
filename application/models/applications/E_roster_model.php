@@ -49,16 +49,34 @@ class e_roster_model extends XPO_Model {
 		return $this->xpo->get()->result();
 	}
 	
-	function get_birthdays(){
-		$first = new DateTime('first day of this month');
-		$last = new DateTime('last day of this month');
-		$first = $first->format('Y-m-d 00:00:00');
-		$last = $last->format('Y-m-d 00:00:00');
-		$this->xpo->select('emp_fname,emp_lname,emp_dob');
+	function get_birthdays($report){
+		$month = new DateTime('first day of this month');
+		
+		$month = $month->format('m');
+		$day_array = array();
+		$final = array();
+		/* $this->xpo->select('emp_fname,emp_lname,emp_dob');
 		$this->xpo->from('tbl_employees');
-		$this->xpo->where("emp_dob > '$first'");
-		$this->xpo->where("emp_dob < '$last'");
-		return $this->xpo->get()->result();
+		if($report == FALSE){
+			$this->xpo->where("MONTH(emp_dob) = '$month'");
+		}
+		$this->xpo->order_by('emp_dob');
+		return $this->xpo->get()->result(); */
+		$query = 'emp_fname,emp_lname,date_format(emp_dob,'."'%m-%d'".')as dob';
+		$this->xpo->select($query);
+		$this->xpo->from('tbl_employees');
+		$this->xpo->where("MONTH(emp_dob) = '$month'");
+		$this->xpo->order_by('dob');
+		$result = $this->xpo->get()->result();
+		foreach($result as $row){
+			if(!array_search($row->dob,$day_array)){
+				$day_array[] = $row->dob;
+				$final[$row->dob] = array("$row->emp_fname $row->emp_lname");
+			} else {
+				$final[$row->dob][] = "$row->emp_fname $row->emp_lname";
+			}
+		}
+		return $final;
 	}
 	
 	function insert_employee($data,$photo){
