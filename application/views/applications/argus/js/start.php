@@ -50,6 +50,7 @@
 		updateShipment(data);
 		socket.emit('command','/do-argus-started-'+shipment);
 		$('.modal').modal('hide');
+		shipLock(shipment,0);
 		socket.emit('command','/do-argus-unlock-'+shipment);
 		notifyAll(shipment,'started');
 	});

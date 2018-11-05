@@ -6,6 +6,23 @@
 <hr>
 <div class="row" style="max-height: 80%; overflow: auto">
 	<div class="col-lg-12">
+		<h3>As of 11/5/2018 (Phase 2 Continued) <small>v0.1.3</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-success">New</span> Added Verification ID field on QA verification sheet.</li>
+			<li><span class="badge bg-success">New</span> Added system pallet check to show expected pallets.</li>
+			<li><span class="badge bg-success">New</span> Added system carton check to show expected cartons.</li>
+			<li><span class="badge bg-success">New</span> Added verification dataset query to provide data in QA verification sheet.</li>
+			<li><span class="badge bg-success">New</span> Added Error catcher in event of WMS db lock.</li>
+			<li><span class="badge bg-success">New</span> Added QTY field required before submission.</li>
+			<li><span class="badge bg-success">New</span> Added QA sheet saving function.</li>
+			<li><span class="badge bg-warning">Fixed</span> Fixed a bug where starting a shipment will not release from unlock state.</li>
+			<li><span class="badge bg-warning">Fixed</span> Fixed a bug where resetting a shipment will not remove it from a filtered list.</li>
+			<li><span class="badge bg-warning">Fixed</span> Fixed a bug sending a shipment to QA will not remove it from a filtered list.</li>
+			<li><span class="badge bg-warning">Fixed</span> Fixed a bug where save a verification sheet will add a ghost pallet.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
 		<h3>As of 11/01/2018 (Phase 2 Continued) <small>v0.1.2</small></h3>
 		Changes made:
 		<ul>

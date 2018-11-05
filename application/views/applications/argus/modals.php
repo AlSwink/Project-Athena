@@ -201,3 +201,17 @@
     </div>
   </div>
 </div>
+
+<div class="modal" id="error" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h4 class="display-4">Ooops! An error has occured</h4>
+        <p>It's ok, This happen sometimes. Try you action again.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Understood</a>
+      </div>
+    </div>
+  </div>
+</div>

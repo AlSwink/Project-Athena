@@ -18,23 +18,27 @@
 				$(card).find('.fa-clipboard-list').addClass('text-success');
 				$(card).attr('data-stage','verification');
 				$(card).find('.card-subtitle').html('Under Verification');
+				updateFilter(true);
 			},
 			ready_qa: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
+				$(card).removeClass('verification');
 				$(card).addClass('verification_pass2');
 				$(card).find('.fa-boxes').removeClass('text-muted');
 				$(card).find('.fa-boxes').addClass('text-success');
 				$(card).attr('data-stage','verification_pass2');
 				$(card).find('.card-subtitle').html('Waiting for QA');
+				updateFilter(true);
 			},
 			verified: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
+				$(card).removeClass('verification_pass2');
 				$(card).addClass('verified');
 				$(card).find('.fa-pallet').removeClass('text-muted');
 				$(card).find('.fa-pallet').addClass('text-success');
 				$(card).attr('data-stage','verified');
 				$(card).find('.card-subtitle').html('Waiting for Door/Pickup number');
-				notifyAll(shipment,'verified by the QA');
+				updateFilter(true);
 			},
 			loading: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
@@ -102,7 +106,7 @@
 			},
 			reset: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
-				$(card).removeClass('.verification,.verification_pass2,.verified,.loading,.signed,.ship_complete');
+				$(card).removeClass('verification verification_pass2 verified loading signed ship_complete');
 				$(card).find('.fa-clipboard-list').removeClass('^=text').addClass('text-muted');
 				$(card).find('.fa-boxes').removeClass('^=text').addClass('text-muted');
 				$(card).find('.fa-pallet').removeClass('^=text').addClass('text-muted');
@@ -112,6 +116,7 @@
 				$(card).attr('data-stage','waiting');
 				$(card).find('.card-subtitle').html('Not Started');
 				updateCounts();
+				updateFilter(true);
 			},
 			user_reset: function(user_id){
 				if(app_user == user_id){
@@ -255,8 +260,8 @@
 	});
 
 	$(document).on('click','.cancel',function(){
-		socket.emit('command','/do-argus-unlock-'+shipment);
 		shipLock(shipment,0);
+		socket.emit('command','/do-argus-unlock-'+shipment);
 	});
 
 	$(document).on('click','.filter',function(){
@@ -513,4 +518,15 @@
 			}
 		});
 	}
+	function search_key_val(k,val,haystack)
+	{
+		if(haystack){
+			for(x=0;x<haystack.length;x++){
+				if(haystack[x][k] == val){
+					return x;
+					break;
+				}
+			}
+		}
+	}	
 </script>

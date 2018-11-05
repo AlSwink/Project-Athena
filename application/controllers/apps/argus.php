@@ -63,6 +63,7 @@ class Argus extends CI_Controller {
     	}
     	
     	$this->argus_model->getShipmentDetails($shipment);
+    	$this->argus_model->getVerification();
     	echo json_encode($this->argus_model->shipment);
     }
 
@@ -115,4 +116,10 @@ class Argus extends CI_Controller {
     	echo json_encode($post);
     }
 
+    public function submitQA()
+    {
+    	$post = $this->input->post();
+    	$this->argus_model->updateVerification($post);
+    	echo json_encode($post);
+    }
 }

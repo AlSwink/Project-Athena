@@ -3,6 +3,7 @@
 
 	function start_verification()
 	{
+		shipLock(shipment,1);
 		socket.emit('command','/do-argus-lock-'+shipment);
 		
 		$.ajax({
@@ -28,13 +29,13 @@
 
 	$('#cancel_verification_btn').click(function(){
 		$('#tabs a[href="#shipment_list"]').tab('show');
-		socket.emit('command','/do-argus-unlock-'+shipment);
 	});
 
 	$('#ready_qa_btn').click(function(){
 		ready = checkValues();
 		
 		if(ready){
+
 			data = submitVerification();
 
 			$.ajax({
@@ -60,6 +61,7 @@
 
 					socket.emit('command','/do-argus-ready_qa-'+shipment);
 					$('#tabs a[href="#shipment_list"]').tab('show');
+					shipLock(shipment,0);
 					socket.emit('command','/do-argus-unlock-'+shipment);
 					notifyAll(shipment,'verified');	
 				}
@@ -157,9 +159,9 @@
 		pallet_nums = [];
 		counts = [];
 
-		$('.pallet_row').each(function(k,v){
-			pallet_num = $(v).find('.pallet_num').html();
-			count = $(v).find('.carton_count').val();
+		$('.pallet_row:visible').each(function(k,v){
+			pallet_num = $(v).find('.pallet_num:visible').html();
+			count = $(v).find('.carton_count:visible').val();
 			pallet_nums.push(pallet_num);
 			counts.push(count);
 		});
