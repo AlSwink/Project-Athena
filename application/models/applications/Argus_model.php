@@ -95,6 +95,7 @@ class Argus_model extends XPO_Model {
 		$wr_query = "SELECT TRIM(om_f.attention) as attention, om_f.carrier, Max(om_f.ship_name) AS ship_name, Sum(shipunit_f.wgt) AS wgt, (Count(DISTINCT(ct_f.ucc128))) AS cartons
 						FROM om_f INNER JOIN (shipunit_f INNER JOIN ct_f ON shipunit_f.shipunit_rid = ct_f.shipunit_rid) ON om_f.shipment = shipunit_f.shipment
 						WHERE from_email != ''
+						AND om_f.attention LIKE 'WR%'
 						AND om_f.carrier NOT IN ('WCL','STOP','EXPT')
 						AND om_f.carrier NOT LIKE 'U%'
 						AND om_f.carrier NOT LIKE 'F%'
@@ -396,6 +397,14 @@ class Argus_model extends XPO_Model {
 		$this->db->order_by('verified_on','DESC');
 		$verifications = $this->db->get('argus_verifications')->result_array();
 		$this->shipment['verification'] = $verifications;
+	}
+
+	public function getArgusCarriers()
+	{
+		$this->db->select('DISTINCT(carrier) as carrier');
+		$this->db->where('stage !=',8);
+		$carriers = $this->db->get('argus_shipments')->result_array();
+		return $carriers;
 	}
 
 	private function override805($shipments)

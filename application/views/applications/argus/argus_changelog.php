@@ -6,6 +6,28 @@
 <hr>
 <div class="row" style="max-height: 80%; overflow: auto">
 	<div class="col-lg-12">
+		<h3>As of 11/7/2018 (Phase 3 Start) <small>v0.1.5</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-success">New</span> Added a button for setting trailer door and seal numbers.</li>
+			<li><span class="badge bg-success">New</span> Added a database argus_trailers for accepting and recording trailers through argus.</li>
+			<li><span class="badge bg-success">New</span> Added a database argus_trailer_details for trailer inspection details.</li>
+			<li><span class="badge bg-warning">Fixed</span> A bug where opening a QA sheet that's been 805'd will get stuck.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
+		<h3>As of 11/5/2018 (Phase 3 Start) <small>v0.1.4</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-success">New</span> Added Standalone page for accepting outbound trailers.</li>
+			<li><span class="badge bg-success">New</span> Added Carrier database for translating carrier codes.</li>
+			<li><span class="badge bg-success">New</span> Added Dock database for trailer yard management.</li>
+			<li><span class="badge bg-success">New</span> Added Trailer number input on accept outbound trailer.</li>
+			<li><span class="badge bg-warning">Fixed</span> An issue where entering QA mode changes all shipment carrier cards to the same carrier as the QA sheet.</li>
+			<li><span class="badge bg-secondary">Changed</span> Changed released icon from steady truck to moving truck on Count summary and Card stages.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
 		<h3>As of 11/5/2018 (Phase 2 Continued) <small>v0.1.3</small></h3>
 		Changes made:
 		<ul>
@@ -16,10 +38,10 @@
 			<li><span class="badge bg-success">New</span> Added Error catcher in event of WMS db lock.</li>
 			<li><span class="badge bg-success">New</span> Added QTY field required before submission.</li>
 			<li><span class="badge bg-success">New</span> Added QA sheet saving function.</li>
-			<li><span class="badge bg-warning">Fixed</span> Fixed a bug where starting a shipment will not release from unlock state.</li>
-			<li><span class="badge bg-warning">Fixed</span> Fixed a bug where resetting a shipment will not remove it from a filtered list.</li>
-			<li><span class="badge bg-warning">Fixed</span> Fixed a bug sending a shipment to QA will not remove it from a filtered list.</li>
-			<li><span class="badge bg-warning">Fixed</span> Fixed a bug where save a verification sheet will add a ghost pallet.</li>
+			<li><span class="badge bg-warning">Fixed</span> a bug where starting a shipment will not release from unlock state.</li>
+			<li><span class="badge bg-warning">Fixed</span> a bug where resetting a shipment will not remove it from a filtered list.</li>
+			<li><span class="badge bg-warning">Fixed</span> a bug sending a shipment to QA will not remove it from a filtered list.</li>
+			<li><span class="badge bg-warning">Fixed</span> a bug where save a verification sheet will add a ghost pallet.</li>
 		</ul>
 	</div>
 	<div class="col-lg-12">

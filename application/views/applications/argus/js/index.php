@@ -61,8 +61,8 @@
 			release: function(shipment){
 				card = $('#shipment_list').find("div[data-shipment="+shipment+"]");
 				$(card).addClass('ship_complete');
-				$(card).find('.fa-truck').removeClass('text-muted');
-				$(card).find('.fa-truck').addClass('text-success');
+				$(card).find('.fa-shipping-fast').removeClass('text-muted');
+				$(card).find('.fa-shipping-fast').addClass('text-success');
 				$(card).find('.card-subtitle').html('Released');
 				$(card).attr('data-stage','ship_complete');
 				notifyAll(shipment,'released by security');

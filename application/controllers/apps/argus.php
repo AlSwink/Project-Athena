@@ -7,6 +7,7 @@ class Argus extends CI_Controller {
     {
         parent::__construct();
         check_session();
+        $this->app_info = $this->Applications_model->get_app_info('argus');
         $this->load->model('applications/argus_model');
         $this->page_dir = 'applications/argus';
     }
@@ -15,6 +16,19 @@ class Argus extends CI_Controller {
     {
     	$this->page = $this->page_dir.'/argus_display';
         $this->load->view('page');
+    }
+
+    public function accept_trailer()
+    {
+        $data['carriers'] = $this->argus_model->getArgusCarriers();
+        $this->page = $this->page_dir.'/argus_accept_trailer';
+        $this->load->view('page',$data); 
+    }
+
+    public function release_trailer()
+    {
+        $this->page = $this->page_dir.'/argus_release_trailer';
+        $this->load->view('page'); 
     }
 
     public function check805($shipment=null)

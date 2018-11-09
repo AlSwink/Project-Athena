@@ -6,7 +6,7 @@
 		<td><i class="mode filter on fas fa-pallet fa-lg text-success" title="Verified" data-filter="verified"></i></td>
 		<td><i class="mode filter on fas fa-truck-loading fa-lg text-success" title="Loaded" data-filter="loading"></i></td>
 		<td><i class="mode filter on fas fa-clipboard-check fa-lg text-success" title="Signed" data-filter="signed"></i></td>
-		<td><i class="mode filter on fas fa-truck fa-lg text-success" title="Released" data-filter="ship_complete"></i></td>
+		<td><i class="mode filter on fas fa-shipping-fast fa-lg text-success" title="Released" data-filter="ship_complete"></i></td>
 	</tr>
 	<tr>
 		<td class="counters" data-stage="waiting">0</td>

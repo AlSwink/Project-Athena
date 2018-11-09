@@ -135,4 +135,14 @@ class XPO_Model extends CI_Model {
     $dd = $this->db->get('swi_documents')->result();
     return $dd;
   }
+
+  public function getDoor($door=null)
+  {
+    if($door){
+      $this->db->where('door',$door);
+    }
+
+    $this->db->where('deleted',0);
+    return $this->db->get('site_docks')->result_array();
+  }
 }

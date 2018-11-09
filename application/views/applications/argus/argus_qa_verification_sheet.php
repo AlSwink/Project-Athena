@@ -8,12 +8,12 @@
 	<div class="col-lg-6 col-sm-12 mb-2">
 		<table class="table table-sm table-bordered mb-1">
 			<tr>
-				<th>Shipment</th>
+				<td>Shipment</td>
 				<th class="shipment text-primary"></th>
 			</tr>
 			<tr>
-				<th>Carrier</th>
-				<th class="carrier text-primary"></th>
+				<td>Carrier</td>
+				<th class="qa_carrier text-primary"></th>
 			</tr>
 			<tr>
 				<td>Loader</td>

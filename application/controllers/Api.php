@@ -10,6 +10,7 @@ class Api extends CI_Controller {
         $this->load->model('applications/Cycle_count_model');
         $this->load->model('applications/Random_audit_model');
         $this->load->model('applications/Argus_model');
+        $this->load->model('applications/Replenisher_model');
     }
 
     public function get_app($app)
@@ -153,4 +154,38 @@ class Api extends CI_Controller {
         echo json_encode($this->Argus_model->shipments);
     }
 
+    public function replenish_wave($wave=null)
+    {
+        $selected = array();
+        $this->Replenisher_model->wave = $wave;
+        $this->Replenisher_model->getWaveLines();
+
+        $lines = $this->Replenisher_model->lines;
+        
+        foreach($lines as $line){
+            $locs = array_column($this->Replenisher_model->getCrestingLocations(trim($line['tariff_desc'])),'loc');
+            $new = array_diff($locs,$selected);
+            
+            $loc = array_rand($new);
+            array_push($selected,$new[$loc]);
+            
+            $data = array(
+                        'sku' => trim($line['sku']),
+                        'pkg' => trim($line['pkg']),
+                        'commodity' => trim($line['tariff_desc']),
+                        'need' => number_format($line['qty']),
+                        'loc' => $new[$loc]
+                    );
+            
+            $data['loc_info'] = $this->Replenisher_model->buildReplenishment($data);
+
+            $prod_locs[] = $data;
+        }
+        
+        $data['prod_locs'] = $prod_locs;
+        $data['wave'] = $wave;
+
+        $this->page = 'test_page';
+        $this->load->view('page',$data);
+    }
 }

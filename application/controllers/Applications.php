@@ -11,7 +11,6 @@ class Applications extends CI_Controller {
         $method = $this->router->fetch_method();
 
         //dynamic model initialization
-        $this->load->model('Applications_model');
         $this->load->model('applications/'.$method.'_model',$method);
         $this->model = $this->$method;
 
@@ -147,5 +146,21 @@ class Applications extends CI_Controller {
                 );
 
         loadView($ra);
+    }
+
+    public function replenisher()
+    {
+        check_session();
+        $replen = array(
+                    'cresting_waves' => $this->model->getWaves('Cresting'),
+                    'dependencies' => array(
+                                        'js' => array(
+                                                    'hermes',
+                                                    'notify.min'
+                                                )
+                                        )
+                );
+
+        loadView($replen);
     }
 }

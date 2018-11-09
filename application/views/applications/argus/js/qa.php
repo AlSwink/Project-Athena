@@ -17,7 +17,7 @@
 			},
 			success : function(res){
 				$('.verification_id').html(res.verification[0].verification_id);
-				$('.carrier').html(res.wms.carrier);
+				$('.qa_carrier').html(res.wms.carrier);
 				$('.loader').html(res.verification[0].e_fname+' '+res.verification[0].e_lname);
 				$('#carton_count_counted').html(res.verification[0].total_cartons);
 				$('#pallet_counted').html(res.verification[0].total_pallets);

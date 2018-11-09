@@ -99,4 +99,8 @@ $route['cycle_count/(:any)/(:any)/(:any)'] = 'apps/cycle_count/$1/$2/$3';
 //random_audit routes
 $route['random_audit'] = 'applications/random_audit';
 $route['random_audit/standalone'] = 'applications/random_audit/1';
+//replenish_wave
+$route['replenisher'] = 'applications/replenisher';
+$route['replenisher/standalone'] = 'applications/replenisher/1';
+$route['replenisher/(:any)'] = 'apps/replenisher/$1';
 //tool routes

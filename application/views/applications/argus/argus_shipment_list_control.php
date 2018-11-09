@@ -8,5 +8,6 @@
 	<button type="button" class="btn btn-sm btn-info sync">Sync <i class="fas fa-sync"></i></button>
 	<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#announcement_modal">Announce <i class="fas fa-bullhorn"></i></button>
 	<button type="button" class="btn btn-sm btn-primary refresh">Refresh Argus <i class="fas fa-sync"></i></button>
+	<button type="button" class="btn btn-sm btn-primary pickup">Set Trailer <i class="fas fa-truck"></i></button>
 	<button type="button" class="btn btn-sm btn-secondary changelog">Changelog <i class="fas fa-code"></i></button>
 </div>
