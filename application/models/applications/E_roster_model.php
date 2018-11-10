@@ -1,7 +1,9 @@
 <?php
 
 class e_roster_model extends XPO_Model {
-
+	
+	
+	
 	function get($setting){
         $er = $this->load->database('xpo',TRUE);
         $results = $er->get('tbl_xpo_'.$setting);
@@ -12,6 +14,33 @@ class e_roster_model extends XPO_Model {
 		$query = "SELECT user_grp FROM mlknt.ug_f";
 		return $this->wms->query($query)->result();
     }
+	
+	function get_access_levels(){
+		$user='mssql';
+		$password='bruh@h@';
+		$database='WIN-PAK PRO';
+		$server='knx381094';
+		
+		$final = [];
+		
+		$conn = odbc_connect("Driver={SQL Server Native Client 10.0};Server=$server;Database=$database;", $user, $password);
+		if (!$conn){
+			if (phpversion() < '4.0'){
+				exit("Connection Failed: . $php_errormsg" );
+			} else {
+				exit("Connection Failed:" . odbc_errormsg() );
+			}
+		} 
+		$wp = $this->load->database('winpak');
+		$query = "SELECT RecordID, Name FROM dbo.AccessLevelPlus WHERE Deleted = 0";
+		$res = odbc_exec($conn,$query);
+		while($temp = odbc_fetch_object($res)){
+			$final[]=$temp;
+		}
+		return $final;
+		//return $wp->query($query)->results();
+		//return $wp;
+	}
 
     function get_temp_agencies(){
 		
@@ -49,19 +78,57 @@ class e_roster_model extends XPO_Model {
 		return $this->xpo->get()->result();
 	}
 	
-	function get_birthdays($report){
+	/* function get_missing_report(){
+		
+		$wpuser='mssql';
+		$wppassword='bruh@h@';
+		$database='WIN-PAK PRO';
+		$server='knx381094';
+		$conn = odbc_connect("Driver={SQL Server Native Client 10.0};Server=$server;Database=$database;", $wpuser, $wppassword);
+		if (!$conn){
+			if (phpversion() < '4.0'){
+				exit("Connection Failed: . $php_errormsg" );
+			} else {
+				exit("Connection Failed:" . odbc_errormsg() );
+			}
+		} 
+		
+		$winpak = [];
+		$query = "SELECT CONCAT(FirstName,' ',LastName) as name FROM dbo.CardHolder where deleted = 0";
+		$result = odbc_exec($conn,$query);
+		while(odbc_fetch_row($result)){
+			$winpak[] = odbc_result($result,'name');
+		}
+		
+		$this->xpo->select("CONCAT(emp_fname,' ',emp_lname) as eroster");
+		$this->xpo->from('tbl_employees');
+		$this->xpo->where('wms','');
+        $this->xpo->join('tbl_xpo_departments','tbl_employees.dept_id = tbl_xpo_departments.dept_id');
+        $this->xpo->join('tbl_xpo_zones','tbl_employees.zone_id = tbl_xpo_zones.id');
+        $this->xpo->join('tbl_xpo_shifts','tbl_employees.shift_id = tbl_xpo_shifts.id');
+        $this->xpo->join('tbl_xpo_positions','tbl_employees.primary = tbl_xpo_positions.id');
+        $this->xpo->join('tbl_xpo_agency','tbl_employees.temp_id = tbl_xpo_agency.temp_id');
+		$eroster = $this->xpo->get();
+		
+		
+		$wms = $this->wms->query('SELECT opr_name FROM mlknt.us_f');
+		
+		return $winpak;
+	} */
+	
+	function get_birthdays(){
+		$query = 'emp_fname,emp_lname,date_format(emp_dob,'."'%m-%d'".')as dob';
+		$this->xpo->select($query);
+		$this->xpo->from('tbl_employees');
+		return $this->xpo->get()->result();
+	}
+	function get_birthdays_by_month(){
 		$month = new DateTime('first day of this month');
 		
 		$month = $month->format('m');
 		$day_array = array();
 		$final = array();
-		/* $this->xpo->select('emp_fname,emp_lname,emp_dob');
-		$this->xpo->from('tbl_employees');
-		if($report == FALSE){
-			$this->xpo->where("MONTH(emp_dob) = '$month'");
-		}
-		$this->xpo->order_by('emp_dob');
-		return $this->xpo->get()->result(); */
+		
 		$query = 'emp_fname,emp_lname,date_format(emp_dob,'."'%m-%d'".')as dob';
 		$this->xpo->select($query);
 		$this->xpo->from('tbl_employees');
@@ -80,6 +147,20 @@ class e_roster_model extends XPO_Model {
 	}
 	
 	function insert_employee($data,$photo){
+		
+		$wpuser='mssql';
+		$wppassword='bruh@h@';
+		$database='WIN-PAK PRO';
+		$server='knx381094';
+		$conn = odbc_connect("Driver={SQL Server Native Client 10.0};Server=$server;Database=$database;", $wpuser, $wppassword);
+		if (!$conn){
+			if (phpversion() < '4.0'){
+				exit("Connection Failed: . $php_errormsg" );
+			} else {
+				exit("Connection Failed:" . odbc_errormsg() );
+			}
+		} 
+		
 		
 		$user = $this->session->userdata('user_id');
 		$ip = $this->input->ip_address();
@@ -170,9 +251,19 @@ class e_roster_model extends XPO_Model {
                             'ip' => $ip
                             );
         $this->xpo->insert('tbl_badges',$insert_badge);
-		
+		$cardholder = "INSERT into dbo.CardHolder (AccountID,TimeStamp,UserID,NodeID,Deleted,UserPriority,FirstName,LastName,
+		SpareW1,SpareW2,SpareW3,SpareW4,SpareDW1,SpareDW2,SpareDW3,SpareDW4) 
+		OUTPUT Inserted.RecordID
+		VALUES (1,'$dtimecre',0,0,0,0,'".$data['emp_fname']."','".$data['emp_lname']."',0,0,0,0,0,0,0,0)";
+		$holderID = odbc_exec($conn,$cardholder);
+		$hID = odbc_result($holderID,'RecordID');
+		$card = "INSERT into dbo.Card (AccountID,TimeStamp,UserID,NodeID,Deleted,UserPriority,CardNumber,Issue,CardHolderID,
+		AccessLevelID,ActivationDate,ExpirationDate,NoOfUsesLeft,CMDFileID,CardStatus,Display,BackDrop1ID,BackDrop2ID,ActionGroupID,
+		LastReaderHID,LastReaderDate,PrintStatus,SpareW1,SpareW2,SpareW3,SpareW4,SpareDW1,SpareDW2,SpareDW3,SpareDW4)
+		VALUES (1,'$dtimecre',0,0,0,0,".$data['sb'].",0,$hID,".$data['access_level'].",'$dtimecre', '1900-01-01',0,0,1,0,0,0,0,0,'1900-01-01',0,0,0,0,0,0,0,0,0)";
+		odbc_exec($conn,$card);
         //$this->send_badge_email();
-		//return $query;
+		//return $card;
 	}
 
 	function check($val){
@@ -260,6 +351,18 @@ class e_roster_model extends XPO_Model {
         $ins = array();
         $er = $this->load->database('xpo',TRUE);
         $wms = $this->load->database('wms',TRUE);
+		$wpuser='mssql';
+		$wppassword='bruh@h@';
+		$database='WIN-PAK PRO';
+		$server='knx381094';
+		$conn = odbc_connect("Driver={SQL Server Native Client 10.0};Server=$server;Database=$database;", $wpuser, $wppassword);
+		if (!$conn){
+			if (phpversion() < '4.0'){
+				exit("Connection Failed: . $php_errormsg" );
+			} else {
+				exit("Connection Failed:" . odbc_errormsg() );
+			}
+		} 
 		$user = $this->session->userdata('user_id');
 
         $org = $er->get_where('tbl_employees',array('id'=>$data['tbl_id']));
@@ -361,7 +464,14 @@ class e_roster_model extends XPO_Model {
                         );
 
             $er->insert('tbl_badges',$insert);
-
+			
+			$query = "SELECT RecordID FROM dbo.CardHolder WHERE FirstName = '".$data['emp_fname']."' AND LastName = '".$data['emp_lname']."'";
+			$holderID = odbc_exec($conn,$query);
+			$card = "INSERT into dbo.Card (AccountID,TimeStamp,UserID,NodeID,Deleted,UserPriority,CardNumber,Issue,CardHolderID,
+			AccessLevelID,ActivationDate,ExpirationDate,NoOfUsesLeft,CMDFileID,CardStatus,Display,BackDrop1ID,BackDrop2ID,ActionGroupID,
+			LastReaderHID,LastReaderDate,PrintStatus,SpareW1,SpareW2,SpareW3,SpareW4,SpareDW1,SpareDW2,SpareDW3,SpareDW4) 
+			VALUES (1,'$dtimecre',0,0,0,0,".$data['sb'].",0,$holderID,".$data['access_level'].",'$dtimecre', '1900-01-01',0,0,1,0,0,0,0,0,'1900-01-01',0,0,0,0,0,0,0,0,0)";
+			odbc_exec($conn,$card);
             //$this->send_badge_email();
         } 
     }

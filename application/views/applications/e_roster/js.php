@@ -76,7 +76,7 @@
 		    	style : 'multi+shift'
 		    }
 		});
-	
+		
 	var dept_rep_table = $('#report_dept_table').DataTable({
 		dom : '<"row"<"col"t>><"row"<"col"iBp>>',
 			info : true,
@@ -157,7 +157,7 @@
 		    }
 		});
 		
-	var bday_rep_table = $('#report_bday_table').DataTable({
+	/* var bday_rep_table = $('#report_bday_table').DataTable({
 		dom : '<"row"<"col"t>><"row"<"col"iBp>>',
 			info : true,
 			colReorder: true,
@@ -197,7 +197,7 @@
 		    select: {
 		    	style : 'multi+shift'
 		    }
-		});
+		}); */
 
 	var pos_table = $('#pos_table').DataTable({
 		dom : '<"row"<"col"t>><"row"<"col"iBp>>',
@@ -474,6 +474,18 @@
 		
 	});
 	
+	$('#missing_test').click(function(){
+		$.ajax({
+				type : 'GET',
+				url  : '<?= site_url("api/getAllMissingReport"); ?>',
+				dataType : 'json',
+				asyc : false,
+				success : function(res){
+					console.log(res);
+				}
+		});
+	});
+	
 	//functions
 	
 	function setting_submit(target){
@@ -507,7 +519,7 @@
 		$.ajax({
 			type : 'POST',
 			url : url,
-			dataType : 'json',
+			//dataType : 'json',
 			data : post,
 			beforeSend : function(){
 				
@@ -519,6 +531,8 @@
 			},
 			success : function(res){
 				endSubmit('.employee_submit');
+				//console.log('RESULTS: '+res);
+				
 				$('.emp_table').DataTable().ajax.reload();
 				
 			},

@@ -62,6 +62,16 @@
 							<input type="text" class="form-control form-control-sm text-input" name="ssn" required>
 						</div>
 					</div>
+					<div class="row"> 
+						<div class="col-4">
+							<label>Access Level</label>
+							<select name="access_level" class="form-control form-control-sm">
+							<?php foreach($access_levels as $level){ ?>
+								<option value="<?=$level->RecordID;?>"><?=$level->Name;?></option>
+							<?php } ?>
+							</select>
+						</div>
+					</div>
 					<br/>
 					<strong>Employment Information</strong>
 					<hr size="1">
@@ -208,6 +218,16 @@
 						<div class="col-4">
 							<label>Last 4 SSN</label>
 							<input type="text" class="form-control form-control-sm text-input" name="ssn" required>
+						</div>
+					</div>
+					<div class="row"> 
+						<div class="col-4">
+							<label>Access Level</label>
+							<select name="access_level" class="form-control form-control-sm">
+							<?php foreach($access_levels as $level){ ?>
+								<option value="<?=$level->RecordID;?>"><?=$level->Name;?></option>
+							<?php } ?>
+							</select>
 						</div>
 					</div>
 					<br/>

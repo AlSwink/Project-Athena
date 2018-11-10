@@ -117,7 +117,8 @@ class Applications extends CI_Controller {
 						'zones' => $this->model->get('zones'),
 						'shifts' => $this->model->get('shifts'),
 						'supervisors' => $this->model->get_supervisors(),
-						'birthdays' => $this->model->get_birthdays(FALSE),
+						'access_levels' => $this->model->get_access_levels(),
+						'birthdays' => $this->model->get_birthdays_by_month(),
 						'dependencies' => array(
 											'js'    => array('hermes','chart.min','notify.min','jquery.contextMenu.min')
 											)

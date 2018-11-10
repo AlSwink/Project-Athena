@@ -1,5 +1,13 @@
 <div class="row mt-3" style="max-height: 80%; overflow: auto">
 	<div class="col-lg-12">
+		<h3>As of 11/09/2018<small>v0.0.7</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-success">New</span>Added winpak integration</li>
+			<li><span class="badge bg-success">New</span>Added WMS/E-Roster/Winpak comparison report</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
 		<h3>As of 11/02/2018<small>v0.0.6</small></h3>
 		Changes made:
 		<ul>

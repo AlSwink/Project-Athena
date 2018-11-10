@@ -15,8 +15,9 @@
 			    	<a href="#dept_report" class="nav-link list-group-item list-group-item-action list-group-item-secondary" data-toggle="pill">Employees per department</a>
 			    </li>
 				<li class="nav-item">
-					<a href="#birthday_report" class="nav-link list-group-item list-group-item-action list-group-item-secondary" data-toggle="pill">Employee Birthdays</a>
+					<a href="#birthday_report" class="nav-link list-group-item list-group-item-action list-group-item-secondary" data-toggle="pill">Employee Birthdays(Broken)</a>
 				</li>
+				
 			</ul>
 		</div>
 	</div>
@@ -31,6 +32,7 @@
 			<div class="tab-pane" id="birthday_report">
 				<?php loadSubTemplate('eroster_reports_bday');?>
 			</div>
+			
 		</div>
 	</div>
 </div>
