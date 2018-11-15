@@ -188,4 +188,10 @@ class Api extends CI_Controller {
         $this->page = 'test_page';
         $this->load->view('page',$data);
     }
+
+    public function getDockDoors()
+    {
+        $doors = $this->XPO_model->getDoor();
+        echo json_encode($doors);
+    }
 }

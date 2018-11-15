@@ -14,7 +14,7 @@ class Replenisher_model extends XPO_Model {
 					WHERE ob_ord_stt = 'PLN'";
 		$query .= "AND ".$this->getReplenishmentSettings('query',$type)['val'];
 
-		$waves = $this->wms_test->query($query)->result_array();
+		$waves = $this->wms->query($query)->result_array();
 
 		foreach($waves as $wave){
 			$replenisher_info = $this->getReplenisherInfo($wave['wave']);
@@ -40,7 +40,7 @@ class Replenisher_model extends XPO_Model {
 					HAVING (SUM(plan_qty - sched_qty)) >0
 					ORDER BY sku,pkg ASC";
 
-		$this->lines = $this->wms_test->query($query)->result_array();
+		$this->lines = $this->wms->query($query)->result_array();
 	}
 
 	public function buildReplenishment($data)
@@ -77,9 +77,11 @@ class Replenisher_model extends XPO_Model {
 					AND loc_stt = ''";
 
 		$filter = $this->getReplenishmentSettings('query',$type);
-		$query .= "AND ".$filter['val'];
-
-		return $this->wms_test->query($query)->result_array();
+		if($filter){
+			$query .= "AND ".$filter['val'];
+		}
+		
+		return $this->wms->query($query)->result_array();
 	}
 
 	public function updateLocations($data)
@@ -132,13 +134,19 @@ class Replenisher_model extends XPO_Model {
 
 	private function update_lc_f($data)
 	{
-		$query = "UPDATE pm_f SET prod_class = '".$this->getReplenishmentSettings('type','new_marker')['val']."' 
-					WHERE prod_class = ".$this->getReplenishmentSettings('type','marker')['val']."";
+		$marker = $this->getReplenishmentSettings('type','marker')['val'];
+		$new_marker = $this->getReplenishmentSettings('type','new_marker')['val'];
+		$pm_query = "UPDATE pm_f SET prod_class = '".$new_marker."' 
+					WHERE prod_class = ".$marker."";
+		
+		$this->wms->query($pm_query); //clear 78s
 
 		foreach($data as $row){
 			$lc_fields = $this->buildReplenishment($row);
 			$query = "UPDATE lc_f SET ".$this->updateSQL($lc_fields,'loc');
-			
+			$this->wms->query($query);
+			$query_2 = "UPDATE pm_f SET prod_class = '".$marker."' WHERE sku = '".$lc_fields['sku']."' AND pkg = '".$lc_fields['pkg']."'"; //apply 78s
+			$this->wms->query($query_2);
 		}
 	}
 

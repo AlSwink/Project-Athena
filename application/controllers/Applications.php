@@ -154,13 +154,36 @@ class Applications extends CI_Controller {
         $replen = array(
                     'cresting_waves' => $this->model->getWaves('Cresting'),
                     'dependencies' => array(
+                                        'css' => array(
+                                                    'jquery.contextMenu.min'
+                                        ),
                                         'js' => array(
                                                     'hermes',
-                                                    'notify.min'
+                                                    'notify.min',
+                                                    'jquery.contextMenu.min'
                                                 )
                                         )
                 );
 
         loadView($replen);
+    }
+
+    public function dock_manager()
+    {
+        $docker = array(
+                    'dependencies' => array(
+                                        'css' => array(
+                                                    'jquery.contextMenu.min',
+                                                    'daterangepicker'
+                                        ),
+                                        'js' => array(
+                                                    'moment',
+                                                    'jquery.contextMenu.min',
+                                                    'daterangepicker'
+                                        ),
+                                    )
+                );
+
+        loadView($docker);
     }
 }

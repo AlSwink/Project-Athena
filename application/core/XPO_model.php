@@ -141,8 +141,23 @@ class XPO_Model extends CI_Model {
     if($door){
       $this->db->where('door',$door);
     }
+    
+    $this->db->join('employees','employees.user_id = site_docks.modified_by','LEFT');
+    $this->db->join('building','building.bldg_id = site_docks.building_id');
+    $this->db->where('site_docks.deleted',0);
+    $doors = $this->db->get('site_docks')->result_array();
 
+    foreach($doors as $key => $door){
+      $final_doors[$key] = $door;
+      $final_doors[$key]['detail'] = $this->db->get_where('site_docks_detail',array('dock_id'=>$door['dock_id']))->result_array();
+    }
+
+    return $final_doors;
+  }
+
+  public function getCarriers()
+  {
     $this->db->where('deleted',0);
-    return $this->db->get('site_docks')->result_array();
+    return $this->db->get('carriers')->result_array();
   }
 }

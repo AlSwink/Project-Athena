@@ -6,7 +6,16 @@
 <hr>
 <div class="row" style="max-height: 80%; overflow: auto">
 	<div class="col-lg-12">
-		<h3>As of 11/7/2018 (Phase 3 Start) <small>v0.1.5</small></h3>
+		<h3>As of 11/9/2018 (Phase 3 Continued) <small>v0.1.6</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-success">New</span> Added Core function to fetch Dock information.</li>
+			<li><span class="badge bg-success">New</span> Added Core function to fetch Carrier information.</li>
+
+		</ul>
+	</div>
+	<div class="col-lg-12">
+		<h3>As of 11/7/2018 (Phase 3 Continued) <small>v0.1.5</small></h3>
 		Changes made:
 		<ul>
 			<li><span class="badge bg-success">New</span> Added a button for setting trailer door and seal numbers.</li>

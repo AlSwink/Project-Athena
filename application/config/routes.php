@@ -103,4 +103,8 @@ $route['random_audit/standalone'] = 'applications/random_audit/1';
 $route['replenisher'] = 'applications/replenisher';
 $route['replenisher/standalone'] = 'applications/replenisher/1';
 $route['replenisher/(:any)'] = 'apps/replenisher/$1';
+//dock_manager
+$route['dock_manager'] = 'applications/dock_manager';
+$route['dock_manager/standalone'] = 'applications/dock_manager/1';
+$route['dock_manager/(:any)'] = 'apps/dock_manager/$1';
 //tool routes

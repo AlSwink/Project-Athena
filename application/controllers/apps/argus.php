@@ -20,7 +20,7 @@ class Argus extends CI_Controller {
 
     public function accept_trailer()
     {
-        $data['carriers'] = $this->argus_model->getArgusCarriers();
+        $data['carriers'] = $this->XPO_model->getCarriers();
         $this->page = $this->page_dir.'/argus_accept_trailer';
         $this->load->view('page',$data); 
     }
@@ -136,4 +136,31 @@ class Argus extends CI_Controller {
     	$this->argus_model->updateVerification($post);
     	echo json_encode($post);
     }
+
+    public function getDockDoors()
+    {
+        //$post = $this->input->post();
+        $this->db->where('dept_id',1);
+        $data['doors'] = $this->XPO_model->getDoor();
+
+        foreach($data['doors'] as $door){
+
+        }
+
+        $this->page = $this->page_dir.'/argus_dock_select';
+        $this->load->view('page',$data);
+        //echo json_encode($post);
+    }
+
+    public function dock_manager()
+    {
+        $this->page = $this->page_dir.'/argus_dock_manager';
+        $this->load->view('page');
+    }
+
+    private function checkIfExpected($detail)
+    {
+
+    }
+
 }
