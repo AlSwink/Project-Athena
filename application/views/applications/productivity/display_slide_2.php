@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="col">
-		<table class="table table-bordered totals shadow">
+		<table class="table table-bordered font-35 shadow">
 	        <tr>
 	            <th></th>
 	            <th>Picks</th>

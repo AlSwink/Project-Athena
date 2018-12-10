@@ -79,6 +79,10 @@
     .totals th{
         font-size: 10px !important;
     }
+
+    .font-35{
+    	font-size: 35px !important;
+    }
 </style>
 <script>
 	$('#production_carousel').carousel({
