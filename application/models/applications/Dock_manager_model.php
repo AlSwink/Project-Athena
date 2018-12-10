@@ -25,9 +25,23 @@ class Dock_manager_model extends XPO_Model {
 		$this->db->insert('site_docks_detail',$insert);
 	}
 
-	public function updateDock()
+	public function getQueue($dock_id)
 	{
-		
+		$this->db->select('dock,carrier,pickup_number,expected_start,expected_end');
+		$this->db->select('CONCAT(e_fname," ",e_lname) as contact');
+		$this->db->select('site_docks.dock_id as dock_id');
+		$this->db->where('site_docks.dock_id',$this->dock_id);
+		$this->db->where('site_docks_detail.deleted',0);
+		$this->db->join('site_docks_detail','site_docks.dock_id = site_docks_detail.dock_id','LEFT');
+		$this->db->join('employees','employees.user_id = site_docks_detail.created_by','LEFT');
+		$this->db->order_by('expected_start','ASC');
+		return $this->db->get('site_docks')->result_array();
+	}
+
+	public function getDoorInfo()
+	{
+		$this->db->where('dock',$this->dock);
+		return $this->db->get('site_docks')->result_array();
 	}
 }
 

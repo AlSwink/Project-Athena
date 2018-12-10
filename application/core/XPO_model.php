@@ -9,6 +9,7 @@ class XPO_Model extends CI_Model {
   public $user_id;
   public $wms;
   public $wms_test;
+  public $now;
 
   function __construct()
   {
@@ -24,7 +25,7 @@ class XPO_Model extends CI_Model {
       if($this->session->userdata('user_id') != ''){
         $this->user_id =  $this->session->userdata('user_id');
       }
-      
+      $this->now = date('Y-m-d H:i:s');
       $this->firstdayofmonth = date('Y-m-01 00:00:00');
       $this->lastdayofmonth = date('Y-m-t 23:59:59');
 
@@ -136,12 +137,13 @@ class XPO_Model extends CI_Model {
     return $dd;
   }
 
-  public function getDoor($door=null)
+  public function getDoor($dock_id=null)
   {
-    if($door){
-      $this->db->where('door',$door);
+    if($dock_id){
+      $this->db->where('dock_id',$dock_id);
     }
-    
+    $this->db->select('*');
+    $this->db->select('site_docks.dock_id as dock_id');
     $this->db->join('employees','employees.user_id = site_docks.modified_by','LEFT');
     $this->db->join('building','building.bldg_id = site_docks.building_id');
     $this->db->where('site_docks.deleted',0);
@@ -149,6 +151,9 @@ class XPO_Model extends CI_Model {
 
     foreach($doors as $key => $door){
       $final_doors[$key] = $door;
+      $this->db->select('*');
+      $this->db->select('CONCAT(e_fname," ",e_lname) as contact');
+      $this->db->join('employees','employees.user_id = site_docks_detail.created_by');
       $final_doors[$key]['detail'] = $this->db->get_where('site_docks_detail',array('dock_id'=>$door['dock_id']))->result_array();
     }
 
@@ -159,5 +164,41 @@ class XPO_Model extends CI_Model {
   {
     $this->db->where('deleted',0);
     return $this->db->get('carriers')->result_array();
+  }
+
+  public function getBuildings()
+  {
+    $this->db->where('deleted',0);
+    return $this->db->get('building')->result_array();
+  }
+
+  public function saveDock($data)
+  {
+    $update = array(
+                'building_id' => $data['building_id'],
+                'status' => $data['status'],
+                'note' => $data['note'],
+                'modified_by' => $this->user_id,
+                'modified_on' => date('Y-m-d H:i:s')
+              );
+    $this->db->where('dock_id',$data['dock_id']);
+    $this->db->update('site_docks',$update);
+  }
+
+  public function addDock($data)
+  {
+    $insert = array(
+                'dock' => $data['add_dock_number'],
+                'category' => $data['add_dock_type'],
+                'building_id' => $data['add_building_id'],
+                'dept_id' => 1,
+                'deleted' => 0,
+                'status' => $data['add_status'],
+                'note' => $data['add_note'],
+                'modified_by' => $this->user_id,
+                'modified_on' => date('Y-m-d H:i:s')
+              );
+
+    $this->db->insert('site_docks',$insert);
   }
 }

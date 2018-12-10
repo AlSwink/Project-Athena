@@ -2,6 +2,7 @@
 	<?= loadInclude('app_container_control',$this->app_info); ?>
 	<div class="row">
 		<div class="col">
+			<button type="button" class="btn btn-success" data-toggle="modal" data-target="#add_dock">Add Dock <i class="fas fa-plus"></i></button>
 			<table id="dock_table" class="table table-sm table-bordered table-hover text-center">
 				<thead>
 					<tr class="thead-dark">
@@ -18,4 +19,4 @@
 	</div>
 </div>
 
-<?= loadSubTemplate(['js','modals']); ?>
+<?= loadSubTemplate(['modals','js']); ?>

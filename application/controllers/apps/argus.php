@@ -137,30 +137,98 @@ class Argus extends CI_Controller {
     	echo json_encode($post);
     }
 
-    public function getDockDoors()
+    public function getMatchingDocks()
     {
-        //$post = $this->input->post();
-        $this->db->where('dept_id',1);
-        $data['doors'] = $this->XPO_model->getDoor();
+        $post = $this->input->post('post');
+        parse_str($post,$post_data);
 
-        foreach($data['doors'] as $door){
+        $this->db->where('status',0);
+        $docks = $this->XPO_model->getDoor();
+        $data['suggestions'] = $this->checkIfExpected($docks,$post_data);
+        $page = $this->load->view('includes/suggestions',$data,TRUE);
+        echo json_encode($page);
+    }
 
+    private function checkIfExpected($detail,$post)
+    {
+        $suggestions = array();
+        
+        foreach($detail as $dock){
+            
+            //check if pickup number exist in notes
+            if($post['pickup_number']){
+                if(strpos($dock['note'],$post['pickup_number'])){
+                    $suggestions[] = array(
+                                        'type' => 'Pickup Number Found!',
+                                        'msg' => 'Related note found for this pickup number "'.$dock['note'].'" -'.$dock['e_fname'].' '.$dock['e_lname'],
+                                        'dock' => $dock['dock'],
+                                        'info' => $this->XPO_model->getDoor($dock['dock_id'])[0],
+                                        'level' => 2
+                                    );
+                }
+            }
+            
+            if($dock['detail'])
+                foreach($dock['detail'] as $queue){
+                    //check if pickup number exist
+                    if($post['pickup_number']){
+                        if($queue['pickup_number'] == $post['pickup_number']){
+                            $suggestions[] = array(
+                                            'type' => 'Pickup Number Found!',
+                                            'msg' => 'Pickup Number is expected and should be properly routed',
+                                            'dock' => $dock['dock'],
+                                            'info' => $this->XPO_model->getDoor($dock['dock_id'])[0],
+                                            'level' => 1
+                                        );
+                            
+                        }
+                    }
+
+                    //check if carrier is expected
+                    $start = strtotime($queue['expected_start']);
+                    $end = strtotime($queue['expected_end']);
+                    $now = strtotime(date('Y-m-d H:i:s'));
+                    if($now < $end && $now > $start){
+                        $expected = true;
+                    }else{
+                        $expected = false;
+                    }
+
+
+                    if($queue['carrier'] == $post['carrier'] && $expected){
+                        $suggestions[] = array(
+                                        'type' => 'Carrier is Expected!',
+                                        'msg' => 'This carrier is expected to arrive at this time',
+                                        'dock' => $dock['dock'],
+                                        'info' => $this->XPO_model->getDoor($dock['dock_id'])[0],
+                                        'level' => 3
+                                    );
+                    }
+
+                    if($queue['carrier'] == $post['carrier']){
+                        $suggestions[] = array(
+                                        'type' => 'Carrier Match!',
+                                        'msg' => 'Match found : please confirm with the warehouse',
+                                        'dock' => $dock['dock'],
+                                        'info' => $this->XPO_model->getDoor($dock['dock_id'])[0],
+                                        'level' => 3
+                                    );
+                    }
+
+                }
         }
 
-        $this->page = $this->page_dir.'/argus_dock_select';
-        $this->load->view('page',$data);
-        //echo json_encode($post);
-    }
+        if(!count($suggestions)){
+             $suggestions[] = array(
+                                        'type' => 'No Suggestions for this Carrier!',
+                                        'msg' => 'Please contact the warehouse',
+                                        'dock' => 'N/A',
+                                        'info' => array(),
+                                        'level' => 4
+                                    );
+        }
 
-    public function dock_manager()
-    {
-        $this->page = $this->page_dir.'/argus_dock_manager';
-        $this->load->view('page');
-    }
-
-    private function checkIfExpected($detail)
-    {
-
+        return $suggestions;
     }
 
 }

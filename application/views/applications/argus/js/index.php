@@ -359,7 +359,7 @@
 	})
 
 	socket.on('notify',function(app,msg){
-		if(app == app_name){
+		if(app == app_name || app == 'global'){
 			notif.play();
 			$.notify(msg);
 		}

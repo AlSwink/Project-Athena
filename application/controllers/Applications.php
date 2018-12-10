@@ -170,20 +170,66 @@ class Applications extends CI_Controller {
 
     public function dock_manager()
     {
+        check_session();
         $docker = array(
+                    'carriers' => $this->XPO_model->getCarriers(),
+                    'buildings' => $this->XPO_model->getBuildings(),
                     'dependencies' => array(
                                         'css' => array(
                                                     'jquery.contextMenu.min',
                                                     'daterangepicker'
                                         ),
                                         'js' => array(
+                                                    'hermes',
                                                     'moment',
                                                     'jquery.contextMenu.min',
+                                                    'notify.min',
                                                     'daterangepicker'
                                         ),
                                     )
                 );
 
         loadView($docker);
+    }
+
+    public function yard_manager()
+    {
+        check_session();
+        $yard = array(
+                    'carriers' => $this->XPO_model->getCarriers(),
+                    'buildings' => $this->XPO_model->getBuildings(),
+                    'dependencies' => array(
+                                        'css' => array(
+                                                    'jquery.contextMenu.min',
+                                                    'daterangepicker'
+                                        ),
+                                        'js' => array(
+                                                    'hermes',
+                                                    'moment',
+                                                    'jquery.contextMenu.min',
+                                                    'notify.min',
+                                                    'daterangepicker'
+                                        ),
+                                    )
+                );
+
+        loadView($yard);
+    }
+
+    public function productivity($type)
+    {
+        $this->model->setProdType($type);
+        $prod = array(
+                    'type' => $type,
+                    'data' => $this->model->getShiftData(),
+                    'title' => $this->model->label,
+                    'dependencies' => array(
+                                        'js' => array(
+                                                'hermes'
+                                        )
+                                    )
+                );
+
+        loadView($prod);
     }
 }

@@ -194,4 +194,19 @@ class Api extends CI_Controller {
         $doors = $this->XPO_model->getDoor();
         echo json_encode($doors);
     }
+
+    public function getOutstandingCartons()
+    {
+        $query = "SELECT COUNT(DISTINCT(to_cont)) as count,clust_cont_type as type
+        			FROM cm_f
+                    WHERE clust_cont_type != ''
+                    AND task = 'PICK'
+                    AND cmd_stt = 'CLST'
+                    GROUP BY clust_cont_type
+                    ORDER BY type";
+
+        $data['cartons'] = $this->XPO_model->wms->query($query)->result_array();
+        $this->page = 'test_page';
+        $this->load->view('page',$data);
+    }
 }

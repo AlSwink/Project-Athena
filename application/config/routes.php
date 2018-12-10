@@ -107,4 +107,15 @@ $route['replenisher/(:any)'] = 'apps/replenisher/$1';
 $route['dock_manager'] = 'applications/dock_manager';
 $route['dock_manager/standalone'] = 'applications/dock_manager/1';
 $route['dock_manager/(:any)'] = 'apps/dock_manager/$1';
+$route['dock_manager/(:any)/(:any)'] = 'apps/dock_manager/$1/$2';
+//yard_manager
+$route['yard_manager'] = 'applications/yard_manager';
+$route['yard_manager/standalone'] = 'applications/yard_manager/1';
+$route['yard_manager/(:any)'] = 'apps/yard_manager/$1';
+$route['yard_manager/(:any)/(:any)'] = 'apps/yard_manager/$1/$2';
+//productivity
+$route['productivity'] = 'applications/productivity/global';
+$route['productivity/admin/(:any)'] = 'applications/productivity/$1';
+$route['productivity/(:any)'] = 'apps/productivity/$1';
+$route['productivity/(:any)/(:any)'] = 'apps/productivity/$1/$2';
 //tool routes
