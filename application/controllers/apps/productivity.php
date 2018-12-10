@@ -160,7 +160,7 @@ class Productivity extends CI_Controller {
 
         $data['graph'] = $graph;
         $data['time_range'] = $this->productivity_model->time_ranges;
-        $data['dependencies']['js'] = ['chart.min'];
+        
         $page .= $this->load->view($this->page,$data,TRUE);
 
         echo $page;
