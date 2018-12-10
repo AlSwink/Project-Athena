@@ -1,22 +1,21 @@
 <div class="row">
-	<div class="col-6 px-1">
-		<?= loadSubtemplate('card',array(
-									'icon'=>'circle',
-									'label'=>'Current Remaining',
-									'sub_label'=>'picks|units',
-									'value'=>$data['available_picks'].' | '.$data['available_units'],
-									'desc'=>'Total remaining picks and units',
-									'logic' => null
-								)); ?>
-	</div>
-	<div class="col-6 px-1">
-		<?= loadSubtemplate('card',array(
-									'icon'=>'check-circle',
-									'label'=>'Current Completed',
-									'sub_label'=>'picks|units',
-									'value'=>$data['cmp_picks'].' | '.$data['cmp_units'],
-									'desc'=>'Total completed picks and units',
-									'logic' => null
-								)); ?>
+	<div class="col">
+		<table class="table table-bordered totals shadow">
+	        <tr>
+	            <th></th>
+	            <th>Picks</th>
+	            <th>Units</th>
+	        </tr>
+	        <tr class="table-success">
+	            <th>Completed</th>
+	            <th><?= $data['cmp_picks']; ?></th>
+	            <th><?= $data['cmp_units']; ?></th>
+	        </tr>
+	        <tr class="table-warning">
+	            <th>Remaining</th>
+	            <th><?= $data['available_picks']; ?></th>
+	            <th><?= $data['available_units']; ?></th>
+	        </tr>
+	    </table>
 	</div>
 </div>
