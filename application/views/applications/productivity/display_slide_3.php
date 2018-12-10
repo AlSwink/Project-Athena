@@ -1,4 +1,4 @@
-<div class="row mt-2 px-1">
+<div class="row">
 	<div class="col px-0">
 		<table class="hourly_table table table-sm table-bordered text-center totals">
 			<thead>
