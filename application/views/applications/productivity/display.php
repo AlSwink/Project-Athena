@@ -109,7 +109,6 @@
     	}
     }
 
-    console.log(config);
-    var ctx = $("#prod_board");
+    var ctx = document.getElementById("prod_board");
     var daily1 = new Chart(ctx,config);
 </script>
