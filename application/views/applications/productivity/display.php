@@ -80,8 +80,10 @@
         font-size: 10px !important;
     }
 </style>
-
 <script>
+	$('#production_carousel').carousel({
+        interval: 20000
+    });
 
     var	config = {
     	type: 'line',
