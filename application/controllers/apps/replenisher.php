@@ -29,32 +29,42 @@ class Replenisher extends CI_Controller {
     public function wave_lines()
     {
         $selected = array();
+        $created = 0;
         $page = '';
 
         $this->replenisher_model->wave = $this->input->post('wave');
     	$this->replenisher_model->getWaveLines();
 
         $lines = $this->replenisher_model->lines;
-
+        $lines_counts = count($lines);
         foreach($lines as $line){
             $locs = array_column($this->replenisher_model->getCrestingLocations(trim($line['tariff_desc'])),'loc');
             $new = array_diff($locs,$selected);
-            
-            $loc = array_rand($new);
-            array_push($selected,$new[$loc]);
-            
-            $data = array(
-                        'sku' => trim($line['sku']),
-                        'pkg' => trim($line['pkg']),
-                        'commodity' => trim($line['tariff_desc']),
-                        'need' => number_format($line['qty']),
-                        'loc' => $new[$loc]
-                    );
-            
-            $data['loc_info'] = $this->replenisher_model->buildReplenishment($data);
 
-            $info['line'] = $data;
-            $page .= $this->load->view($this->page_dir.'/replenishment_summary',$info,TRUE);
+            if($new){
+                $loc = array_rand($new);
+                array_push($selected,$new[$loc]);
+                
+                $data = array(
+                            'sku' => trim($line['sku']),
+                            'pkg' => trim($line['pkg']),
+                            'commodity' => trim($line['tariff_desc']),
+                            'need' => number_format($line['qty']),
+                            'loc' => $new[$loc]
+                        );
+                
+                $data['loc_info'] = $this->replenisher_model->buildReplenishment($data);
+
+                $info['line'] = $data;
+                $created++;
+                $page .= $this->load->view($this->page_dir.'/replenishment_summary',$info,TRUE);
+            }
+        }
+
+        if($created < $lines_counts){
+            $counts['created'] = $created;
+            $counts['lines'] = $lines_counts;
+            $page .= $this->load->view($this->page_dir.'/replenishment_error',$counts,TRUE);
         }
 
         $log = array(

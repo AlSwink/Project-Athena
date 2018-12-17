@@ -114,6 +114,7 @@
 			dataType: 'json',
 			data: { wave : wave },
 			beforeSend: function(){
+				$('.btn_submit ').addClass('d-none')
 				$('#replen_summary').html(loading);
 			},
 			success: function(res){

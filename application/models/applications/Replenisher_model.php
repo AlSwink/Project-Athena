@@ -38,7 +38,7 @@ class Replenisher_model extends XPO_Model {
 					WHERE wave = '".$this->wave."'
 					GROUP BY sku,pkg,tariff_desc
 					HAVING (SUM(plan_qty - sched_qty)) >0
-					ORDER BY sku,pkg ASC";
+					ORDER BY qty DESC";
 
 		$this->lines = $this->wms->query($query)->result_array();
 	}
