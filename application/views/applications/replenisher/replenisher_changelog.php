@@ -9,9 +9,10 @@
 		<h4>As of 12/17/2018 <small>v0.1.2</small></h4>
 		Changes made:
 		<ul>
+			<li><span class="badge bg-success">New</span> Added Alert for incomplete replenishment.</li>
+			<li><span class="badge bg-success">New</span> Added location number on preview and built log trasaction.</li>
 			<li><span class="badge bg-warning">Changed</span> Order wave lines by QTY.</li>
-			<li><span class="badge bg-warning">Changed</span> Added Alert for incomplete replenishment.</li>
-			
+			<li><span class="badge bg-warning">Changed</span> Excluded -T, CUSTM and #L from replenishment lines.</li>
 		</ul>
 	</div>
 	<div class="col-lg-12">

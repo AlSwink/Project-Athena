@@ -36,6 +36,8 @@ class Replenisher_model extends XPO_Model {
 					JOIN od_f ON om_f.ob_oid = od_f.ob_oid
 					JOIN pm_f ON pm_f.sku = od_f.sku AND pm_f.pkg = od_f.pkg
 					WHERE wave = '".$this->wave."'
+					AND od_f.pkg NOT LIKE '%-T'
+					AND od_f.pkg NOT MATCHES '[0-9]L'
 					GROUP BY sku,pkg,tariff_desc
 					HAVING (SUM(plan_qty - sched_qty)) >0
 					ORDER BY qty DESC";

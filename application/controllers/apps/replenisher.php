@@ -69,7 +69,7 @@ class Replenisher extends CI_Controller {
 
         $log = array(
                 'for' => $this->input->post('wave'),
-                'action' => 'Replenish Build Preview',
+                'action' => 'Replenish Build Preview '.$created.'/'.$lines_counts,
                 'reason' => 'System Log'
                 );
         
@@ -85,7 +85,7 @@ class Replenisher extends CI_Controller {
 
         $log = array(
                 'for' => $this->input->post('wave'),
-                'action' => 'Replenish Built',
+                'action' => 'Replenish Built '.$post['loc'].' locations',
                 'reason' => 'System Log'
                 );
         
