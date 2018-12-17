@@ -13,9 +13,6 @@
 			    	<a class="nav-link" data-toggle="tab" href="#replen_logs"><i class="fas fa-table"></i> Logs</a>
 			  	</li>
 			  	<li class="nav-item">
-			    	<a class="nav-link" data-toggle="tab" href="#replen_documentation"><i class="fas fa-book"></i>  Documentation</a>
-			  	</li>
-			  	<li class="nav-item">
 			    	<a class="nav-link" data-toggle="tab" href="#replen_changelog"><i class="fas fa-file-code"></i> Changelog</a>
 			  	</li>
 			</ul>
@@ -31,6 +28,9 @@
 			</div>
 			<div class="tab-pane " id="replen_logs" role="tabpanel">
 			  	<?php loadSubTemplate('replenisher_logs'); ?>
+			</div>
+			<div class="tab-pane " id="replen_changelog" role="tabpanel">
+			  	<?php loadSubTemplate('replenisher_changelog'); ?>
 			</div>
 		</div>
 	</div>
