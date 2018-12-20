@@ -22,8 +22,8 @@ class Replenisher_model extends XPO_Model {
 			$final_waves[] = array(
 								'wave' => $wave['wave'],
 								'built' => ($replenisher_info && $replenisher_info['replenished_on'] ? 1 : 0),
-								'user' => ($replenisher_info['replenished_on'] ? $replenisher_info['e_fname'].' '.$replenisher_info['e_lname'] : null),
-								'timestamp' => $replenisher_info['replenished_on']
+								'user' => ($replenisher_info ? $replenisher_info['e_fname'].' '.$replenisher_info['e_lname'] : null),
+								'timestamp' => ($replenisher_info ? $replenisher_info['replenished_on'] : null)
 							);
 		}
 
@@ -32,13 +32,16 @@ class Replenisher_model extends XPO_Model {
 
 	public function getWaveLines()
 	{
-		$query = "SELECT trim(od_f.sku) as sku,trim(od_f.pkg) as pkg,SUM(plan_qty - sched_qty) as qty,trim(tariff_desc) as tariff_desc FROM om_f
+		$waves = explode(',',$this->wave);
+		$new_waves = implode("','",$waves);
+		
+		$query = "SELECT wave,trim(od_f.sku) as sku,trim(od_f.pkg) as pkg,SUM(plan_qty - sched_qty) as qty,trim(tariff_desc) as tariff_desc FROM om_f
 					JOIN od_f ON om_f.ob_oid = od_f.ob_oid
 					JOIN pm_f ON pm_f.sku = od_f.sku AND pm_f.pkg = od_f.pkg
-					WHERE wave = '".$this->wave."'
+					WHERE wave IN ('".$new_waves."')
 					AND od_f.pkg NOT LIKE '%-T'
 					AND od_f.pkg NOT MATCHES '[0-9]L'
-					GROUP BY sku,pkg,tariff_desc
+					GROUP BY wave,sku,pkg,tariff_desc
 					HAVING (SUM(plan_qty - sched_qty)) >0
 					ORDER BY qty DESC";
 
@@ -115,8 +118,8 @@ class Replenisher_model extends XPO_Model {
 	public function getReplenisherInfo($wave)
 	{
 		$this->db->join('employees','employees.user_id = replenishment_master.replenished_by','LEFT');
-		$this->db->where('wave',$wave);
-		$replenisher_info = $this->db->get('replenishment_master')->row_array();
+		$this->db->where_in('wave',$wave);
+		$replenisher_info = $this->db->get('replenishment_master')->result_array();
 
 		return $replenisher_info;
 	}

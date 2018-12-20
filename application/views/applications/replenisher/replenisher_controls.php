@@ -5,11 +5,12 @@
 </div>
 <div class="row">
 	<div class="col-4">
-		<label>Enter a Wave to Replenish</label>
+		<label class="mb-0">Enter a Wave to Replenish use comma to separate multiple waves.</label><br>
+		<span class="text-muted"><i>Click rows to toggle on/off wave selection.</i></span>
 		<div class="input-group">
 			<input type="text" id="wave" class="form-control" placeholder="Wave goes here"/>
 			<div class="input-group-append">
-				<button type=button id="build" class="btn btn-secondary">Build Replenishment <i class="fas fa-magic"></i></button>
+				<button type=button id="build" class="btn btn-secondary">Build Template <i class="fas fa-magic"></i></button>
 			</div>
 		</div>
 		<div style="max-height: 70%; overflow: auto">
@@ -28,8 +29,8 @@
 				</thead>
 				<tbody>
 					<?php foreach($cresting_waves as $wave){ ?>
-					<tr class="<?= ($wave['built'] ? 'bg-success text-light' : null); ?>">
-						<td ><?= $wave['wave']; ?></td>
+					<tr class="wave_list <?= ($wave['built'] ? 'bg-success text-light' : null); ?>">
+						<td><?= $wave['wave']; ?></td>
 						<td class="text-center"><?= ($wave['built'] ? '<i class="fas fa-check"></i>' : '<i class="fas fa-times"></i>'); ?></td>
 						<td><?= $wave['user']; ?></td>
 						<td><?= humanDate($wave['timestamp']); ?></td>
@@ -38,15 +39,15 @@
 				</tbody>
 			</table>
 			<?php } ?>
+
 		</div>
 	</div>
 	<div class="col-8">
-		<h4 class="display-4">Replenishment Summary</h4>
+		<h5>Replenishment Summary</h5>
 		<hr>
 		<form id="replen_summary_form">
 			<input type="hidden" name="wave" value=""/>
 			<div id="replen_summary" class="mb-3"></div>
 		</form>
-		<button type="button" class="btn btn-success w-100 btn_submit d-none mb-5">Confirm & Update Locations <i class="fas fa-check"></i></button>
 	</div>
 </div>

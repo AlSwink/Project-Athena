@@ -77,22 +77,29 @@
 		var wave = $('#wave').val();
 
 		if(wave.length){
+			$('#wave').removeClass('is-invalid');
 			$.ajax({
 				type: 'POST',
 				url: urls.wave_check,
 				dataType: 'json',
 				data: { wave : wave },
 				success: function(res){
-					if(res){
-						$('.rb_wave').html(res.wave);
-						$('.rb_user').html(res.e_fname+' '+res.e_lname);
-						$('.rb_timestamp').html(res.replenished_on);
+					if(res.length){
+						rows = '<tr>';
+						$(res).each(function(k,v){
+							rows += '<td>'+v.wave+'</td><td>'+v.e_fname+'</td><td>'+v.e_lname+'</td><td>'+v.replenished_on+'</td>';
+						});
+						rows += '</tr>';
+						$('#rb_table').html(rows);
 						$('#confirm_rebuild').modal('show');
 					}else{
 						buildWave();
 					}
 				}
 			});
+		}else{
+			$('#wave').addClass('is-invalid');
+			$('#replen_summary').empty();
 		}
 	});
 
@@ -103,6 +110,30 @@
 
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 		$.fn.dataTable.tables({visible: true, api: true}).columns.adjust();
+	});
+
+	$('a[href="#replen_logs"]').click(function(){
+		logtable.ajax.reload();
+	});
+
+	$('.wave_list').click(function(){
+		waves = [];
+		curr_waves = $('#wave').val();
+		if(curr_waves){
+			waves = curr_waves.split(',');
+		}
+
+		wave = $(this).find('td:first').html();
+		exist = waves.indexOf(wave);
+		
+		if(exist < 0){
+			waves.push(wave);
+		}else{
+			waves.splice(exist,1);
+		}
+
+		new_waves = waves.join(',');
+		$('#wave').val(new_waves);
 	});
 
 	function buildWave(){
@@ -137,7 +168,7 @@
 		});
 	}
 
-	$('.btn_submit').click(function(){
+	$(document).on('click','.btn_submit',function(){
 		form_data = $('#replen_summary_form').serialize();
 		wave = $('input[name="wave"]').val();
 		$.ajax({

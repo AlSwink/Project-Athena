@@ -13,7 +13,8 @@ class Replenisher extends CI_Controller {
     public function check_wave()
     {
         $wave = $this->input->post('wave');
-        $check = $this->replenisher_model->getReplenisherInfo($wave);
+        $waves = explode(',',$wave);
+        $check = $this->replenisher_model->getReplenisherInfo($waves);
 
         $log = array(
                 'for' => $wave,
@@ -50,7 +51,8 @@ class Replenisher extends CI_Controller {
                             'pkg' => trim($line['pkg']),
                             'commodity' => trim($line['tariff_desc']),
                             'need' => number_format($line['qty']),
-                            'loc' => $new[$loc]
+                            'loc' => $new[$loc],
+                            'wave' => trim($line['wave'])
                         );
                 
                 $data['loc_info'] = $this->replenisher_model->buildReplenishment($data);
@@ -61,11 +63,23 @@ class Replenisher extends CI_Controller {
             }
         }
 
+        $counts['created'] = $created;
+        $counts['lines'] = $lines_counts;
+
         if($created < $lines_counts){
-            $counts['created'] = $created;
-            $counts['lines'] = $lines_counts;
-            $page .= $this->load->view($this->page_dir.'/replenishment_error',$counts,TRUE);
+            $counts['color'] = 'danger';
+            $counts['header'] = 'Attention there are not enough locations';
+            $counts['question'] = 'Are you sure you want to build anyway?';
+            $counts['insufficient'] = true;
+        }elseif($created == $lines_counts){
+            $counts['color'] = 'success';
+            $counts['header'] = 'Awesome';
+            $counts['question'] = NULL;
+            $counts['insufficient'] = false;
         }
+
+        $page .= $this->load->view($this->page_dir.'/replenishment_result',$counts,TRUE);
+        $page .= $this->load->view($this->page_dir.'/replenishment_confirm',$counts,TRUE);
 
         $log = array(
                 'for' => $this->input->post('wave'),
@@ -85,12 +99,11 @@ class Replenisher extends CI_Controller {
 
         $log = array(
                 'for' => $this->input->post('wave'),
-                'action' => 'Replenish Built '.$post['loc'].' locations',
+                'action' => 'Replenish Built '.count($post['loc']).' locations',
                 'reason' => 'System Log'
                 );
         
         $this->Logger_model->create('replenishment_logs',$log);
-
         echo json_encode($log);
     }
 }

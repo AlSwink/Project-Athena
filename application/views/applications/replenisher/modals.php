@@ -8,17 +8,17 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>This wave has already been built.<p>
+        <p>Some waves had already been built.<p>
         <table class="table table-sm table-bordered">
-          <tr>
-            <td>Wave</td><td class="rb_wave"></td>
-          </tr>
-          <tr>
-            <td>User</td><td class="rb_user"></td>
-          </tr>
-          <tr>
-            <td>Timestamp</td><td class="rb_timestamp"></td>
-          </tr>
+          <thead>
+            <tr>
+              <th>Wave</th>
+              <th>User</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody id="rb_table">
+          </tbody>
         </table>
         <p>Are you sure you want to rebuild?</p>
       </div>

@@ -6,13 +6,26 @@
 <hr>
 <div class="row" style="max-height: 80%; overflow: auto">
 	<div class="col-lg-12">
+		<h4>As of 12/19/2018 <small>v0.1.3</small></h4>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-success">New</span> Added Alert for complete replenishment.</li>
+			<li><span class="badge bg-success">New</span> Added Wave badge for each location template.</li>
+			<li><span class="badge bg-success">New</span> Added Multi-wave selection for building location template.</li>
+			<li><span class="badge bg-secondary">Changed</span> Converted static confirm button to dynamic logic button based on replenishment result.</li>
+			<li><span class="badge bg-secondary">Changed</span> Revised modal to show multiple waves that have already been built.</li>
+			<li><span class="badge bg-secondary">Changed</span> Build Replenishment button label to Build Template button label.</li>
+			<li><span class="badge bg-warning">Fixed</span> Built replenishment log showing array instead of total count of built replenishment.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
 		<h4>As of 12/17/2018 <small>v0.1.2</small></h4>
 		Changes made:
 		<ul>
 			<li><span class="badge bg-success">New</span> Added Alert for incomplete replenishment.</li>
 			<li><span class="badge bg-success">New</span> Added location number on preview and built log trasaction.</li>
-			<li><span class="badge bg-warning">Changed</span> Order wave lines by QTY.</li>
-			<li><span class="badge bg-warning">Changed</span> Excluded -T, CUSTM and #L from replenishment lines.</li>
+			<li><span class="badge bg-secondary">Changed</span> Order wave lines by QTY.</li>
+			<li><span class="badge bg-secondary">Changed</span> Excluded -T, CUSTM and #L from replenishment lines.</li>
 		</ul>
 	</div>
 	<div class="col-lg-12">
