@@ -1,5 +1,5 @@
 <div class="row">
-	<div class="col-2">
+	<div class="col-lg-2 col-xs-12">
 		<div class="card shadow">
 			<div class="card-body">
 				<form id="shift_setting_form">
@@ -12,12 +12,12 @@
 				<input type="hidden" name="shift_id" value="<?= (isset($data['shift_id']) ? $data['shift_id'] : null); ?>">
 				<input type="hidden" id="shift_type" name="shift_type" value="<?= $type; ?>">
 				<button type="button" class="btn btn-primary w-100 mt-2 save_shift">Save Settings <i class="fas fa-save"></i></button>
-				<button type="button" class="btn btn-info w-100 mt-2" disabled>Send Email <i class="fas fa-envelope"></i></button>
+				<button type="button" class="btn btn-info w-100 mt-2 send_email">Send Email <i class="fas fa-envelope"></i></button>
 				</form>
 			</div>
 		</div>
 	</div>
-	<div id="update_section" class="col-10 pl-0">
+	<div id="update_section" class="col-lg-10 col-xs-12 ">
 		<?= loadSubTemplate(['productivity_admin_cards','productivity_hour_lines']); ?>
 	</div>
 </div>

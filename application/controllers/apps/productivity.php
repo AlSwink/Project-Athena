@@ -165,4 +165,17 @@ class Productivity extends CI_Controller {
 
         echo $page;
     }
+
+    public function email($type=null)
+    {
+        $this->productivity_model->setProdType($type);
+        $info['header'] = $this->productivity_model->label;
+        $info['data'] = $this->productivity_model->getShiftData();
+        $email['to'] = 'paul.gillo@xpo.com';
+        $email['subject'] = $info['header'].' Hourly Productivity Report';
+        $email['message'] = $this->load->view($this->page_dir.'/productivity_email',$info,TRUE);
+        //$this->load->view($this->page_dir.'/productivity_email',$info);
+        $result = $this->Notifications_model->sendEmail($email);
+        echo json_encode($result);
+    }
 }

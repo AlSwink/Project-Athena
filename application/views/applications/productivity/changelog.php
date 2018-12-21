@@ -1,5 +1,25 @@
 <div class="row" style="max-height: 80%; overflow: auto">
 	<div class="col-lg-12">
+		<h3>As of 12/20/2018 <small>v0.8.7</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-success">Added</span> Site Display version.</li>
+			<li><span class="badge bg-success">Added</span> Email template for sending reports.</li>
+			<li><span class="badge bg-success">Added</span> Email sending functionality for Athena.</li>
+			<li><span class="badge bg-secondary">Changed</span> Enabled Send Email button.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
+		<h3>As of 12/19/2018 <small>v0.8.6</small></h3>
+		Changes made:
+		<ul>
+			<li><span class="badge bg-success">Added</span> MOD-A settings for switching to MOD-A dataset.</li>
+			<li><span class="badge bg-success">Added</span> MOD-B settings for switching to MOD-B dataset.</li>
+			<li><span class="badge bg-success">Added</span> MOD-A remaining update scheduler.</li>
+			<li><span class="badge bg-success">Added</span> MOD-B remaining update scheduler.</li>
+		</ul>
+	</div>
+	<div class="col-lg-12">
 		<h3>As of 12/07/2018 <small>v0.8.5</small></h3>
 		Changes made:
 		<ul>

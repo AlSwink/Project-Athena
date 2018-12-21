@@ -1,5 +1,5 @@
 <div class="row">
-	<div class="col-2 px-1">
+	<div class="col-lg-2 col-xs-12 px-1">
 		<?= loadSubtemplate('card',array(
 									'icon'=>'flag-checkered',
 									'label'=>'Processing Capacity',
@@ -9,7 +9,7 @@
 									'logic' => null
 								)); ?>
 	</div>
-	<div class="col-2 px-1">
+	<div class="col-lg-2 col-xs-12 px-1">
 		<?= loadSubtemplate('card',array(
 										'icon'=>'tachometer-alt text-success',
 										'label'=>'Target Picks Per Hour',
@@ -19,7 +19,7 @@
 										'logic' => null
 								)); ?>
 	</div>
-	<div class="col-2 px-1">
+	<div class="col-lg-2 col-xs-12 px-1">
 		<?= loadSubtemplate('card',array(
 										'icon'=>'arrows-alt-h',
 										'label'=>'Variance to Target',
@@ -29,7 +29,7 @@
 										'logic' => ($data['variance_to_target'] > 0 ? 'text-success' : 'text-danger')
 								)); ?>
 	</div>
-	<div class="col-2 px-1">
+	<div class="col-lg-2 col-xs-12 px-1">
 		<?= loadSubtemplate('card',array(
 										'icon'=>'tasks',
 										'label'=>'Efficiency',
@@ -39,7 +39,7 @@
 										'logic' => ($data['efficiency'] >= 100 ? 'text-success' : 'text-danger')
 								)); ?>
 	</div>
-	<div class="col-2 px-1">
+	<div class="col-lg-2 col-xs-12 px-1">
 		<?= loadSubtemplate('card',array(
 										'icon'=>'tachometer-alt text-info',
 										'label'=>'Actual PPH',
@@ -49,7 +49,7 @@
 										'logic' => ($data['actual_pph'] >= $data['target_pph'] ? 'text-success' : 'text-danger')
 								)); ?>
 	</div>
-	<div class="col-2 px-1">
+	<div class="col-lg-2 col-xs-12 px-1">
 		<?= loadSubtemplate('card',array(
 										'icon'=>'tachometer-alt text-muted',
 										'label'=>'Variance to PPH',
@@ -61,7 +61,7 @@
 	</div>
 </div>
 <div class="row mt-2 px-1">
-	<div class="col-2 px-1">
+	<div class="col-lg-2 col-xs-12 px-1">
 		<?= loadSubtemplate('card',array(
 									'icon'=>'calculator',
 									'label'=>'Simulated Capacity',
@@ -71,7 +71,7 @@
 									'logic' => null
 								)); ?>
 	</div>
-	<div class="col-3 px-1">
+	<div class="col-lg-3 col-xs-12 px-1">
 		<?= loadSubtemplate('card',array(
 									'icon'=>'circle',
 									'label'=>'Current Remaining',
@@ -81,7 +81,7 @@
 									'logic' => null
 								)); ?>
 	</div>
-	<div class="col-3 px-1">
+	<div class="col-lg-3 col-xs-12 px-1">
 		<?= loadSubtemplate('card',array(
 									'icon'=>'check-circle',
 									'label'=>'Current Completed',
@@ -91,7 +91,7 @@
 									'logic' => null
 								)); ?>
 	</div>
-	<div class="col-4 px-1">
+	<div class="col-lg-4 col-xs-12 px-1">
 		<?= loadSubtemplate('card',array(
 									'icon'=>'thumbs-up',
 									'label'=>'Summary',

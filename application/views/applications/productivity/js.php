@@ -33,6 +33,24 @@
 		});
 	});
 
+	$('.send_email').click(function(){
+		type = $('#shift_type').val();
+		url = "<?= site_url('productivity/email/'); ?>"+type;
+		$.ajax({
+			type: 'GET',
+			url: url,
+			beforeSend: function(){
+				startSubmit('.send_email');
+			},
+			success: function(res){
+				console.log(res);
+			},
+			complete: function(){
+				endSubmit('.send_email');
+			}
+		});
+	});
+
 	$('.set_break').click(function(){
 		val = $(this).attr('data-mins');
 		$('input.mins_worked:visible').val(val);

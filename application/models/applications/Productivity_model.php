@@ -332,7 +332,8 @@ class Productivity_model extends XPO_Model {
 						FROM cm_f
 						WHERE loc LIKE '$this->from_loc'
 						AND task = 'PICK'
-						AND cmd_stt = 'CLST'";
+						AND cmd_stt = 'CLST'
+						AND ob_type != 'CRS'";
         }
 
         $result = $this->wms->query($query)->row_array();
@@ -354,7 +355,8 @@ class Productivity_model extends XPO_Model {
 						FROM cm_f
 						WHERE loc LIKE '$this->from_loc'
 						AND task = 'PICK'
-						AND cmd_stt = 'CLST'";
+						AND cmd_stt = 'CLST'
+						AND ob_type != 'CRS'";
         }            
 
         $units = $this->wms->query($query)->result_array();
@@ -513,6 +515,7 @@ class Productivity_model extends XPO_Model {
 
 		if($this->from_loc){
 			$pick_query .= "AND from_loc LIKE '$this->from_loc'";
+			$pick_query .= "AND ob_type != 'CRS'";
 		}
 
 		return $this->wms->query($pick_query)->row_array();
