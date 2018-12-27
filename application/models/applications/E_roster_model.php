@@ -78,7 +78,7 @@ class e_roster_model extends XPO_Model {
 		return $this->xpo->get()->result();
 	}
 	
-	/* function get_missing_report(){
+	function get_missing_report(){
 		
 		$wpuser='mssql';
 		$wppassword='bruh@h@';
@@ -97,24 +97,32 @@ class e_roster_model extends XPO_Model {
 		$query = "SELECT CONCAT(FirstName,' ',LastName) as name FROM dbo.CardHolder where deleted = 0";
 		$result = odbc_exec($conn,$query);
 		while(odbc_fetch_row($result)){
-			$winpak[] = odbc_result($result,'name');
+			$winpak[] = trim(odbc_result($result,'name'));
 		}
 		
+		$eroster = [];
 		$this->xpo->select("CONCAT(emp_fname,' ',emp_lname) as eroster");
 		$this->xpo->from('tbl_employees');
-		$this->xpo->where('wms','');
+		
         $this->xpo->join('tbl_xpo_departments','tbl_employees.dept_id = tbl_xpo_departments.dept_id');
         $this->xpo->join('tbl_xpo_zones','tbl_employees.zone_id = tbl_xpo_zones.id');
         $this->xpo->join('tbl_xpo_shifts','tbl_employees.shift_id = tbl_xpo_shifts.id');
         $this->xpo->join('tbl_xpo_positions','tbl_employees.primary = tbl_xpo_positions.id');
         $this->xpo->join('tbl_xpo_agency','tbl_employees.temp_id = tbl_xpo_agency.temp_id');
-		$eroster = $this->xpo->get();
+		$result2 = $this->xpo->get()->result();
+		foreach($result2 as $row){
+			$eroster[] = trim($row->eroster);
+		}		
 		
+		$wms = [];
+		$result3 = $this->wms->query('SELECT opr_name FROM mlknt.us_f')->result();
+		foreach($result3 as $temp){
+			$wms[] = trim($temp->opr_name);
+		}
+		$final = [$wms,$eroster,$winpak];
 		
-		$wms = $this->wms->query('SELECT opr_name FROM mlknt.us_f');
-		
-		return $winpak;
-	} */
+		return $final;
+	}
 	
 	function get_birthdays(){
 		$query = 'emp_fname,emp_lname,date_format(emp_dob,'."'%m-%d'".')as dob';
@@ -262,7 +270,7 @@ class e_roster_model extends XPO_Model {
 		LastReaderHID,LastReaderDate,PrintStatus,SpareW1,SpareW2,SpareW3,SpareW4,SpareDW1,SpareDW2,SpareDW3,SpareDW4)
 		VALUES (1,'$dtimecre',0,0,0,0,".$data['sb'].",0,$hID,".$data['access_level'].",'$dtimecre', '1900-01-01',0,0,1,0,0,0,0,0,'1900-01-01',0,0,0,0,0,0,0,0,0)";
 		odbc_exec($conn,$card);
-        //$this->send_badge_email();
+        $this->send_badge_email();
 		//return $card;
 	}
 
@@ -332,10 +340,30 @@ class e_roster_model extends XPO_Model {
     function delete_employee($id){
         $er = $this->load->database('xpo',TRUE);
         $wms = $this->load->database('wms',TRUE);
+		$wpuser='mssql';
+		$wppassword='bruh@h@';
+		$database='WIN-PAK PRO';
+		$server='knx381094';
+		$conn = odbc_connect("Driver={SQL Server Native Client 10.0};Server=$server;Database=$database;", $wpuser, $wppassword);
+		if (!$conn){
+			if (phpversion() < '4.0'){
+				exit("Connection Failed: . $php_errormsg" );
+			} else {
+				exit("Connection Failed:" . odbc_errormsg() );
+			}
+		} 
 
         $emp = $this->get_employee($id);
+		$badge = $emp->sb;
         $emp = $emp->wms;
-
+		
+		$query = "SELECT CardHolder.RecordID FROM dbo.CardHolder, dbo.Card where CardHolder.deleted = 0 AND Card.CardNumber LIKE '%$badge%' AND Card.CardHolderID = dbo.CardHolder.RecordID";
+		$result = odbc_exec($conn,$query);
+		$cardHolder = odbc_fetch_object($result);
+		$cardHolder = $cardHolder->RecordID;
+		$update = "UPDATE dbo.CardHolder SET deleted = 1 WHERE RecordID = $cardHolder";
+		odbc_exec($conn,$update);
+		
         $er->where('id',$id);
         $er->delete('tbl_employees');
         $er->where('emp_id',$id);
@@ -464,15 +492,15 @@ class e_roster_model extends XPO_Model {
                         );
 
             $er->insert('tbl_badges',$insert);
-			
-			$query = "SELECT RecordID FROM dbo.CardHolder WHERE FirstName = '".$data['emp_fname']."' AND LastName = '".$data['emp_lname']."'";
+			$dtimecre = date('Y-m-d H:i:s');
+			$query = "SELECT CardHolder.RecordID FROM dbo.CardHolder, dbo.Card where CardHolder.deleted = 0 AND Card.CardNumber LIKE '%".$org->sb."%' AND Card.CardHolderID = dbo.CardHolder.RecordID";
+		//"SELECT RecordID FROM dbo.CardHolder WHERE FirstName = '".$data['emp_fname']."' AND LastName = '".$data['emp_lname']."'";
 			$holderID = odbc_exec($conn,$query);
-			$card = "INSERT into dbo.Card (AccountID,TimeStamp,UserID,NodeID,Deleted,UserPriority,CardNumber,Issue,CardHolderID,
-			AccessLevelID,ActivationDate,ExpirationDate,NoOfUsesLeft,CMDFileID,CardStatus,Display,BackDrop1ID,BackDrop2ID,ActionGroupID,
-			LastReaderHID,LastReaderDate,PrintStatus,SpareW1,SpareW2,SpareW3,SpareW4,SpareDW1,SpareDW2,SpareDW3,SpareDW4) 
-			VALUES (1,'$dtimecre',0,0,0,0,".$data['sb'].",0,$holderID,".$data['access_level'].",'$dtimecre', '1900-01-01',0,0,1,0,0,0,0,0,'1900-01-01',0,0,0,0,0,0,0,0,0)";
+			$hID = odbc_result($holderID,'RecordID');
+			
+			$card = "UPDATE dbo.Card SET TimeStamp = '$dtimecre', CardNumber = ".$data['sb'].", AccessLevelID = ".$data['access_level'].",ActivationDate = '$dtimecre' WHERE CardHolderID = $hID";
 			odbc_exec($conn,$card);
-            //$this->send_badge_email();
+            $this->send_badge_email();
         } 
     }
 
@@ -695,23 +723,25 @@ class e_roster_model extends XPO_Model {
     }
 
     function send_badge_email(){
-        require_once 'C:/Users/wdyount/vendor/swiftmailer/swiftmailer/lib/swift_required.php';
+		//do something about this, maybe better email program
+        require_once 'C:/xampp/htdocs/athena/swiftmailer/lib/swift_required.php';
+		
         $xpo = $this->load->database('xpo',TRUE);
         $result = $xpo->get_where('tbl_badges',array('status'=>'pending'));
         $data['data'] = $result->result();
-
+		$user = $xpo->get('email')->result();
         $body = $this->load->view('e-roster/email_badge_requests',$data,TRUE);
-
+		
         try{
-            $transport = \Swift_SmtpTransport::newInstance('outlook.office365.com', 587,'tls')->setUsername('William.Yount@xpo.com')->setPassword('Conway23');
+            $transport = \Swift_SmtpTransport::newInstance('outlook.office365.com', 587,'tls')->setUsername($user->email)->setPassword($user->password);
 
             $mailer = \Swift_Mailer::newInstance($transport);
             $message = \Swift_Message::newInstance('New Badge Requests is available');
 
-            $message->setReplyTo('SCKNTHelp@xpo.com');
+            $message->setReplyTo('Alan.Swink@xpo.com');
 
             $message->setFrom(array('William.Yount@xpo.com'=>'SCKNT-IT'));
-            $message->setTo('SCKNTHelp@xpo.com');
+            $message->setTo('Alan.Swink@xpo.com');
             $message->setBody($body, 'text/html');
             $result = $mailer->send($message);
         }catch(Swift_TransportException $e){

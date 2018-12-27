@@ -109,6 +109,7 @@ class Applications extends CI_Controller {
 		$eroster = array(
 						'employees' => $this->model->get_all(),
 						'wms_missing' => $this->model->get_not_in_wms(),
+						'test' => $this->model->get_missing_report(),
 						'positions' => $this->model->get('positions'),
 						'position_data' => $this->model->get_position_numbers(),
 						'agencies' => $this->model->get_temp_agencies(),

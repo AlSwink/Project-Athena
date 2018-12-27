@@ -1,5 +1,14 @@
 <div class="row mt-3" style="max-height: 80%; overflow: auto">
 	<div class="col-lg-12">
+		<h3>As of 12/26/2018<small>v0.0.8</small></h3>
+		Changes Made:
+		<ul>
+			<li><span class="badge bg-success">New</span>Employee birthday report fixed.</li>
+			<li><span class="badge bg-success">New</span>Deleting an employee now sets them to deleted in Winpak.</li>
+			
+		</ul>
+	</div>
+	<div class="col-lg-12">
 		<h3>As of 11/09/2018<small>v0.0.7</small></h3>
 		Changes made:
 		<ul>
@@ -22,8 +31,8 @@
 		Changes made:
 		<ul>
 			
-			<li><span class="badge bg-success">New</span>Adding settings(excluding staffing agencies) is now possible.</li>
-			<li><span class="badge bg-success">New</span>Deleting employees is now possible.</li>
+			<li>Adding settings(excluding staffing agencies) is now possible.</li>
+			<li>Deleting employees is now possible.</li>
 		</ul>
 	</div>
 	<div class="col-lg-12">
@@ -31,8 +40,8 @@
 		Changes made:
 		<ul>
 			<li>Editing employees is bugged and produces an error but still goes through.</li>
-			<li><span class="badge bg-success">New</span> Adding and Editing employees is now possible.</li>
-			<li><span class="badge bg-success">New</span> Added two reports to the reports tab.</li>
+			<li>Adding and Editing employees is now possible.</li>
+			<li>Added two reports to the reports tab.</li>
 		</ul>
 	</div>
 	<div class="col-lg-12">

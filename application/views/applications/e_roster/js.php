@@ -1,4 +1,5 @@
 <script>
+	
 	var last_emp = '';
 	
 	var position_data = <?php echo json_encode($position_data); ?>;
@@ -157,7 +158,7 @@
 		    }
 		});
 		
-	/* var bday_rep_table = $('#report_bday_table').DataTable({
+	var bday_rep_table = $('#report_bday_table').DataTable({
 		dom : '<"row"<"col"t>><"row"<"col"iBp>>',
 			info : true,
 			colReorder: true,
@@ -183,9 +184,9 @@
 		        		return row.emp_fname+' '+row.emp_lname;
 		        	}
 				},
-				{data: "emp_dob",
+				{data: "dob",
 					render: function(data,type,row,meta){
-						return row.emp_dob.slice(5,10);
+						return row.dob;
 					}				
 				}
 			],
@@ -197,7 +198,7 @@
 		    select: {
 		    	style : 'multi+shift'
 		    }
-		}); */
+		}); 
 
 	var pos_table = $('#pos_table').DataTable({
 		dom : '<"row"<"col"t>><"row"<"col"iBp>>',
@@ -474,17 +475,7 @@
 		
 	});
 	
-	$('#missing_test').click(function(){
-		$.ajax({
-				type : 'GET',
-				url  : '<?= site_url("api/getAllMissingReport"); ?>',
-				dataType : 'json',
-				asyc : false,
-				success : function(res){
-					console.log(res);
-				}
-		});
-	});
+	
 	
 	//functions
 	
