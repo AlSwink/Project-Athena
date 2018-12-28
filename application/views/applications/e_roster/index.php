@@ -36,10 +36,10 @@
 				<?php loadSubTemplate('eroster_reports');?>
 			</div>
 			<div class="tab-pane" id="eroster_logs" role="tabpanel">
-				<?php //loadSubTemplate('eroster_logs');?>
+				<?php loadSubTemplate('eroster_logs');?>
 			</div>
 			<div class="tab-pane" id="eroster_settings" role="tabpanel">
-				<?php //loadSubTemplate('eroster_settings');?>
+				<?php loadSubTemplate('eroster_settings');?>
 			</div>
 			<div class="tab-pane" id="eroster_changelog" role="tabpanel">
 				<?php loadSubTemplate('eroster_changelog');?>

@@ -14,7 +14,29 @@
 		  		<li class="nav-item">
 			    	<a href="#dept_report" class="nav-link list-group-item list-group-item-action list-group-item-secondary" data-toggle="pill">Employees per department</a>
 			    </li>
+				<li class="nav-item">
+					<a href="#birthday_report" class="nav-link list-group-item list-group-item-action list-group-item-secondary" data-toggle="pill">Employee Birthdays</a>
+				</li>
+				<li class="nav-item">
+					<a href="#test_report" class="nav-link list-group-item list-group-item-action list-group-item-secondary" data-toggle="pill">Test</a>
+				</li>
 			</ul>
+		</div>
+	</div>
+	<div class="col-lg-9 col-sm-12">
+		<div class="tab-content">
+			<div class="tab-pane" id="wms_report">
+				<?php loadSubTemplate('eroster_reports_wms');?>
+			</div>
+			<div class="tab-pane show active" id="dept_report">
+				<?php loadSubTemplate('eroster_reports_dept');?>
+			</div>
+			<div class="tab-pane" id="birthday_report">
+				<?php loadSubTemplate('eroster_reports_bday');?>
+			</div>
+			<div class="tab-pane" id="test_report">
+				<?php loadSubTemplate('eroster_reports_missing');?>
+			</div>
 		</div>
 	</div>
 </div>

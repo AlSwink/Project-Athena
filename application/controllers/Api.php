@@ -9,6 +9,7 @@ class Api extends CI_Controller {
         $this->load->model('applications/swi_model');
         $this->load->model('applications/Cycle_count_model');
         $this->load->model('applications/Random_audit_model');
+		$this->load->model('applications/E_roster_model');
     }
 
     public function get_app($app)
@@ -139,4 +140,40 @@ class Api extends CI_Controller {
         $data = $this->Random_audit_model->getLocationList();
         echo json_encode($data);
     }
+	
+	public function eroster_get_employees()
+	{
+		$employees = $this->E_roster_model->get_all();
+		echo json_encode($employees);
+	}
+	
+	public function getDeptReport()
+	{
+		$report = $this->E_roster_model->get_department_employees();
+		echo json_encode($report);
+	}
+	
+	public function getWmsMissingReport()
+	{
+		$report = $this->E_roster_model->get_not_in_wms();
+		echo json_encode($report);
+	}
+	
+	public function getSetting($setting)
+	{
+		$data = $this->E_roster_model->get($setting);
+		echo json_encode($data);
+	}
+	
+	public function getBirthdayReport()
+	{
+		$report = $this->E_roster_model->get_birthdays();
+		echo json_encode($report);
+	}
+	
+	/* public function getAllMissingReport()
+	{
+		$report = $this->E_roster_model->get_missing_report();
+		echo json_encode($report);
+	} */
 }

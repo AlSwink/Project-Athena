@@ -1,53 +1,186 @@
 <?php
 
 class e_roster_model extends XPO_Model {
-
+	
+	
+	
 	function get($setting){
         $er = $this->load->database('xpo',TRUE);
-        $field = $setting;
-        switch($setting){
-            case 'departments':
-                $field = 'dept_name';
-                break;
-            case 'agency':
-                $field = 'temp_name';
-                break;
-            default:
-                $field = rtrim($field,'s');
-                break;
-        }
-        
-        $er->order_by($field,'ASC');
-
         $results = $er->get('tbl_xpo_'.$setting);
         return $results->result();
     }
 
     function get_wms_usrgrp(){
-        $er = $this->load->database('wms',TRUE);
-        $er->order_by('user_grp','ASC');
-        $res = $er->get('ug_f');
-        return $res->result();
+		$query = "SELECT user_grp FROM mlknt.ug_f";
+		return $this->wms->query($query)->result();
     }
+	
+	function get_access_levels(){
+		$user='mssql';
+		$password='bruh@h@';
+		$database='WIN-PAK PRO';
+		$server='knx381094';
+		
+		$final = [];
+		
+		$conn = odbc_connect("Driver={SQL Server Native Client 10.0};Server=$server;Database=$database;", $user, $password);
+		if (!$conn){
+			if (phpversion() < '4.0'){
+				exit("Connection Failed: . $php_errormsg" );
+			} else {
+				exit("Connection Failed:" . odbc_errormsg() );
+			}
+		} 
+		$wp = $this->load->database('winpak');
+		$query = "SELECT RecordID, Name FROM dbo.AccessLevelPlus WHERE Deleted = 0";
+		$res = odbc_exec($conn,$query);
+		while($temp = odbc_fetch_object($res)){
+			$final[]=$temp;
+		}
+		return $final;
+		//return $wp->query($query)->results();
+		//return $wp;
+	}
 
     function get_temp_agencies(){
-		//$agencies = $this->xpo->query("SELECT tbl_employees.temp_id, count(*)  FROM xpo.tbl_employees, xpo.tbl_xpo_agency group by tbl_employees.temp_id")->result();
 		
+		$this->xpo->select('count(*) as cnt, tbl_xpo_agency.temp_name, tbl_employees.temp_id');
+        $this->xpo->from('tbl_employees');
+        $this->xpo->join('tbl_xpo_departments','tbl_employees.dept_id = tbl_xpo_departments.dept_id');
+        $this->xpo->join('tbl_xpo_zones','tbl_employees.zone_id = tbl_xpo_zones.id');
+        $this->xpo->join('tbl_xpo_shifts','tbl_employees.shift_id = tbl_xpo_shifts.id');
+        $this->xpo->join('tbl_xpo_positions','tbl_employees.primary = tbl_xpo_positions.id');
+        $this->xpo->join('tbl_xpo_agency','tbl_employees.temp_id = tbl_xpo_agency.temp_id');
+        $this->xpo->group_by('tbl_xpo_agency.temp_name');
+		return $this->xpo->get()->result();
+		
+	}
+	
+	function get_department_employees(){
+		$this->xpo->select('count(*) as cnt, dept_name');
+		$this->xpo->from('tbl_employees');
+		$this->xpo->join('tbl_xpo_departments','tbl_employees.dept_id = tbl_xpo_departments.dept_id');
+		$this->xpo->group_by('dept_name');
+		return $this->xpo->get()->result();
+	}
+	
+	function get_not_in_wms(){
+		$this->xpo = $this->load->database('xpo',TRUE);
+        $this->xpo->select('emp_email,park_tag,tbl_employees.id,emp_id,kronos_id, emp_fname,emp_lname,shift,tbl_xpo_agency.temp_name,tbl_xpo_departments.dept_name,tbl_xpo_zones.zone,tbl_xpo_positions.position,supervisor');
+        $this->xpo->from('tbl_employees');
+		$this->xpo->where('wms','');
+        $this->xpo->join('tbl_xpo_departments','tbl_employees.dept_id = tbl_xpo_departments.dept_id');
+        $this->xpo->join('tbl_xpo_zones','tbl_employees.zone_id = tbl_xpo_zones.id');
+        $this->xpo->join('tbl_xpo_shifts','tbl_employees.shift_id = tbl_xpo_shifts.id');
+        $this->xpo->join('tbl_xpo_positions','tbl_employees.primary = tbl_xpo_positions.id');
+        $this->xpo->join('tbl_xpo_agency','tbl_employees.temp_id = tbl_xpo_agency.temp_id');
+        $this->xpo->order_by('emp_fname','ASC');
+		return $this->xpo->get()->result();
+	}
+	
+	function get_missing_report(){
+		
+		$wpuser='mssql';
+		$wppassword='bruh@h@';
+		$database='WIN-PAK PRO';
+		$server='knx381094';
+		$conn = odbc_connect("Driver={SQL Server Native Client 10.0};Server=$server;Database=$database;", $wpuser, $wppassword);
+		if (!$conn){
+			if (phpversion() < '4.0'){
+				exit("Connection Failed: . $php_errormsg" );
+			} else {
+				exit("Connection Failed:" . odbc_errormsg() );
+			}
+		} 
+		
+		$winpak = [];
+		$query = "SELECT CONCAT(FirstName,' ',LastName) as name FROM dbo.CardHolder where deleted = 0";
+		$result = odbc_exec($conn,$query);
+		while(odbc_fetch_row($result)){
+			$winpak[] = trim(odbc_result($result,'name'));
+		}
+		
+		$eroster = [];
+		$this->xpo->select("CONCAT(emp_fname,' ',emp_lname) as eroster");
+		$this->xpo->from('tbl_employees');
+		
+        $this->xpo->join('tbl_xpo_departments','tbl_employees.dept_id = tbl_xpo_departments.dept_id');
+        $this->xpo->join('tbl_xpo_zones','tbl_employees.zone_id = tbl_xpo_zones.id');
+        $this->xpo->join('tbl_xpo_shifts','tbl_employees.shift_id = tbl_xpo_shifts.id');
+        $this->xpo->join('tbl_xpo_positions','tbl_employees.primary = tbl_xpo_positions.id');
+        $this->xpo->join('tbl_xpo_agency','tbl_employees.temp_id = tbl_xpo_agency.temp_id');
+		$result2 = $this->xpo->get()->result();
+		foreach($result2 as $row){
+			$eroster[] = trim($row->eroster);
+		}		
+		
+		$wms = [];
+		$result3 = $this->wms->query('SELECT opr_name FROM mlknt.us_f')->result();
+		foreach($result3 as $temp){
+			$wms[] = trim($temp->opr_name);
+		}
+		$final = [$wms,$eroster,$winpak];
+		
+		return $final;
+	}
+	
+	function get_birthdays(){
+		$query = 'emp_fname,emp_lname,date_format(emp_dob,'."'%m-%d'".')as dob';
+		$this->xpo->select($query);
+		$this->xpo->from('tbl_employees');
+		return $this->xpo->get()->result();
+	}
+	function get_birthdays_by_month(){
+		$month = new DateTime('first day of this month');
+		
+		$month = $month->format('m');
+		$day_array = array();
+		$final = array();
+		
+		$query = 'emp_fname,emp_lname,date_format(emp_dob,'."'%m-%d'".')as dob';
+		$this->xpo->select($query);
+		$this->xpo->from('tbl_employees');
+		$this->xpo->where("MONTH(emp_dob) = '$month'");
+		$this->xpo->order_by('dob');
+		$result = $this->xpo->get()->result();
+		foreach($result as $row){
+			if(!array_search($row->dob,$day_array)){
+				$day_array[] = $row->dob;
+				$final[$row->dob] = array("$row->emp_fname $row->emp_lname");
+			} else {
+				$final[$row->dob][] = "$row->emp_fname $row->emp_lname";
+			}
+		}
+		return $final;
 	}
 	
 	function insert_employee($data,$photo){
 		
-		$user = $this->session->userdata('user_id');
-		$ip = $this->input->ip_addres();
+		$wpuser='mssql';
+		$wppassword='bruh@h@';
+		$database='WIN-PAK PRO';
+		$server='knx381094';
+		$conn = odbc_connect("Driver={SQL Server Native Client 10.0};Server=$server;Database=$database;", $wpuser, $wppassword);
+		if (!$conn){
+			if (phpversion() < '4.0'){
+				exit("Connection Failed: . $php_errormsg" );
+			} else {
+				exit("Connection Failed:" . odbc_errormsg() );
+			}
+		} 
 		
-		$wms_user = strtoupper(substr($data['emp_fname'],0,1).substr($data['emp_lname'],0,1));
+		
+		$user = $this->session->userdata('user_id');
+		$ip = $this->input->ip_address();
+		
+		$wms_user = ($data['wms'] ? $data['wms'] : strtoupper(substr($data['emp_fname'],0,1).substr($data['emp_lname'],0,1)));
 		
 		$query = "SELECT opr
 				  FROM us_f
 				  WHERE opr LIKE '$wms_user%'
 				  ORDER BY LENGTH(opr),opr";
 				  
-		$check = $wms->query($query);
+		$check = $this->wms->query($query);
 		$matches = $check->result();
 		
 		$last = 0;
@@ -68,46 +201,19 @@ class e_roster_model extends XPO_Model {
             $inc = (!$last ? 1 : $last + 1);
             $wms_user = $wms_user.$inc;
         }
-
+		
         $wms_pass = substr($data['wms_usrgrp'],0,4).$data['ssn'];
-
+		
         $wms_pass_enc = file_get_contents('http://10.89.98.122/users/pw_encrypt.php?password='.$wms_pass);
         $wms_pass_val = str_replace('"','',$wms_pass_enc);
         $wms_pass_val = str_replace("\\\\", "\\",$wms_pass_val);
-        
-        $insert_wms = array(
-                        'opr' => $wms_user,
-                        'opr_name' => ucwords($data['emp_fname']).' '.ucwords($data['emp_lname']),
-                        'password' => $wms_pass_val,
-                        'rfsc1' => 'YYYYYYYYYYYYYYYYYYYY',
-                        'rfsc2' => 'YYYYYYYYYYYYYYYYYYYY',
-                        'rfsc3' => 'YYYYYYYYYYYYYYYYYYYY',
-                        'rfsc4' => 'YYYYYYYYYYYYYYYYYYYY',
-                        'rfsc5' => 'YYYYYYYYYYYYYYYYYYYY',
-                        'rfsc6' => 'YYYYYYYYYYYYYYYYYYYY',
-                        'rfsc7' => 'YYYYYYYYYYYYYYYYYYYY',
-                        'rfsc8' => 'YYYYYYYYYYYYYYYYYYYY',
-                        'rfsc9' => 'NNNNNNNNNNNNNNNNNNNN',
-                        'rfsc10' => 'NNNNNNNNNNNNNNNNNNNN',
-                        'rfsc11' => 'YYYYYYYYYYYYYYYYYYYY',
-                        'rfsc12' => 'YYYYYYYYYYYYYYYYYYYY',
-                        'language' => 'English',
-                        'user_grp' => $data['wms_usrgrp'],
-                        'def_eq_type' => 'ALL',
-                        'def_station' => 'BASE',
-                        'modcnt' => 0,
-                        'usrmod' => 'WEB',
-                        'dtimecre' => date('Y-m-d H:i:s'),
-                        'dtimemod' => date('Y-m-d H:i:s'),
-                        'allow_matl_not_req' => 'N',
-                        'rfsc3a' => 'YYYYYYYYYYYYYYYYYYYY',
-                        'locked_out' => 'N',
-                        'num_bad_attempts' => 0,
-                        'dt_pw_changed' => date('Y-m-d H:i:s')
-                        );
-        
-        $query = $wms->set($insert_wms)->get_compiled_insert('us_f');
-        $wms->query($query);
+        $opr_name = ucwords($data['emp_fname']).' '.ucwords($data['emp_lname']);
+		$user_grp = $data['wms_usrgrp'];
+		$dtimecre = date('Y-m-d H:i:s');
+		$dtimemod = date('Y-m-d H:i:s');
+		$dt_pw_changed = date('Y-m-d H:i:s');
+        $query = "INSERT INTO mlknt.us_f (opr,opr_name,password,rfsc1,rfsc2,rfsc3,rfsc4,rfsc5,rfsc6,rfsc7,rfsc8,rfsc9,rfsc10,rfsc11,rfsc12,language,user_grp,def_eq_type,def_station,modcnt,usrmod,dtimecre,dtimemod,allow_matl_not_req, rfsc3a,locked_out,num_bad_attempts,dt_pw_changed) VALUES ('$wms_user', '$opr_name','$wms_pass_val','YYYYYYYYYYYYYYYYYYYY','YYYYYYYYYYYYYYYYYYYY','YYYYYYYYYYYYYYYYYYYY','YYYYYYYYYYYYYYYYYYYY','YYYYYYYYYYYYYYYYYYYY','YYYYYYYYYYYYYYYYYYYY','YYYYYYYYYYYYYYYYYYYY','YYYYYYYYYYYYYYYYYYYY','NNNNNNNNNNNNNNNNNNNN','NNNNNNNNNNNNNNNNNNNN','YYYYYYYYYYYYYYYYYYYY','YYYYYYYYYYYYYYYYYYYY','English','$user_grp','ALL','BASE',0,'WEB','$dtimecre','$dtimemod','N','YYYYYYYYYYYYYYYYYYYY','N',0,'$dt_pw_changed')";
+        $this->wms->query($query);
 
         $insert = array(
                 'emp_id' => trim($data['emp_id']),
@@ -132,14 +238,14 @@ class e_roster_model extends XPO_Model {
                 'ssn' => $data['ssn'],
                 'wms_usrgrp' => $data['wms_usrgrp']
             );
-        $er->insert('tbl_employees',$insert);
-        $ikey = $er->insert_id();
-
+        $this->xpo->insert('tbl_employees',$insert);
+        $ikey = $this->xpo->insert_id();
+		
         $insert_module = array(
             'emp_id' => $ikey
             );
-        $er->insert('tbl_employee_modules',$insert_module);
-
+        $this->xpo->insert('tbl_employee_modules',$insert_module);
+		
         $insert_badge = array(
                             'employee_name' => ucwords($data['emp_fname']).' '.ucwords($data['emp_lname']),
                             'wms_user' => $wms_user,
@@ -152,9 +258,20 @@ class e_roster_model extends XPO_Model {
                             'type' => ($data['sb'] ? 'WMS and Door Badge' : 'WMS Only'),
                             'ip' => $ip
                             );
-        $er->insert('tbl_badges',$insert_badge);
-
-        //$this->send_badge_email();
+        $this->xpo->insert('tbl_badges',$insert_badge);
+		$cardholder = "INSERT into dbo.CardHolder (AccountID,TimeStamp,UserID,NodeID,Deleted,UserPriority,FirstName,LastName,
+		SpareW1,SpareW2,SpareW3,SpareW4,SpareDW1,SpareDW2,SpareDW3,SpareDW4) 
+		OUTPUT Inserted.RecordID
+		VALUES (1,'$dtimecre',0,0,0,0,'".$data['emp_fname']."','".$data['emp_lname']."',0,0,0,0,0,0,0,0)";
+		$holderID = odbc_exec($conn,$cardholder);
+		$hID = odbc_result($holderID,'RecordID');
+		$card = "INSERT into dbo.Card (AccountID,TimeStamp,UserID,NodeID,Deleted,UserPriority,CardNumber,Issue,CardHolderID,
+		AccessLevelID,ActivationDate,ExpirationDate,NoOfUsesLeft,CMDFileID,CardStatus,Display,BackDrop1ID,BackDrop2ID,ActionGroupID,
+		LastReaderHID,LastReaderDate,PrintStatus,SpareW1,SpareW2,SpareW3,SpareW4,SpareDW1,SpareDW2,SpareDW3,SpareDW4)
+		VALUES (1,'$dtimecre',0,0,0,0,".$data['sb'].",0,$hID,".$data['access_level'].",'$dtimecre', '1900-01-01',0,0,1,0,0,0,0,0,'1900-01-01',0,0,0,0,0,0,0,0,0)";
+		odbc_exec($conn,$card);
+        $this->send_badge_email();
+		//return $card;
 	}
 
 	function check($val){
@@ -202,6 +319,10 @@ class e_roster_model extends XPO_Model {
         return $results->result();
     }
 	
+	function get_employee_wms($wms){
+		return $this->wms->get_where('us_f',array('opr'=>$wms))->result();
+	}
+	
 	function get_employee($id){
         $er = $this->load->database('xpo',TRUE);
         $er->select('emp_email,wms_usrgrp,ssn,audit,park_tag,tbl_employees.id,emp_id,emp_fname,emp_lname,emp_dob,wms,sb,tbl_employees.temp_id,tbl_employees.temp_start,tbl_employees.dept_id,tbl_employees.zone_id,tbl_employees.shift_id,primary,secondary,supervisor,photo,guser_id,audit_type');
@@ -219,18 +340,37 @@ class e_roster_model extends XPO_Model {
     function delete_employee($id){
         $er = $this->load->database('xpo',TRUE);
         $wms = $this->load->database('wms',TRUE);
+		$wpuser='mssql';
+		$wppassword='bruh@h@';
+		$database='WIN-PAK PRO';
+		$server='knx381094';
+		$conn = odbc_connect("Driver={SQL Server Native Client 10.0};Server=$server;Database=$database;", $wpuser, $wppassword);
+		if (!$conn){
+			if (phpversion() < '4.0'){
+				exit("Connection Failed: . $php_errormsg" );
+			} else {
+				exit("Connection Failed:" . odbc_errormsg() );
+			}
+		} 
 
         $emp = $this->get_employee($id);
+		$badge = $emp->sb;
         $emp = $emp->wms;
-
+		
+		$query = "SELECT CardHolder.RecordID FROM dbo.CardHolder, dbo.Card where CardHolder.deleted = 0 AND Card.CardNumber LIKE '%$badge%' AND Card.CardHolderID = dbo.CardHolder.RecordID";
+		$result = odbc_exec($conn,$query);
+		$cardHolder = odbc_fetch_object($result);
+		$cardHolder = $cardHolder->RecordID;
+		$update = "UPDATE dbo.CardHolder SET deleted = 1 WHERE RecordID = $cardHolder";
+		odbc_exec($conn,$update);
+		
         $er->where('id',$id);
         $er->delete('tbl_employees');
         $er->where('emp_id',$id);
         $er->delete('tbl_employee_training');
 
         if($emp != '' && $emp != NULL){
-            $wms->where('opr',$emp);
-            $wms->delete('us_f');
+			$wms->query("DELETE FROM us_f WHERE opr = '$emp'");
         }
     }
 
@@ -239,11 +379,23 @@ class e_roster_model extends XPO_Model {
         $ins = array();
         $er = $this->load->database('xpo',TRUE);
         $wms = $this->load->database('wms',TRUE);
-        $user = $this->session->userdata('user_fullname');
+		$wpuser='mssql';
+		$wppassword='bruh@h@';
+		$database='WIN-PAK PRO';
+		$server='knx381094';
+		$conn = odbc_connect("Driver={SQL Server Native Client 10.0};Server=$server;Database=$database;", $wpuser, $wppassword);
+		if (!$conn){
+			if (phpversion() < '4.0'){
+				exit("Connection Failed: . $php_errormsg" );
+			} else {
+				exit("Connection Failed:" . odbc_errormsg() );
+			}
+		} 
+		$user = $this->session->userdata('user_id');
 
-        $org = $er->get_where('tbl_employees',array('id'=>$data['id']));
+        $org = $er->get_where('tbl_employees',array('id'=>$data['tbl_id']));
         $org = $org->row();
-		
+			
 		/* $er->select('user_id');
 		$er->where('username',strtoupper(trim($data['wms'])));
 		$guser_id = $er->get('tbl_users');
@@ -251,7 +403,7 @@ class e_roster_model extends XPO_Model {
 			$guser_id = $guser_id->row()->username;
 		} else {
 			$guser_id = NULL;
-		}	  */
+		}	*/ 
 		
         $update = array(
             'emp_id' => trim($data['emp_id']),
@@ -277,10 +429,10 @@ class e_roster_model extends XPO_Model {
             'wms_usrgrp' => $data['wms_usrgrp'],
             'audit_type' => $data['audit_type']
         );
-		
-        $er->where('id',$data['id']);
-        $er->update('tbl_employees',$update);
 
+        $er->where('id',$data['tbl_id']);		
+        $er->update('tbl_employees',$update);
+	
         if($org->wms_usrgrp != $data['wms_usrgrp']){
             if($org->wms_usrgrp){
                 $change++;
@@ -290,11 +442,9 @@ class e_roster_model extends XPO_Model {
                 $pass = $data['wms_usrgrp'].$data['ssn'];
                 $wms_pass_enc = file_get_contents('http://10.89.98.122/users/pw_encrypt.php?password='.$pass);
                 $wms_pass_val = str_replace('"','',$wms_pass_enc);
-                $wms->set('user_grp',$data['wms_usrgrp']);
-                $wms->set('password',$wms_pass_val);
-                $wms->where('opr',strtoupper($org->wms));
-                $wms->update('us_f');
-            }
+				$query = "UPDATE mlknt.us_f SET user_grp = '".$data['wms_usrgrp']."', password = '$wms_pass_val' WHERE opr = '".strtoupper($org->wms)."'";
+				$wms->query($query);
+			}
         }
 
         if($org->sb != $data['sb'] && $data['sb']){
@@ -311,9 +461,8 @@ class e_roster_model extends XPO_Model {
                 $pass = $data['wms_usrgrp'].$data['ssn'];
                 $wms_pass_enc = file_get_contents('http://10.89.98.122/users/pw_encrypt.php?password='.$pass);
                 $wms_pass_val = str_replace('"','',$wms_pass_enc);
-                $wms->set('password',$wms_pass_val);
-                $wms->where('opr',strtoupper($org->wms));
-                $wms->update('us_f');
+                $query = "UPDATE mlknt.us_f SET password = '$wms_pass_val' WHERE opr = '".strtoupper($org->wms)."'";
+				$wms->query($query);
             }
         }
 
@@ -321,9 +470,7 @@ class e_roster_model extends XPO_Model {
             $change++;
             $ins[] = 'WMS Badge';
             if($data['wms']){
-                $wms->set('opr',$data['wms']);
-                $wms->where('opr',$org->wms);
-                $wms->update('us_f');
+                $wms->query("UPDATE mlknt.us_f SET opr = '".$data['wms']."' where opr = '$org->wms'");
             }
         }
 
@@ -345,35 +492,27 @@ class e_roster_model extends XPO_Model {
                         );
 
             $er->insert('tbl_badges',$insert);
-
+			$dtimecre = date('Y-m-d H:i:s');
+			$query = "SELECT CardHolder.RecordID FROM dbo.CardHolder, dbo.Card where CardHolder.deleted = 0 AND Card.CardNumber LIKE '%".$org->sb."%' AND Card.CardHolderID = dbo.CardHolder.RecordID";
+		//"SELECT RecordID FROM dbo.CardHolder WHERE FirstName = '".$data['emp_fname']."' AND LastName = '".$data['emp_lname']."'";
+			$holderID = odbc_exec($conn,$query);
+			$hID = odbc_result($holderID,'RecordID');
+			
+			$card = "UPDATE dbo.Card SET TimeStamp = '$dtimecre', CardNumber = ".$data['sb'].", AccessLevelID = ".$data['access_level'].",ActivationDate = '$dtimecre' WHERE CardHolderID = $hID";
+			odbc_exec($conn,$card);
             $this->send_badge_email();
-        }
+        } 
     }
 
-    /*function get_my_employees(){
-        $er = $this->load->database('xpo',TRUE);
-        $er->select('tbl_employees.id,emp_id,kronos_id,emp_fname,emp_lname,shift,tbl_xpo_agency.temp_name,tbl_xpo_departments.dept_name,tbl_xpo_zones.zone,tbl_xpo_positions.position,supervisor');
-        $er->from('tbl_employees');
-        $er->join('tbl_xpo_departments','tbl_employees.dept_id = tbl_xpo_departments.dept_id');
-        $er->join('tbl_xpo_zones','tbl_employees.zone_id = tbl_xpo_zones.id');
-        $er->join('tbl_xpo_shifts','tbl_employees.shift_id = tbl_xpo_shifts.id');
-        $er->join('tbl_xpo_positions','tbl_employees.primary = tbl_xpo_positions.id');
-        $er->join('tbl_xpo_agency','tbl_employees.temp_id = tbl_xpo_agency.temp_id');
-        $er->order_by('emp_fname','ASC');
+    function get_supervisors(){
+		$pos_id = $this->xpo->get_where('tbl_xpo_positions',array('position'=>'Supervisor'))->row();
+			
+		$this->xpo->select('emp_fname, emp_lname');
+		$this->xpo->where('primary',$pos_id->id);
+		return $this->xpo->get('tbl_employees')->result();
+	}
 
-        switch($this->session->userdata('user_info')->user_group){
-            case 'TEMPRAND':
-                $er->where('tbl_xpo_agency.temp_name','Randstad USA');
-                break;
-            case 'TEMPPARA':
-                $er->where('tbl_xpo_agency.temp_name','Paramount Staffing');
-                break;
-        }
-        $results = $er->get();
-        return $results->result();
-    }*/
-
-	function get_positions(){
+	function get_position_numbers(){
 		$employees = $this->get_all();
 		$tabs = array();
 		$tabs_count = array();
@@ -432,10 +571,13 @@ class e_roster_model extends XPO_Model {
             case 'zones':
                 $field = 'zone';
                 break;
+			case 'shifts':
+				$field = 'shift';
+				break;
         }
         
         $insert = array(
-            $field => trim($data['name'])
+            $field => trim($data['setting'])
             );
 
         $er->insert('tbl_xpo_'.$data['type'],$insert);
@@ -447,25 +589,7 @@ class e_roster_model extends XPO_Model {
         return $result->num_rows();
     }
 
-    function get_needs_training($mod,$exp){
-        $er = $this->load->database('xpo',TRUE);
-        $er->select('tbl_employees.id,emp_fname,emp_lname');
-        $er->select($mod);
-        $er->where($mod.' < DATE_SUB(NOW(),INTERVAL '.$exp.' MONTH)');
-        $er->from('tbl_employees');
-        $er->join('tbl_employee_modules','tbl_employees.id = tbl_employee_modules.emp_id');
-        $results = $er->get();
-        return $results->result();
-    }
-
-    function refresh_training_date($mod,$exp){
-        $er = $this->load->database('xpo',TRUE);
-        $er->set($mod,null);
-        $er->where($mod.'< DATE_SUB(NOW(),INTERVAL '.$exp.' YEAR)');
-        $results = $er->update('tbl_employee_modules');
-    }
-
-    function edit_multi($data){
+     function edit_multi($data){
         $er = $this->load->database('xpo',TRUE);
         $res = array();
         foreach($data as $row){
@@ -599,23 +723,25 @@ class e_roster_model extends XPO_Model {
     }
 
     function send_badge_email(){
-        require_once 'C:/Users/wdyount/vendor/swiftmailer/swiftmailer/lib/swift_required.php';
+		//do something about this, maybe better email program
+        require_once 'C:/xampp/htdocs/athena/swiftmailer/lib/swift_required.php';
+		
         $xpo = $this->load->database('xpo',TRUE);
         $result = $xpo->get_where('tbl_badges',array('status'=>'pending'));
         $data['data'] = $result->result();
-
+		$user = $xpo->get('email')->result();
         $body = $this->load->view('e-roster/email_badge_requests',$data,TRUE);
-
+		
         try{
-            $transport = \Swift_SmtpTransport::newInstance('outlook.office365.com', 587,'tls')->setUsername('William.Yount@xpo.com')->setPassword('Conway23');
+            $transport = \Swift_SmtpTransport::newInstance('outlook.office365.com', 587,'tls')->setUsername($user->email)->setPassword($user->password);
 
             $mailer = \Swift_Mailer::newInstance($transport);
             $message = \Swift_Message::newInstance('New Badge Requests is available');
 
-            $message->setReplyTo('SCKNTHelp@xpo.com');
+            $message->setReplyTo('Alan.Swink@xpo.com');
 
             $message->setFrom(array('William.Yount@xpo.com'=>'SCKNT-IT'));
-            $message->setTo('SCKNTHelp@xpo.com');
+            $message->setTo('Alan.Swink@xpo.com');
             $message->setBody($body, 'text/html');
             $result = $mailer->send($message);
         }catch(Swift_TransportException $e){
