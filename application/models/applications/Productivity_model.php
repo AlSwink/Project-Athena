@@ -188,8 +188,9 @@ class Productivity_model extends XPO_Model {
 			$query .= " AND ob_type = '$this->ob_type'";
 		}
 
-		if($this->from_loc){
+		if($this->type == 'moda' || $this->type == 'modb'){
 			$query .= " AND from_loc LIKE '$this->from_loc'";
+			$query .= " AND ob_type != 'CRS'";
 		}
 
 		$query .= $this->getQuery($type);
@@ -218,6 +219,11 @@ class Productivity_model extends XPO_Model {
 					);
 
 		return $final;
+	}
+
+	public function getHistory($date,$shift)
+	{
+
 	}
 
 	public function getShiftData($save=true){
@@ -334,6 +340,14 @@ class Productivity_model extends XPO_Model {
 						AND task = 'PICK'
 						AND cmd_stt = 'CLST'
 						AND ob_type != 'CRS'";
+        }elseif($this->type == 'outside'){
+        	$query = "SELECT COUNT(*) AS picks
+						FROM cm_f
+						WHERE task = 'PICK'
+						AND cmd_stt = 'CLST'
+						AND ob_type != 'CRS'
+						AND loc NOT MATCHES 'O[18-22]*-*'
+						AND loc NOT MATCHES '[A-B]*-*'";
         }
 
         $result = $this->wms->query($query)->row_array();
@@ -357,7 +371,15 @@ class Productivity_model extends XPO_Model {
 						AND task = 'PICK'
 						AND cmd_stt = 'CLST'
 						AND ob_type != 'CRS'";
-        }            
+        }elseif($this->type == 'outside'){
+        	$query = "SELECT SUM(qty) AS units
+						FROM cm_f
+						WHERE task = 'PICK'
+						AND cmd_stt = 'CLST'
+						AND ob_type != 'CRS'
+						AND loc NOT MATCHES 'O[18-22]*-*'
+						AND loc NOT MATCHES '[A-B]*-*'";
+        }
 
         $units = $this->wms->query($query)->result_array();
         $units = array_column($units,'units');
@@ -385,7 +407,7 @@ class Productivity_model extends XPO_Model {
     public function save_hourly($data)
     {
     	$master = array(
-    				'date' => date('Y-m-d'),
+    				'date' => humanDate($this->shift['start'],'Y-m-d'),
     				'type' => $this->type,
     				'shift' => $data['shift_title'],
     				'sched_hrs' => $data['sched_hrs'],
@@ -464,14 +486,21 @@ class Productivity_model extends XPO_Model {
 		$query = "SELECT DISTINCT(it_f.opr) as opr,us_f.opr_name as picker
 					FROM it_f 
 					JOIN us_f ON us_f.opr = it_f.opr
-					WHERE transact IN('OPK','OPKP')";
+					WHERE transact IN('OPK','OPKP')
+					AND us_f.user_grp != 'PICKEXEMPT'";
 
 		if($this->ob_type){
 			$query .= "AND ob_type = '$this->ob_type'";
 		}
 
 		if($this->from_loc){
-			$query .= "AND from_loc LIKE '$this->from_loc'";
+			if(in_array($this->type,array('moda','modb'))){
+				$query .= "AND from_loc LIKE '$this->from_loc'";
+			}else{
+				$query .= "AND from_loc NOT MATCHES 'O[18-22]*-*'";
+				$query .= "AND from_loc NOT MATCHES '[A,B]*-*'";
+			}
+			$query .= "AND ob_type != 'CRS'";
 		}
 
 		if($from){
@@ -514,7 +543,12 @@ class Productivity_model extends XPO_Model {
 		}
 
 		if($this->from_loc){
-			$pick_query .= "AND from_loc LIKE '$this->from_loc'";
+			if(in_array($this->type,array('moda','modb'))){
+				$pick_query .= "AND from_loc LIKE '$this->from_loc'";
+			}else{
+				$pick_query .= "AND from_loc NOT MATCHES 'O[18-22]*-*'";
+				$pick_query .= "AND from_loc NOT MATCHES '[A,B]*-*'";
+			}
 			$pick_query .= "AND ob_type != 'CRS'";
 		}
 
@@ -527,15 +561,15 @@ class Productivity_model extends XPO_Model {
 		$now_formatted = $now->format('Y-m-d H:i:s');
 		$shift1_start = $now->format('Y-m-d 06:00:00');
 		$shift1_end = $now->format('Y-m-d 17:59:59');
-
+		//$now_formatted = '2018-12-20 01:00:00';
 		if($now_formatted > $shift1_start && $now_formatted < $shift1_end){
 			$this->shift['current'] = '1st';
 			$this->shift['start'] = $now->format('Y-m-d 06:00:00');
 			$this->shift['end'] = $now->format('Y-m-d 17:59:59');
 		}else{
 			$this->shift['current'] = '2nd';
-			$this->shift['start'] = $now->format('Y-m-d 17:00:00');
-			$this->shift['end'] = $now->add(new DateInterval('P1D'))->format('Y-m-d 04:00:00');
+			$this->shift['start'] = $now->format('Y-m-d 18:00:00');
+			$this->shift['end'] = $now->add(new DateInterval('P1D'))->format('Y-m-d 05:59:59');
 		}
 	}
 
@@ -543,6 +577,7 @@ class Productivity_model extends XPO_Model {
 		$this->checkShift();
 		$start = DateTime::createFromFormat('Y-m-d H:i:s',$this->shift['start']);
 		$end = DateTime::createFromFormat('Y-m-d H:i:s',$this->shift['end']);
+
 		$total_hours = $end->diff($start)->format('%h');
 		
 		for($x=0;$x<=$total_hours;$x++){
@@ -587,39 +622,37 @@ class Productivity_model extends XPO_Model {
 	{
 		$this->type = $type;
 
-		if($type == 'cresting'){
-            $this->ob_type = 'CRS';
-            $this->standard = 'prod_crs_pph';
-            $this->label = 'Cresting';
-        }elseif($type == 'moda'){
-            $this->from_loc = 'A%-%';
-            $this->standard = 'prod_moda_pph';
-            $this->label = 'MOD-A';
-        }elseif($type == 'modb'){
-            $this->from_loc = 'B%-%';
-            $this->standard = 'prod_modb_pph';
-            $this->label = 'MOD-B';
+		switch($type){
+			case 'cresting':
+	            $this->ob_type = 'CRS';
+	            $this->standard = 'prod_crs_pph';
+	            $this->label = 'Cresting';
+	            break;
+        	case 'moda':
+	            $this->from_loc = 'A%-%';
+	            $this->standard = 'prod_moda_pph';
+	            $this->label = 'MOD-A';
+	            break;
+        	case 'modb':
+	            $this->from_loc = 'B%-%';
+	            $this->standard = 'prod_modb_pph';
+	            $this->label = 'MOD-B';
+	           	break;
+	        case 'outside':
+	        	$this->from_loc = 'OUT';
+	            $this->standard = 'prod_out_pph';
+	            $this->label = 'Outside';
         }
 	}
 
 	private function getQuery($type)
 	{
 		$query['mod'] = " AND (from_loc LIKE 'A%-%' OR from_loc LIKE 'B%-%')";
-		$query['out'] = " AND from_loc NOT LIKE 'A%-%' 
-							AND from_loc NOT LIKE 'B%-%'
-							AND from_loc NOT LIKE 'O18%'
-							AND from_loc NOT LIKE 'O19%'
-							AND from_loc NOT LIKE 'O20%'
-							AND from_loc NOT LIKE 'O21%'
-							AND from_loc NOT LIKE 'O23%'
-							AND from_loc NOT LIKE 'O22%'
+		$query['out'] = " AND from_loc NOT MATCHES '[A-B]*-*' 
+							AND from_loc NOT MATCHES 'O[18-22]*-*'
 							AND from_loc NOT LIKE 'QP%'";
-		$query['crs'] = " AND (from_loc LIKE 'O18%'
-							OR from_loc LIKE 'O19%'
-							OR from_loc LIKE 'O20%'
-							OR from_loc LIKE 'O21%'
-							OR from_loc LIKE 'O23%'
-							OR from_loc LIKE 'O22%')";
+
+		$query['crs'] = " OR from_loc MATCHES 'O[18-22]*-*'";
 		$query['qp'] = " AND from_loc LIKE 'QP%'";
 		$query['pick_out'] = " AND ith_f.from_loc NOT LIKE 'A%-%-%'
 								AND ith_f.from_loc NOT LIKE 'B%-%-%'

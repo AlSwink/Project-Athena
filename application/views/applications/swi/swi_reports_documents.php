@@ -49,7 +49,7 @@
 		</select>
 	</div>
 	<div class="col-lg-3 col-md-12 col-sm-12">
-		<label class="mb-0">Controls</label>
+		<label class="mb-0">Controls</label><br>
 		<div class="btn-group btn-group-sm text-right">
 			<button id="rdl_table_reload" type="button" class="btn btn-info">Fetch new data <i class="fas fa-sync-alt"></i></button>
 			<button id="rdl_excel" type="button" class="btn btn-success">Excel <i class="fas fa-file-excel"></i></button>

@@ -21,9 +21,9 @@ class Replenisher_model extends XPO_Model {
 
 			$final_waves[] = array(
 								'wave' => $wave['wave'],
-								'built' => ($replenisher_info && $replenisher_info['replenished_on'] ? 1 : 0),
-								'user' => ($replenisher_info ? $replenisher_info['e_fname'].' '.$replenisher_info['e_lname'] : null),
-								'timestamp' => ($replenisher_info ? $replenisher_info['replenished_on'] : null)
+								'built' => ($replenisher_info && $replenisher_info[0]['replenished_on'] ? 1 : 0),
+								'user' => ($replenisher_info ? $replenisher_info[0]['e_fname'].' '.$replenisher_info[0]['e_lname'] : null),
+								'timestamp' => ($replenisher_info ? $replenisher_info[0]['replenished_on'] : null)
 							);
 		}
 

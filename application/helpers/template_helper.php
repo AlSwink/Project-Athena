@@ -29,7 +29,12 @@
 
 	function getRandomHints()
 	{
-		$hints = ['The Sun is the big bright ball you see in the sky','The Moon is the constantly changing pie in the sky at night'];
+		$hints = array(
+					'XPO was founded in 1989 (as Express-1 Expedited Solutions)',
+					'Brad Jacobs is the CEO of XPO',
+					'XPO has at least 1500+ locations',
+					'XPO is in 32 different countries'
+				);
 
 		$index = array_rand($hints);
 		return $hints[$index];

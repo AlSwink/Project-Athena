@@ -18,6 +18,9 @@
 			    	<a class="nav-link" data-toggle="tab" href="#prod_individual_admin"><i class="fas fa-user"></i> Individual Tracker</a>
 			  	</li>
 			  	<li class="nav-item ">
+			    	<a class="nav-link" data-toggle="tab" href="#prod_history"><i class="fas fa-history"></i> History</a>
+			  	</li>
+			  	<li class="nav-item ">
 			    	<a class="nav-link" data-toggle="tab" href="#changelog"><i class="fas fa-code"></i> Changelog</a>
 			  	</li>
 			</ul>
@@ -31,6 +34,9 @@
 			<div class="tab-pane" id="prod_individual_admin" role="tabpanel">
 				<div id="individual">
 				</div>
+			</div>
+			<div class="tab-pane" id="prod_history" role="tabpanel">
+				<?= loadSubTemplate('productivity_history'); ?>
 			</div>
 			<div class="tab-pane" id="changelog" role="tabpanel">
 				<?= loadSubTemplate('changelog'); ?>

@@ -37,26 +37,6 @@ class Productivity extends CI_Controller {
         echo $this->load->view($this->page,$data,TRUE);
     }
 
-    public function test()
-    {
-        $this->page = $this->page_dir.'/test';
-        $this->productivity_model->setProdType('cresting');
-        $data['data'] = $this->productivity_model->getCRSIndividual();
-        //echo '<pre>';
-        //var_dump($data['data']);
-        $this->load->view('page',$data);
-    }
-
-    public function test2()
-    {
-        $this->page = $this->page_dir.'/test';
-        $this->productivity_model->setProdType('cresting');
-        $data['data'] = $this->productivity_model->getCRSIndividual2();
-        //echo '<pre>';
-        //var_dump($data['data']);
-        //$this->load->view('page',$data);
-    }
-
     public function test3()
     {
         $this->productivity_model->getHours();
@@ -177,5 +157,13 @@ class Productivity extends CI_Controller {
         //$this->load->view($this->page_dir.'/productivity_email',$info);
         $result = $this->Notifications_model->sendEmail($email);
         echo json_encode($result);
+    }
+
+    public function test_hours()
+    {
+        $this->productivity_model->getHours();
+        echo '<pre>';
+        var_dump($this->productivity_model->hours);
+        var_dump($this->productivity_model->shift);
     }
 }
