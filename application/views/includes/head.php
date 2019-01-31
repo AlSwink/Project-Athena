@@ -41,9 +41,11 @@
 
 
 <!-- js start-->
+
 <script src="<?= base_url('/assets/js/jquery-2.2.4.min.js'); ?>"></script>
 <script src="<?= base_url('/assets/js/fontawesome-all.min.js'); ?>"></script>
 <script src="<?= base_url('/assets/js/moment.js'); ?>"></script>
+<script src="<?= base_url('/assets/js/flipclock.min.js'); ?>"></script>
 <script src="<?= base_url('/assets/js/main.js'); ?>"></script>
 <script src="<?= base_url('/assets/datatables/datatables.js'); ?>"></script>
 <script src="<?= 'http://'.$_SERVER['HTTP_HOST'].':3000/socket.io/socket.io.js'; ?>"></script>

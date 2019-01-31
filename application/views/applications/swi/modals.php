@@ -386,6 +386,8 @@
               <option value="08">August</option>
               <option value="09">September</option>
               <option value="10">October</option>
+              <option value="11">November</option>
+              <option value="12">December</option>
             </select>
           </div>
         </div>

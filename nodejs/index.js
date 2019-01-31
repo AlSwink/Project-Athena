@@ -20,6 +20,12 @@ io.on('connection',function(socket){
 		
 		io.emit(cmd,val);
 	});
+
+	socket.on('notify',function(m){
+		console.log(m);
+		params = m.split('-');
+		io.emit('notify',params[0],params[1]);
+	});
 });
 
 http.listen(3000,function(){

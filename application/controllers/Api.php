@@ -10,6 +10,9 @@ class Api extends CI_Controller {
         $this->load->model('applications/Cycle_count_model');
         $this->load->model('applications/Random_audit_model');
 		$this->load->model('applications/E_roster_model');
+        $this->load->model('applications/Argus_model');
+        $this->load->model('applications/Replenisher_model');
+
     }
 
     public function get_app($app)
@@ -176,4 +179,72 @@ class Api extends CI_Controller {
 		$report = $this->E_roster_model->get_missing_report();
 		echo json_encode($report);
 	} */
+}
+    public function argus_update_shipments()
+    {
+        $this->Argus_model->updateShipments();
+        $this->Argus_model->check805();
+    }
+
+    public function argus_shipments()
+    {
+        $this->Argus_model->getShipments();
+        echo json_encode($this->Argus_model->shipments);
+    }
+
+    public function replenish_wave($wave=null)
+    {
+        $selected = array();
+        $this->Replenisher_model->wave = $wave;
+        $this->Replenisher_model->getWaveLines();
+
+        $lines = $this->Replenisher_model->lines;
+        
+        foreach($lines as $line){
+            $locs = array_column($this->Replenisher_model->getCrestingLocations(trim($line['tariff_desc'])),'loc');
+            $new = array_diff($locs,$selected);
+            
+            $loc = array_rand($new);
+            array_push($selected,$new[$loc]);
+            
+            $data = array(
+                        'sku' => trim($line['sku']),
+                        'pkg' => trim($line['pkg']),
+                        'commodity' => trim($line['tariff_desc']),
+                        'need' => number_format($line['qty']),
+                        'loc' => $new[$loc]
+                    );
+            
+            $data['loc_info'] = $this->Replenisher_model->buildReplenishment($data);
+
+            $prod_locs[] = $data;
+        }
+        
+        $data['prod_locs'] = $prod_locs;
+        $data['wave'] = $wave;
+
+        $this->page = 'test_page';
+        $this->load->view('page',$data);
+    }
+
+    public function getDockDoors()
+    {
+        $doors = $this->XPO_model->getDoor();
+        echo json_encode($doors);
+    }
+
+    public function getOutstandingCartons()
+    {
+        $query = "SELECT COUNT(DISTINCT(to_cont)) as count,clust_cont_type as type
+        			FROM cm_f
+                    WHERE clust_cont_type != ''
+                    AND task = 'PICK'
+                    AND cmd_stt = 'CLST'
+                    GROUP BY clust_cont_type
+                    ORDER BY type";
+
+        $data['cartons'] = $this->XPO_model->wms->query($query)->result_array();
+        $this->page = 'test_page';
+        $this->load->view('page',$data);
+    }
 }

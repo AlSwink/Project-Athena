@@ -1,0 +1,21 @@
+Regular Shipment Criteria
+
+LEVEL 1-3
+wave = 100,200,300-PKG/LTL
+
+STATUS 805IT
+shipunit_f.packlist != ''
+
+SELECT TRIM(om.shipment) as shipment,TRIM(om.attention) as attention,om.carrier,om.ship_name,(SELECT SUM(ord_qty) FROM od_f WHERE ob_oid = om.ob_oid) as ord_qty
+FROM shipunit_f AS s
+INNER JOIN om_f AS om ON s.shipment = om.shipment
+WHERE packlist != ''
+AND packlist IS NOT NULL
+AND (om.attention LIKE '1%%PKG' OR om.attention LIKE '1%%LTL' OR om.attention LIKE '2%%PKG' OR om.attention LIKE '2%%LTL' OR om.attention LIKE '3%%PKG' OR om.attention LIKE '3%%LTL')
+GROUP BY shipment,attention,carrier,ship_name,ord_qty
+ORDER BY attention ASC
+
+WR Shipment Criteria
+
+from_email != ''
+shipment LIKE 'WR%'

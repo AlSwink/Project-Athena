@@ -11,7 +11,6 @@ class Applications extends CI_Controller {
         $method = $this->router->fetch_method();
 
         //dynamic model initialization
-        $this->load->model('Applications_model');
         $this->load->model('applications/'.$method.'_model',$method);
         $this->model = $this->$method;
 
@@ -51,13 +50,31 @@ class Applications extends CI_Controller {
         loadView($swi);
     }
 
-    public function argus(){
+    public function argus($stage='master'){
         check_session();
-        
+        $this->model->stage = $stage;
+        $this->model->getShipments();
+        $this->stage = $stage;
+
         $argus = array(
+                    'shipments' =>  $this->model->shipments,
                     'dependencies' => array(
-                                        'css'   => array('jquery.signature','jquery-ui.min','jquery.contextMenu.min'),
-                                        'js'    => array('moment','hermes','jquery-ui.min','jquery.signature.min','jquery.ui.touch-punch.min','jquery.contextMenu.min')
+                                        'css'   => array(
+                                                    'jquery.signature',
+                                                    'jquery-ui.min',
+                                                    'jquery.contextMenu.min'
+                                                ),
+                                        'js'    => array(
+                                                    'moment',
+                                                    'hermes',
+                                                    'jquery-ui.min',
+                                                    'jquery.signature.min',
+                                                    'jquery.ui.touch-punch.min',
+                                                    'jquery.contextMenu.min',
+                                                    'jquery.quicksearch.min',
+                                                    'notify.min',
+                                                    'responsivevoice',
+                                                )
                                         )
                 );
 
@@ -70,8 +87,19 @@ class Applications extends CI_Controller {
         $cyc = array(
                     'totals' => $this->model->getTotals($dataset),
                     'dependencies' => array(
-                                        'css'   => array('daterangepicker','jquery.contextMenu.min'),
-                                        'js'    => array('hermes','chart.min','jquery-barcode.min','daterangepicker','jquery.contextMenu.min','jquery.ui.position.min','notify.min')
+                                        'css'   => array(
+                                                    'daterangepicker',
+                                                    'jquery.contextMenu.min'
+                                                ),
+                                        'js'    => array(
+                                                    'hermes',
+                                                    'chart.min',
+                                                    'jquery-barcode.min',
+                                                    'daterangepicker',
+                                                    'jquery.contextMenu.min',
+                                                    'jquery.ui.position.min',
+                                                    'notify.min'
+                                                )
                                         )
                 );
 
@@ -141,11 +169,105 @@ class Applications extends CI_Controller {
         $ra = array(
                     'employees' => $this->model->getEmployeesReport(),
                     'dependencies' => array(
-                                        'css' => array('daterangepicker','jquery.contextMenu.min'),
-                                        'js'    => array('hermes','chart.min','notify.min','jquery.contextMenu.min','daterangepicker')
+                                        'css'   => array(
+                                                    'daterangepicker',
+                                                    'jquery.contextMenu.min'
+                                                ),
+                                        'js'    => array(
+                                                    'hermes',
+                                                    'chart.min',
+                                                    'notify.min',
+                                                    'jquery.contextMenu.min',
+                                                    'daterangepicker'
+                                                )
                                         )
                 );
 
         loadView($ra);
+    }
+
+    public function replenisher()
+    {
+        check_session();
+        $replen = array(
+                    'cresting_waves' => $this->model->getWaves('Cresting'),
+                    'dependencies' => array(
+                                        'css' => array(
+                                                    'jquery.contextMenu.min'
+                                        ),
+                                        'js' => array(
+                                                    'hermes',
+                                                    'notify.min',
+                                                    'jquery.contextMenu.min'
+                                                )
+                                        )
+                );
+
+        loadView($replen);
+    }
+
+    public function dock_manager()
+    {
+        check_session();
+        $docker = array(
+                    'carriers' => $this->XPO_model->getCarriers(),
+                    'buildings' => $this->XPO_model->getBuildings(),
+                    'dependencies' => array(
+                                        'css' => array(
+                                                    'jquery.contextMenu.min',
+                                                    'daterangepicker'
+                                        ),
+                                        'js' => array(
+                                                    'hermes',
+                                                    'moment',
+                                                    'jquery.contextMenu.min',
+                                                    'notify.min',
+                                                    'daterangepicker'
+                                        ),
+                                    )
+                );
+
+        loadView($docker);
+    }
+
+    public function yard_manager()
+    {
+        check_session();
+        $yard = array(
+                    'carriers' => $this->XPO_model->getCarriers(),
+                    'buildings' => $this->XPO_model->getBuildings(),
+                    'dependencies' => array(
+                                        'css' => array(
+                                                    'jquery.contextMenu.min',
+                                                    'daterangepicker'
+                                        ),
+                                        'js' => array(
+                                                    'hermes',
+                                                    'moment',
+                                                    'jquery.contextMenu.min',
+                                                    'notify.min',
+                                                    'daterangepicker'
+                                        ),
+                                    )
+                );
+
+        loadView($yard);
+    }
+
+    public function productivity($type)
+    {
+        $this->model->setProdType($type);
+        $prod = array(
+                    'type' => $type,
+                    'data' => $this->model->getShiftData(),
+                    'title' => $this->model->label,
+                    'dependencies' => array(
+                                        'js' => array(
+                                                'hermes'
+                                        )
+                                    )
+                );
+
+        loadView($prod);
     }
 }

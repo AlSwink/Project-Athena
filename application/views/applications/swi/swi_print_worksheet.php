@@ -6,7 +6,7 @@
 		</div>
 		<div class="col">
 			<u><?= $data[0]->e_fname.' '.$data[0]->e_lname; ?></u><br>
-			<small>Employee</small>
+			<small>Auditor</small>
 		</div>
 		<div class="col">
 			<u><?= $data[0]->doc_name; ?></u><br>

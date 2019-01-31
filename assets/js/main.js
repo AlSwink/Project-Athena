@@ -1,4 +1,5 @@
 var site_url = 'http://'+window.location.hostname+'/athena/';
+var notif = new Audio('http://'+window.location.hostname+'/athena/assets/audio/argus-notify-default.mp3');
 var app_name = '';
 var loading = '';
 var	active = '';

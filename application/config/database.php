@@ -97,8 +97,8 @@ $db['default'] = array(
 
 $db['xpo'] = array(
 	'dsn'	=> '',
-	'hostname' => '10.89.99.176',
-	'username' => 'root',
+	'hostname' => '10.89.99.186',
+	'username' => 'user',
 	'password' => 'bruh@h@',
 	'database' => 'xpo',
 	'dbdriver' => 'mysqli',

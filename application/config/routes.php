@@ -77,7 +77,12 @@ $route['health_check/standalone'] = 'applications/system_health_check/1';
 $route['health_check/(:any)'] = 'apps/system_health_check/$1';
 //argus routes
 $route['argus'] = 'applications/argus';
-$route['argus/standalone'] = 'applications/argus/1';
+$route['argus/display'] = 'apps/argus/display';
+$route['argus/standalone'] = 'applications/argus';
+$route['argus/mode/(:any)'] = 'applications/argus/$1';
+$route['argus/(:any)'] = 'apps/argus/$1';
+$route['argus/(:any)/(:any)'] = 'apps/argus/$1/$2';
+
 //access_verifier routes
 $route['access_verifier'] = 'applications/access_verifier';
 $route['access_verifier/standalone'] = 'applications/access_verifier/1';
@@ -106,5 +111,23 @@ $route['e_roster/get_wms_employee/(:any)'] = 'apps/e_roster/get_wms_employee/$1'
 //random_audit routes
 $route['random_audit'] = 'applications/random_audit';
 $route['random_audit/standalone'] = 'applications/random_audit/1';
-
+//replenish_wave
+$route['replenisher'] = 'applications/replenisher';
+$route['replenisher/standalone'] = 'applications/replenisher/1';
+$route['replenisher/(:any)'] = 'apps/replenisher/$1';
+//dock_manager
+$route['dock_manager'] = 'applications/dock_manager';
+$route['dock_manager/standalone'] = 'applications/dock_manager/1';
+$route['dock_manager/(:any)'] = 'apps/dock_manager/$1';
+$route['dock_manager/(:any)/(:any)'] = 'apps/dock_manager/$1/$2';
+//yard_manager
+$route['yard_manager'] = 'applications/yard_manager';
+$route['yard_manager/standalone'] = 'applications/yard_manager/1';
+$route['yard_manager/(:any)'] = 'apps/yard_manager/$1';
+$route['yard_manager/(:any)/(:any)'] = 'apps/yard_manager/$1/$2';
+//productivity
+$route['productivity'] = 'applications/productivity/global';
+$route['productivity/admin/(:any)'] = 'applications/productivity/$1';
+$route['productivity/(:any)'] = 'apps/productivity/$1';
+$route['productivity/(:any)/(:any)'] = 'apps/productivity/$1/$2';
 //tool routes
